@@ -6,10 +6,10 @@ Status: early implementation. Product principles and the full agent blueprint li
 
 | Path | Role |
 | --- | --- |
-| `apps/web` | Learner UI (foundation shell today; Next.js PWA next) |
-| `apps/api` | HTTP API (health today; Fastify + auth next) |
-| `packages/contracts` | Shared Zod types and i18n contracts |
-| `packages/database` | Drizzle + PostgreSQL (stub) |
+| `apps/web` | Next.js PWA shell (`en` / `ml`) with magic-link sign-in UI |
+| `apps/api` | Fastify API: health, magic-link auth, session cookies |
+| `packages/contracts` | Shared Zod types, auth schemas, and i18n contracts |
+| `packages/database` | Drizzle schema + migrations (users, profiles, consent, sessions) |
 | `packages/ai-gateway` | Provider-neutral model gateway (stub) |
 | `packages/agent-runtime` | Bounded tutor workflows (stub) |
 | `prompts/` | Versioned prompt templates |

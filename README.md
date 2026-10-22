@@ -12,12 +12,16 @@ Koode is more than an AI tutor or an employability app. It aims to help learners
 ## Getting started
 
 ```bash
+cp .env.example .env
 pnpm install
+pnpm db:up          # Postgres on localhost:5433
+pnpm db:migrate
 pnpm build
 pnpm test
-pnpm --filter @koode/web dev   # http://localhost:3000?lang=en or ?lang=ml
-pnpm --filter @koode/api dev   # http://localhost:3001
+pnpm dev            # web :3000 + api :3001
 ```
+
+Open http://localhost:3000/en or http://localhost:3000/ml, then **Sign in** with a magic link (dev mode prints the link on the page).
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/architecture.md](docs/architecture.md), and [docs/testing.md](docs/testing.md).
 

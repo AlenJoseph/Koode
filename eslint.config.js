@@ -14,6 +14,9 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
     },
     rules: {
       '@typescript-eslint/no-unused-vars': [

@@ -2,14 +2,13 @@ import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  DEFAULT_LOCALE,
-  isLocale,
   messageKeys,
   type Locale,
   type MessageKey,
+  supportedLocales,
 } from '@koode/contracts';
 
-const localesRoot = join(dirname(fileURLToPath(import.meta.url)), '../locales');
+const localesRoot = join(dirname(fileURLToPath(import.meta.url)), '../../locales');
 
 function loadCatalog(locale: Locale): Record<MessageKey, string> {
   const raw = JSON.parse(
@@ -27,22 +26,14 @@ function loadCatalog(locale: Locale): Record<MessageKey, string> {
   return catalog;
 }
 
-const catalogs: Record<Locale, Record<MessageKey, string>> = {
-  en: loadCatalog('en'),
-  ml: loadCatalog('ml'),
-};
+const catalogs = Object.fromEntries(
+  supportedLocales.map((locale) => [locale, loadCatalog(locale)]),
+) as Record<Locale, Record<MessageKey, string>>;
 
-export function resolveLocale(value: string | null | undefined): Locale {
-  if (value && isLocale(value)) {
-    return value;
-  }
-  return DEFAULT_LOCALE;
+export function getDictionary(locale: Locale): Record<MessageKey, string> {
+  return catalogs[locale];
 }
 
 export function t(locale: Locale, key: MessageKey): string {
   return catalogs[locale][key];
-}
-
-export function shellCopy(locale: Locale): Record<MessageKey, string> {
-  return { ...catalogs[locale] };
 }

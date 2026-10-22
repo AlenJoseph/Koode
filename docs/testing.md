@@ -20,13 +20,22 @@ pnpm typecheck
 pnpm build
 ```
 
-## Foundation coverage (this milestone)
+## Coverage (weeks 3–4)
 
 | Area | Location |
 | --- | --- |
 | Locale parity | `packages/contracts/src/i18n/parity.test.ts` |
-| Web i18n loaders | `apps/web/src/i18n.test.ts` |
-| API health | `apps/api/src/health.test.ts` |
+| Web dictionaries | `apps/web/src/i18n/dictionaries.test.ts` |
+| API health / crypto | `apps/api/src/health.test.ts`, `crypto.test.ts` |
+| Auth integration | `apps/api/src/auth.integration.test.ts` (needs `DATABASE_URL`) |
+
+Local database:
+
+```bash
+pnpm db:up
+pnpm db:migrate
+DATABASE_URL=postgres://koode:koode@localhost:5433/koode pnpm test
+```
 
 ## Adding a message key
 

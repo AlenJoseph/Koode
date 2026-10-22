@@ -4,17 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "dev": "tsx watch src/dev-server.ts",
+    "build": "next build",
+    "dev": "next dev --port 3000",
+    "start": "next start --port 3000",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
     "test": "vitest run"
   },
   "dependencies": {
-    "@koode/contracts": "workspace:*"
+    "@koode/contracts": "workspace:*",
+    "next": "^15.5.4",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
-    "tsx": "^4.20.6",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
     "typescript": "^5.9.3",
     "vitest": "^3.2.4"
   }

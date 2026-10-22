@@ -16,7 +16,14 @@
       "dependsOn": ["^build"]
     },
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "passThroughEnv": [
+        "DATABASE_URL",
+        "SESSION_SECRET",
+        "MAGIC_LINK_DEV_MODE",
+        "APP_ORIGIN",
+        "API_ORIGIN"
+      ]
     }
   }
 }

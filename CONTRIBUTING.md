@@ -5,14 +5,16 @@ Thanks for helping build open, learner-centered tools. This guide keeps the code
 ## Quick start
 
 ```bash
+cp .env.example .env
 pnpm install
+pnpm db:up
+pnpm db:migrate
 pnpm build
 pnpm test
-pnpm --filter @koode/web dev   # http://localhost:3000?lang=en|ml
-pnpm --filter @koode/api dev   # http://localhost:3001 health JSON
+pnpm dev   # Next.js :3000 + Fastify :3001
 ```
 
-Requirements: Node.js 22+, pnpm 10+.
+Requirements: Node.js 22+, pnpm 10+, Docker (for local Postgres).
 
 ## Before you write code
 

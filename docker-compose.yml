@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: koode-postgres
+    restart: unless-stopped
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_USER: koode
+      POSTGRES_PASSWORD: koode
+      POSTGRES_DB: koode
+    volumes:
+      - koode_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U koode -d koode']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  koode_pg_data:

@@ -1,16 +1,14 @@
-import { createServer } from 'node:http';
-import { getHealth } from './health.js';
+import { buildApp } from './app.js';
+import { loadConfig } from './config.js';
 
-const port = Number(process.env.PORT ?? 3001);
+async function main(): Promise<void> {
+  const config = loadConfig();
+  const app = await buildApp({ config });
+  await app.listen({ port: config.port, host: '0.0.0.0' });
+  console.log(`@koode/api listening on http://localhost:${config.port}`);
+}
 
-const httpServer = createServer((_req, res) => {
-  const body = JSON.stringify(getHealth());
-  res.writeHead(200, {
-    'content-type': 'application/json; charset=utf-8',
-  });
-  res.end(body);
-});
-
-httpServer.listen(port, () => {
-  console.log(`@koode/api listening on http://localhost:${port}`);
+main().catch((error: unknown) => {
+  console.error(error);
+  process.exit(1);
 });

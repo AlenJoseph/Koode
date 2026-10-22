@@ -4,8 +4,20 @@
   "nav.home": "Home",
   "nav.challenges": "Challenges",
   "nav.progress": "Progress",
+  "nav.signIn": "Sign in",
+  "nav.signOut": "Sign out",
   "locale.switch": "Language",
   "locale.en": "English",
   "locale.ml": "Malayalam",
-  "health.ok": "Ready"
+  "health.ok": "Ready",
+  "auth.title": "Sign in with email",
+  "auth.emailLabel": "Email",
+  "auth.sendLink": "Send magic link",
+  "auth.linkSent": "Check your email for a sign-in link. In local dev the link also appears on this page.",
+  "auth.verifyTitle": "Completing sign-in",
+  "auth.verifying": "Verifying your link…",
+  "auth.verifyFailed": "That sign-in link is invalid or expired.",
+  "auth.signedInAs": "Signed in as",
+  "home.welcome": "Welcome back. Your learning progress will live here.",
+  "home.signedOutHint": "Sign in to save progress across sessions."
 }

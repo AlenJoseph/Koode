@@ -12,12 +12,34 @@ concurrency:
 jobs:
   quality:
     name: Lint, typecheck, test
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: koode
+          POSTGRES_PASSWORD: koode
+          POSTGRES_DB: koode
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U koode -d koode"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgres://koode:koode@localhost:5432/koode
+      SESSION_SECRET: ci-session-secret-at-least-32-chars-long
+      MAGIC_LINK_DEV_MODE: 'true'
+      APP_ORIGIN: http://localhost:3000
+      API_ORIGIN: http://localhost:3001
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -25,7 +47,7 @@ jobs:
           version: 10.33.0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: pnpm
@@ -42,7 +64,10 @@ jobs:
       - name: Build packages
         run: pnpm build
 
-      - name: Test (unit, locale parity, health)
+      - name: Migrate database
+        run: pnpm db:migrate
+
+      - name: Test (unit, integration, locale parity)
         run: pnpm test
 
       - name: Locale parity (explicit)

@@ -1,5 +1,2 @@
-/**
- * Drizzle schema and migrations land here in weeks 3–4.
- * PostgreSQL remains the source of truth for learner records.
- */
-export const databasePackageName = '@koode/database' as const;
+export * from './schema/index.js';
+export { createDatabase, requireDatabaseUrl, type Database } from './client.js';
