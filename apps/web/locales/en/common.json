@@ -1,0 +1,11 @@
+{
+  "app.name": "Koode",
+  "app.tagline": "Learn your way. Grow with Koode.",
+  "nav.home": "Home",
+  "nav.challenges": "Challenges",
+  "nav.progress": "Progress",
+  "locale.switch": "Language",
+  "locale.en": "English",
+  "locale.ml": "Malayalam",
+  "health.ok": "Ready"
+}

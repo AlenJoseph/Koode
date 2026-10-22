@@ -7,7 +7,19 @@ Koode is an open-source, public-interest project exploring how AI agents can hel
 
 Koode is more than an AI tutor or an employability app. It aims to help learners discover interests, build skills, solve real problems, communicate clearly, create useful things, and develop the judgement to use AI wisely.
 
-> **Status:** Early concept and architecture blueprint. This repository currently documents the proposed product, architecture, principles, and roadmap. Features below are intended directions, not claims that they are already implemented.
+> **Status:** Foundation in progress. The monorepo, CI, Vitest, and `en`/`ml` locale parity checks are implemented. Product features below remain intended directions unless marked as shipped.
+
+## Getting started
+
+```bash
+pnpm install
+pnpm build
+pnpm test
+pnpm --filter @koode/web dev   # http://localhost:3000?lang=en or ?lang=ml
+pnpm --filter @koode/api dev   # http://localhost:3001
+```
+
+See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/architecture.md](docs/architecture.md), and [docs/testing.md](docs/testing.md).
 
 ## Why Koode?
 
@@ -331,7 +343,7 @@ Koode should be developed in the open with clear expectations. Contributions may
 - Never add real student data, secrets, API keys, or private conversations to the repository.
 - Use synthetic fixtures for examples and tests.
 - Document AI/model behavior changes and add evaluation cases when prompts or models change.
-- See `CONTRIBUTING.md` and `CODE_OF_CONDUCT.md` as they are added.
+- See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Initial issues to open
 
@@ -352,4 +364,4 @@ Koode should be developed in the open with clear expectations. Contributions may
 
 ## License
 
-The project has not yet selected a license. Before accepting outside contributions or publishing reusable code, choose a license aligned with the intended public-interest governance and get appropriate guidance if needed.
+Licensed under the [Apache License 2.0](LICENSE).
