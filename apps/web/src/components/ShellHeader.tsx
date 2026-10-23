@@ -10,6 +10,10 @@ type Props = {
   dictionary: Record<MessageKey, string>;
 };
 
+function isTeacherRole(role: string | undefined): boolean {
+  return role === 'teacher' || role === 'admin';
+}
+
 export function ShellHeader({ locale, dictionary }: Props) {
   const otherLocale = locale === 'en' ? 'ml' : 'en';
   const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
@@ -26,6 +30,8 @@ export function ShellHeader({ locale, dictionary }: Props) {
     window.location.href = `/${locale}`;
   }
 
+  const teacher = user ? isTeacherRole(user.role) : false;
+
   return (
     <header className="topbar">
       <div className="topbar-brand">
@@ -40,28 +46,37 @@ export function ShellHeader({ locale, dictionary }: Props) {
       </div>
 
       <nav className="topbar-nav" aria-label="Primary">
-        <Link href={`/${locale}/pathways`}>{dictionary['nav.pathways']}</Link>
-        <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
-        <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
-        <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
-        <Link className="nav-quiet" href={`/${locale}/classroom`}>
-          {dictionary['nav.classroom']}
-        </Link>
-        <Link className="nav-quiet" href={`/${locale}/insights`}>
-          {dictionary['nav.insights']}
-        </Link>
+        {!user || !teacher ? (
+          <>
+            <Link href={`/${locale}/pathways`}>{dictionary['nav.pathways']}</Link>
+            <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
+            <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
+            <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
+          </>
+        ) : null}
+        {teacher ? (
+          <>
+            <Link href={`/${locale}/classroom`}>{dictionary['nav.classroom']}</Link>
+            <Link href={`/${locale}/insights`}>{dictionary['nav.insights']}</Link>
+            <Link className="nav-quiet" href={`/${locale}/pathways`}>
+              {dictionary['nav.pathways']}
+            </Link>
+          </>
+        ) : null}
+        {!user ? (
+          <Link className="nav-quiet" href={`/${locale}/join`}>
+            {dictionary['nav.join']}
+          </Link>
+        ) : null}
       </nav>
 
       <div className="topbar-actions">
         {!user ? (
           <>
-            <Link className="nav-quiet" href={`/${locale}/join`}>
-              {dictionary['nav.join']}
-            </Link>
             <Link className="btn btn-primary btn-sm" href={`/${locale}/sign-up`}>
               {dictionary['nav.signUp']}
             </Link>
-            <Link className="btn btn-secondary btn-sm" href={`/${locale}/sign-in`}>
+            <Link className="nav-quiet teacher-only-link" href={`/${locale}/sign-in`}>
               {dictionary['nav.signIn']}
             </Link>
           </>

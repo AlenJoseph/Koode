@@ -11,6 +11,10 @@ type Props = {
   dictionary: Record<MessageKey, string>;
 };
 
+function isTeacherRole(role: string | undefined): boolean {
+  return role === 'teacher' || role === 'admin';
+}
+
 export function HomeSession({ locale, dictionary }: Props) {
   const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 
@@ -36,16 +40,19 @@ export function HomeSession({ locale, dictionary }: Props) {
           <Link className="btn btn-primary" href={`/${locale}/sign-up`}>
             {dictionary['nav.signUp']}
           </Link>
-          <Link className="btn btn-secondary" href={`/${locale}/sign-in`}>
-            {dictionary['nav.signIn']}
-          </Link>
           <Link className="btn btn-accent" href={`/${locale}/join`}>
             {dictionary['nav.join']}
           </Link>
         </div>
+        <p className="teacher-gate">
+          <Link href={`/${locale}/sign-in`}>{dictionary['nav.signIn']}</Link>
+          <span className="muted"> — for teachers only</span>
+        </p>
       </section>
     );
   }
+
+  const teacher = isTeacherRole(user.role);
 
   return (
     <div className="stack">
@@ -59,18 +66,31 @@ export function HomeSession({ locale, dictionary }: Props) {
           <strong>{user.displayName ?? user.email ?? user.role}</strong>
         </p>
         <div className="ctas">
-          <Link className="btn btn-primary" href={`/${locale}/pathways`}>
-            {dictionary['nav.pathways']}
-          </Link>
-          <Link className="btn btn-secondary" href={`/${locale}/challenges`}>
-            {dictionary['nav.challenges']}
-          </Link>
-          <Link className="btn btn-accent" href={`/${locale}/tutor`}>
-            {dictionary['nav.tutor']}
-          </Link>
+          {teacher ? (
+            <>
+              <Link className="btn btn-primary" href={`/${locale}/classroom`}>
+                {dictionary['nav.classroom']}
+              </Link>
+              <Link className="btn btn-secondary" href={`/${locale}/insights`}>
+                {dictionary['nav.insights']}
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link className="btn btn-primary" href={`/${locale}/pathways`}>
+                {dictionary['nav.pathways']}
+              </Link>
+              <Link className="btn btn-secondary" href={`/${locale}/challenges`}>
+                {dictionary['nav.challenges']}
+              </Link>
+              <Link className="btn btn-accent" href={`/${locale}/tutor`}>
+                {dictionary['nav.tutor']}
+              </Link>
+            </>
+          )}
         </div>
       </section>
-      {!user.email ? <ClaimEmailForm locale={locale} dictionary={dictionary} /> : null}
+      {!user.email && !teacher ? <ClaimEmailForm locale={locale} dictionary={dictionary} /> : null}
     </div>
   );
 }
