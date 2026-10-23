@@ -1,0 +1,32 @@
+{
+  "id": "body-and-care",
+  "title": "Body & care",
+  "promise": "Food sense, everyday wellbeing, and calm first aid basics.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["health literacy", "first aid basics", "self-care"],
+  "challengeOrder": ["plate-sense", "check-call-care"],
+  "introMarkdown": "## Body & care\n\nThis pathway is about looking after your body with judgement: food, rest, and simple first aid calm.\n\nYou are not becoming a doctor. You are becoming someone who notices and responds safely.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Use short checklists. Repeat safety limits often."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what they would do first, then next."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Add a second scenario with a twist."
+      }
+    },
+    "tutorBrief": "Never give medical diagnosis. First aid content stays basic (check, call, care). Urge adult/emergency help for serious cases. No diet shaming.",
+    "personalizeTemplate": "Pace={{pace}}. Local foods and climate={{local_context}}.\nAdapt food examples to local staples. Keep first-aid steps standard and safe."
+  }
+}

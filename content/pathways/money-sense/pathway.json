@@ -1,0 +1,32 @@
+{
+  "id": "money-sense",
+  "title": "Money sense",
+  "promise": "Budgets, fair deals, saving, and spotting traps.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["financial literacy", "planning", "fair exchange"],
+  "challengeOrder": ["week-budget", "fair-or-trap"],
+  "introMarkdown": "## Money sense\n\nMoney is a tool. This pathway helps you plan a small budget and notice unfair deals.\n\nNo get-rich schemes. Just clearer choices.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Use small round numbers in local currency."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask needs vs wants with examples."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Add a save goal with weeks to target."
+      }
+    },
+    "tutorBrief": "No gambling tips. No crypto hype. No shame about poverty. Use local currency when personalizing. Stay educational.",
+    "personalizeTemplate": "Pace={{pace}}. Currency and local prices={{local_context}}.\nRewrite amounts into familiar local prices. Keep math honest."
+  }
+}

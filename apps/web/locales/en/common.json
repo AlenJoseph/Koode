@@ -27,6 +27,8 @@
   "auth.signedInAs": "Signed in as",
   "auth.teacherHint": "Students in a class: use Join class with your section code — no email needed.",
   "auth.learnerHint": "Learn on your own with email. Teachers use Teacher sign in. Class students use Join class.",
+  "auth.ageGate": "Koode is for learners aged 13–18. There is no under-13 sign-up path.",
+  "auth.ageConfirm": "I confirm I am 13 or older",
   "auth.claimTitle": "Link an email to this account",
   "auth.claimHint": "Add a verified email so you can sign in later without your class code.",
   "auth.claimSend": "Send verification link",

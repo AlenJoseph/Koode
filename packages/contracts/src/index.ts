@@ -6,5 +6,6 @@ export * from './pathways.js';
 export * from './challenges.js';
 export * from './projects.js';
 export * from './section-pathways.js';
+export * from './content.js';
 
 

@@ -1,0 +1,54 @@
+{
+  "id": "fair-or-trap",
+  "kind": "quiz",
+  "title": "Fair deal or trap?",
+  "summary": "Spot pressure tricks in offers and sales talk.",
+  "locale": "en",
+  "estimatedMinutes": 12,
+  "objectives": [
+    "Recognise urgency pressure and too-good claims",
+    "Practise asking one check question before buying"
+  ],
+  "briefMarkdown": "## Mission\n\nTraps often sound like:\n- Only today!\n- Everyone is buying!\n- Guaranteed rich!\n\nFair deals can wait while you check.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "\"Buy now or lose 90% forever!\" Best first move:",
+      "options": [
+        { "id": "a", "label": "Buy instantly so you do not miss out" },
+        { "id": "b", "label": "Pause and ask: what exactly do I get, and can I compare?" },
+        { "id": "c", "label": "Borrow money without a plan" },
+        { "id": "d", "label": "Share the offer to all chats uncritically" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Urgency is a common pressure trick. Checking is strength."
+    }
+  ],
+  "reflectionPrompt": "Write one check question you will ask before your next purchase.",
+  "successCriteria": [
+    "Identifies pressure tactics",
+    "Produces a real check question"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Show two ad examples: trap vs fair."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what 'too good' looks like in their town."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Have them rewrite a trap ad into honest copy."
+      }
+    },
+    "tutorBrief": "Consumer caution only. No brand attacks. No financial product recommendations.",
+    "personalizeTemplate": "Pace={{pace}}. Local market apps/shops={{local_context}}.\nUse familiar local sales language. Keep correctOptionId values."
+  }
+}

@@ -116,6 +116,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | --- | --- | --- | --- | --- |
 | **E6-S1** | SEO landing page | Indexable landing (title/meta/OG); clear CTAs: teacher / learner / join class | Playwright SEO smoke (title, h1, meta) | `done` |
 | **E6-S2** | Docs site shell | Docs home + architecture/requirements/epics linked; works locally | Smoke e2e or build check | `done` |
+| **E6-S3** | Content manuals (6 pathways) | JSON manuals under `content/` with Zod schema + LLM pace personalization contract; contribution README | `@koode/contracts` `content.validation.test.ts` | `done` |
 
 ---
 
@@ -125,9 +126,9 @@ Reference only — not re-opened unless a later story requires a fix.
 
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
-| **E7-S1** | Retention & redaction audit | Confirm logs/evidence redaction; document retention defaults | Checklist test / config tests | `todo` |
-| **E7-S2** | Admin export/delete learner (minimal) | Admin can export or delete a learner record (GDPR-minded stub) | API integration | `todo` |
-| **E7-S3** | Age gate copy (13–18) | Sign-up states age expectation; no under-13 path | e2e copy assert | `todo` |
+| **E7-S1** | Retention & redaction audit | Confirm logs/evidence redaction; document retention defaults | `E7-S1-retention-redaction.test.ts` + [`privacy.md`](./privacy.md) | `done` |
+| **E7-S2** | Admin export/delete learner (minimal) | Admin can export or delete a learner record (GDPR-minded stub) | `E7-S2-admin-learner-export-delete.integration.test.ts` + e2e | `done` |
+| **E7-S3** | Age gate copy (13–18) | Sign-up states age expectation; no under-13 path | `e2e/E7-S3-age-gate.spec.ts` | `done` |
 
 ---
 
@@ -135,7 +136,8 @@ Reference only — not re-opened unless a later story requires a fix.
 
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
-| **E8-S1** | openai-compatible adapter live path | Feature-flagged; stub remains default in CI | Gateway tests + one manual/demo checklist | `todo` |
+| **E8-S1** | openai-compatible adapter live path | Feature-flagged; stub remains default in CI | `E8-S1-openai-compatible.test.ts` + [`demo-llm.md`](./demo-llm.md) | `done` |
+| **E8-S2** | Per-child content personalization | Runtime fills `llm.personalizeTemplate` from manuals + pace band; never changes `correctOptionId` / objectives | `personalize.test.ts` + content loader in tutor runtime | `done` |
 
 ---
 
@@ -163,9 +165,9 @@ Start here and move only after gate:
 7. E3-S1 → E3-S5  
 8. E4-S1 → E4-S6  
 9. E5-S1 → E5-S3  
-10. E6-S1 → E6-S2  
+10. E6-S1 → E6-S3  
 11. E7-S1 → E7-S3  
-12. E8-S1  
+12. E8-S1 → E8-S2  
 
 ### Per-story checklist (copy into PR / chat)
 
@@ -182,7 +184,6 @@ Start here and move only after gate:
 
 ---
 
-## First story when you say “go”
+## v1 complete
 
-**E1-S1 — Multi-email user model**  
-Schema + migration + uniqueness tests only. No UI yet. Then stop for e2e/subagent gate (API/schema suite) before E1-S2.
+E1–E8 stories are `done`. Follow-ups (not blocking v1 gate): quiz UI for personalized option text, DB seed from `content/` manuals, automated tutor-turn purge job, Google sign-in (v1.1).

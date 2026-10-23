@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { paceBandSchema } from './content.js';
 import { localeSchema } from './i18n/locales.js';
 
 export const tutorPhaseSchema = z.enum([
@@ -14,6 +15,21 @@ export const tutorTurnRequestSchema = z.object({
   phase: tutorPhaseSchema.default('explain'),
   pathwayId: z.string().uuid().nullable().optional(),
   challengeId: z.string().uuid().nullable().optional(),
+  /** Content manual challenge id (kebab-case), e.g. pause-before-react. */
+  contentChallengeId: z
+    .string()
+    .regex(/^[a-z0-9-]+$/)
+    .nullable()
+    .optional(),
+  /** Content manual pathway id (kebab-case). Required with contentChallengeId for load. */
+  contentPathwayId: z
+    .string()
+    .regex(/^[a-z0-9-]+$/)
+    .nullable()
+    .optional(),
+  paceBand: paceBandSchema.optional(),
+  localContext: z.string().trim().max(500).optional(),
+  interests: z.string().trim().max(500).optional(),
 });
 
 export const tutorTurnResponseSchema = z.object({

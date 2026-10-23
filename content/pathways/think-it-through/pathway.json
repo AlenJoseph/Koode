@@ -1,0 +1,32 @@
+{
+  "id": "think-it-through",
+  "title": "Think it through",
+  "promise": "Decide under uncertainty. Solve unfamiliar problems without freezing.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["critical thinking", "decision-making", "problem-solving"],
+  "challengeOrder": ["fact-or-guess", "two-path-choice"],
+  "introMarkdown": "## Think it through\n\nThis pathway trains clear thinking: separate facts from guesses, then choose with reasons.\n\nYou do not need the perfect answer. You need a better next step.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Break problems into fact / guess / next question."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask for one reason behind each choice."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask what evidence would change their mind."
+      }
+    },
+    "tutorBrief": "Socratic guide. Never dump the answer. Prefer questions that reveal thinking. No conspiracy content.",
+    "personalizeTemplate": "Pace={{pace}}. Interests={{interests}}. Local context={{local_context}}.\nKeep objectives fixed. Swap examples to topics they care about (sports stats, farming rain, shop prices)."
+  }
+}

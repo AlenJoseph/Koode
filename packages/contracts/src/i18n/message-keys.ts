@@ -31,6 +31,8 @@ export const messageKeys = [
   'auth.signedInAs',
   'auth.teacherHint',
   'auth.learnerHint',
+  'auth.ageGate',
+  'auth.ageConfirm',
   'auth.claimTitle',
   'auth.claimHint',
   'auth.claimSend',

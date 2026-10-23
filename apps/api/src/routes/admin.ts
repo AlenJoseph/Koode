@@ -6,6 +6,11 @@ import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
 import { AuthError } from '../auth/errors.js';
 import {
+  createLearnerAdminService,
+  LearnerAdminError,
+  type LearnerAdminService,
+} from '../admin/learners.js';
+import {
   createChallengeService,
   type ChallengeService,
 } from '../content/challenges.js';
@@ -23,11 +28,13 @@ export async function registerAdminRoutes(
     database: Database;
     pathways?: PathwayService;
     challenges?: ChallengeService;
+    learners?: LearnerAdminService;
   },
 ): Promise<void> {
   const { config, auth, database } = deps;
   const pathways = deps.pathways ?? createPathwayService(database);
   const challenges = deps.challenges ?? createChallengeService(database);
+  const learners = deps.learners ?? createLearnerAdminService(database);
 
   async function requireAdmin(
     request: FastifyRequest,
@@ -171,5 +178,49 @@ export async function registerAdminRoutes(
     const challenge = await challenges.archive(challengeId);
     request.log.info({ event: 'admin.challenge_archived', challengeId }, 'challenge archived');
     return { challenge };
+  });
+
+  /** E7-S2 — GDPR-minded learner export (no raw chat, no secret hashes). */
+  app.get('/admin/learners/:userId/export', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { userId } = request.params as { userId: string };
+    try {
+      const payload = await learners.exportLearner(userId);
+      reply.header('content-type', 'application/json; charset=utf-8');
+      reply.header(
+        'content-disposition',
+        `attachment; filename="learner-${userId}.json"`,
+      );
+      return payload;
+    } catch (error) {
+      if (error instanceof LearnerAdminError) {
+        return reply.status(error.statusCode).send({ error: error.message });
+      }
+      throw error;
+    }
+  });
+
+  app.delete('/admin/learners/:userId', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { userId } = request.params as { userId: string };
+    try {
+      const result = await learners.deleteLearner(userId);
+      request.log.info(
+        { event: 'admin.learner_deleted', deletedUserId: result.deletedUserId, role: result.role },
+        'learner deleted',
+      );
+      return result;
+    } catch (error) {
+      if (error instanceof LearnerAdminError) {
+        return reply.status(error.statusCode).send({ error: error.message });
+      }
+      throw error;
+    }
   });
 }

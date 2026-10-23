@@ -1,0 +1,54 @@
+{
+  "id": "week-budget",
+  "kind": "mini_project",
+  "title": "One-week budget",
+  "summary": "Plan a simple weekly budget with needs, wants, and a small save line.",
+  "locale": "en",
+  "estimatedMinutes": 20,
+  "objectives": [
+    "Split money into needs, wants, and save",
+    "Make a plan that adds up"
+  ],
+  "briefMarkdown": "## Mission\n\nImagine you can use **500** units this week (your coach may change the number to your local money).\n\nMake three lines:\n1. Needs\n2. Wants\n3. Save (even small)\n\nTotals must not exceed 500.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Which belongs in Needs for most students?",
+      "options": [
+        { "id": "a", "label": "Bus fare to school" },
+        { "id": "b", "label": "Extra game skins" },
+        { "id": "c", "label": "Third soft drink today" },
+        { "id": "d", "label": "Random loot box" }
+      ],
+      "correctOptionId": "a",
+      "teachBack": "Needs keep school/life running. Wants are optional extras."
+    }
+  ],
+  "projectPrompt": "Write your 3-line budget with numbers that add up. One sentence: what you will save for.",
+  "successCriteria": [
+    "Budget has needs, wants, save",
+    "Numbers do not exceed the weekly total"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Give a filled example budget first, then blank."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Check their addition with them."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask a 4-week save forecast."
+      }
+    },
+    "tutorBrief": "Help them add correctly. Do not shame spending. Keep examples modest and realistic.",
+    "personalizeTemplate": "Pace={{pace}}. Local currency={{local_context}}.\nReplace 500 units with a realistic local weekly amount. Keep correctOptionId values."
+  }
+}

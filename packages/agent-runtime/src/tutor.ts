@@ -6,6 +6,8 @@ import {
   type TutorTurnRequest,
   type TutorTurnResponse,
 } from '@koode/contracts';
+import type { ContentLoader } from './content-loader.js';
+import { buildPersonalizedTutorBlock } from './personalize.js';
 import { buildTutorSystemPrompt, buildTutorUserPrompt } from './prompts.js';
 
 export class TutorRuntimeError extends Error {
@@ -19,11 +21,41 @@ export class TutorRuntimeError extends Error {
   }
 }
 
-export function createTutorRuntime(gateway: AiGateway) {
+export type TutorRuntimeOptions = {
+  /** Optional loader for content/ manuals (E8-S2). */
+  contentLoader?: ContentLoader;
+};
+
+export function createTutorRuntime(gateway: AiGateway, options: TutorRuntimeOptions = {}) {
+  const { contentLoader } = options;
+
   return {
     gatewayId: gateway.adapterId,
     async runTurn(input: unknown): Promise<TutorTurnResponse> {
       const request: TutorTurnRequest = tutorTurnRequestSchema.parse(input);
+
+      let system = buildTutorSystemPrompt(request.locale, request.phase);
+      if (
+        contentLoader &&
+        request.contentPathwayId &&
+        request.contentChallengeId
+      ) {
+        try {
+          const challenge = contentLoader.loadChallenge(
+            request.contentPathwayId,
+            request.contentChallengeId,
+          );
+          const block = buildPersonalizedTutorBlock(challenge, {
+            pace: request.paceBand ?? 'steady',
+            local_context: request.localContext,
+            interests: request.interests,
+            language_mix: request.locale,
+          });
+          system = `${system}\n\n${block.systemAddendum}`;
+        } catch (error) {
+          throw new TutorRuntimeError('Failed to load content challenge for personalization', 400, error);
+        }
+      }
 
       let raw: string;
       try {
@@ -31,7 +63,7 @@ export function createTutorRuntime(gateway: AiGateway) {
           messages: [
             {
               role: 'system',
-              content: buildTutorSystemPrompt(request.locale, request.phase),
+              content: system,
             },
             {
               role: 'user',

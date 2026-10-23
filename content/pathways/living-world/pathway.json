@@ -1,0 +1,32 @@
+{
+  "id": "living-world",
+  "title": "Living world",
+  "promise": "Wildlife, habitats, and climate-aware local action you can walk to.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["environmental care", "observation", "stewardship"],
+  "challengeOrder": ["nearby-habitat", "one-climate-habit"],
+  "introMarkdown": "## Living world\n\nNature is not only on TV. It is trees, birds, insects, water, and soil near you.\n\nThis pathway trains noticing habitats and choosing one climate-aware habit.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Start with one plant and one animal they can find."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what the habitat provides (food, shelter, water)."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask how human activity changes the habitat."
+      }
+    },
+    "tutorBrief": "Encourage wonder and care. No eco-shaming. No dangerous wildlife contact. Stay local and practical.",
+    "personalizeTemplate": "Pace={{pace}}. Bioregion/local species={{local_context}}. Interests={{interests}}.\nUse local birds, trees, and seasons. Avoid exotic-only examples."
+  }
+}

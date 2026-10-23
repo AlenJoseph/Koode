@@ -1,0 +1,54 @@
+{
+  "id": "nearby-habitat",
+  "kind": "field_task",
+  "title": "Nearby habitat",
+  "summary": "Map a tiny habitat within walking distance and who lives there.",
+  "locale": "en",
+  "estimatedMinutes": 20,
+  "objectives": [
+    "Identify a nearby habitat patch",
+    "Note living things and what they need"
+  ],
+  "briefMarkdown": "## Mission\n\nFind a small living patch: roadside trees, pond edge, garden, paddy bund, park corner.\n\nSketch or list:\n- 2 plants\n- 2 animals/insects (from safe distance)\n- Water / shelter / food clues\n\nStay safe. Do not disturb nests.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "A habitat is best described as:",
+      "options": [
+        { "id": "a", "label": "Only a zoo" },
+        { "id": "b", "label": "A place that provides what living things need to survive" },
+        { "id": "c", "label": "Any empty concrete roof" },
+        { "id": "d", "label": "A video game biome only" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Habitats are real places that offer food, water, shelter, and space."
+    }
+  ],
+  "fieldPrompt": "Name your habitat patch and list 2 plants + 2 animals/insects + one need you noticed.",
+  "successCriteria": [
+    "Names a real local place",
+    "Lists living things and at least one need"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Suggest 3 likely nearby patches."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what would happen if litter increased there."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask for a simple food-chain guess from their notes."
+      }
+    },
+    "tutorBrief": "Outdoor safety. No handling wildlife. Respect private land. Keep wonder central.",
+    "personalizeTemplate": "Pace={{pace}}. Local ecosystem={{local_context}}.\nSuggest species common to their area. Keep correctOptionId values."
+  }
+}

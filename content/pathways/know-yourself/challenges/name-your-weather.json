@@ -1,0 +1,66 @@
+{
+  "id": "name-your-weather",
+  "kind": "quiz",
+  "title": "Name your weather",
+  "summary": "Learn to name a feeling the way you name weather: clear, cloudy, stormy.",
+  "locale": "en",
+  "estimatedMinutes": 10,
+  "objectives": [
+    "Name at least one feeling with a simple word",
+    "Separate a feeling from a story about the feeling"
+  ],
+  "briefMarkdown": "## Mission\n\nFeelings are like weather: they change, and you can name them.\n\nThink of the last hour. What is the strongest feeling word that fits?\n\nThen answer the short quiz. After that, write one sentence: **I feel ___ because ___** (the because is optional).",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Which is the clearest feeling name?",
+      "options": [
+        { "id": "a", "label": "I'm weird today" },
+        { "id": "b", "label": "I feel tense" },
+        { "id": "c", "label": "Everything is ruined" },
+        { "id": "d", "label": "People are bad" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Feeling words (tense, sad, excited) are clearer than labels about yourself or other people."
+    },
+    {
+      "id": "q2",
+      "prompt": "You notice a tight chest before a test. A useful first move is:",
+      "options": [
+        { "id": "a", "label": "Ignore it and push harder" },
+        { "id": "b", "label": "Name it: I feel nervous" },
+        { "id": "c", "label": "Decide you will fail" },
+        { "id": "d", "label": "Blame the teacher" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Naming the feeling is a pause. It does not fix everything, but it starts choice."
+    }
+  ],
+  "reflectionPrompt": "Write one sentence: I feel ___ right now. If you want, add because ___.",
+  "successCriteria": [
+    "Quiz answers show understanding of clear feeling words",
+    "Reflection names at least one feeling word"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer a short feeling-word list if stuck."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask where in the body they feel it."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask for a mixed-feeling example."
+      }
+    },
+    "tutorBrief": "Help them name feelings. Do not diagnose anxiety or depression. Do not escalate into crisis counselling; if they disclose harm, point to a trusted adult.",
+    "personalizeTemplate": "Pace={{pace}}. Local school/home context={{local_context}}. Interests={{interests}}.\nKeep quiz correctOptionId values unchanged. You may simplify wording. Swap examples to fit their world (sports, exams, family chores)."
+  }
+}

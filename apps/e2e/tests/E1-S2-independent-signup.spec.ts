@@ -7,6 +7,7 @@ test.describe('E1-S2 independent learner signup', () => {
     await page.goto('/en/sign-up');
     await expect(page.getByRole('heading', { name: 'Learner sign up' })).toBeVisible();
     await page.getByLabel('Email').fill(email);
+    await page.getByLabel(/I confirm I am 13 or older/i).check();
     await page.getByRole('button', { name: 'Send magic link' }).click();
 
     const verifyLink = page.locator('a.dev-link');

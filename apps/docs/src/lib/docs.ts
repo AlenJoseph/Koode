@@ -9,6 +9,7 @@ export const DOC_PAGES = [
   { slug: 'pathways', file: 'pathways-v1.md', title: 'Pathways' },
   { slug: 'testing', file: 'testing.md', title: 'Testing' },
   { slug: 'privacy', file: 'privacy.md', title: 'Privacy' },
+  { slug: 'demo-llm', file: 'demo-llm.md', title: 'Demo LLM' },
 ] as const;
 
 export type DocSlug = (typeof DOC_PAGES)[number]['slug'];

@@ -1,0 +1,54 @@
+{
+  "id": "two-path-choice",
+  "kind": "scenario",
+  "title": "Two-path choice",
+  "summary": "Compare two options with trade-offs and pick with reasons.",
+  "locale": "en",
+  "estimatedMinutes": 15,
+  "objectives": [
+    "List one upside and one downside for each option",
+    "Choose with at least one clear reason"
+  ],
+  "briefMarkdown": "## Mission\n\nYou have 90 minutes after school.\n\n**Option A:** Finish a science project due tomorrow.\n**Option B:** Help a sibling with homework, then start your project later tonight.\n\nMap trade-offs, then choose.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Which statement is a trade-off analysis (not a pure feeling)?",
+      "options": [
+        { "id": "a", "label": "A is boring so B wins" },
+        { "id": "b", "label": "A lowers risk of a late project; B helps family now but shortens my work time" },
+        { "id": "c", "label": "I always pick whatever friends do" },
+        { "id": "d", "label": "There are never trade-offs" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Trade-offs name what you gain and what you give up."
+    }
+  ],
+  "reflectionPrompt": "Which option would you pick today, and what is your main reason?",
+  "successCriteria": [
+    "Shows understanding of trade-offs",
+    "States a choice with a reason"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests", "language_mix"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Provide a two-column gain/give-up template."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what they would check tomorrow morning."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Add a third option they invent and compare."
+      }
+    },
+    "tutorBrief": "Help weigh trade-offs. Do not moralise family vs school. Stay practical.",
+    "personalizeTemplate": "Pace={{pace}}. Local context={{local_context}}.\nRewrite Option A/B to fit their real after-school pressures. Keep correctOptionId values."
+  }
+}

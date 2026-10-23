@@ -1,0 +1,54 @@
+{
+  "id": "pause-before-react",
+  "kind": "scenario",
+  "title": "Pause before you react",
+  "summary": "Practise a 10-second pause when something annoys you.",
+  "locale": "en",
+  "estimatedMinutes": 12,
+  "objectives": [
+    "Describe one pause tool (breath, count, step away)",
+    "Apply it to a realistic school or home scenario"
+  ],
+  "briefMarkdown": "## Mission\n\nWhen we feel heat rising, we often react first and think later.\n\nChoose one pause tool:\n1. Three slow breaths\n2. Count 1–10\n3. Step away for one minute\n\nRead the scenario, pick a response, then reflect.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "A classmate jokes about your project in front of others. You feel hot and angry. Which response uses a pause?",
+      "options": [
+        { "id": "a", "label": "Insult them back immediately" },
+        { "id": "b", "label": "Take three breaths, then say you want to talk later" },
+        { "id": "c", "label": "Delete your project in anger" },
+        { "id": "d", "label": "Pretend nothing happened forever" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "A pause is not silence forever. It is space to choose a clearer next step."
+    }
+  ],
+  "reflectionPrompt": "Name your pause tool. When will you try it this week?",
+  "successCriteria": [
+    "Chooses a response that includes a pause",
+    "Names one pause tool for real life"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer the three pause tools as a checklist."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what usually happens in the first 5 seconds of anger."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask them to design a second scenario from their week."
+      }
+    },
+    "tutorBrief": "Coach pause skills. Do not encourage aggression. Do not shame anger. Keep scenarios school/home appropriate.",
+    "personalizeTemplate": "Pace={{pace}}. Local context={{local_context}}. Interests={{interests}}.\nRewrite the classmate scenario to a setting familiar to this learner. Keep correctOptionId the same."
+  }
+}

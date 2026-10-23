@@ -20,9 +20,14 @@ Koode pathways are **themed competence tracks**: a student picks a world, then l
 | **UNESCO-IBE competences** | Lifelong learning, self-agency, interacting with others/world, tools & resources, transdisciplinarity, multi-literacies (incl. **health** and **financial** literacy). |
 | **UN SDGs** | Shared impact language (esp. 3, 4, 8, 10, 11, 12, 13, 15). Koode is not a UN programme. |
 
+## Authored manuals (shipped)
+
+JSON-driven content for the first six pathways lives in [`content/`](../content/README.md).  
+Each challenge carries an `llm` block so the tutor can adapt **pace, examples, and local context** per child without inventing a new curriculum.
+
 ## v1 pathway set (recommended)
 
-Concrete missions students recognise, mapped to the frameworks above.
+Concrete missions students recognise, mapped to the frameworks above. First six are authored under `content/pathways/`.
 
 | Pathway | Student-facing promise | Primary skills | SDG anchors |
 | --- | --- | --- | --- |

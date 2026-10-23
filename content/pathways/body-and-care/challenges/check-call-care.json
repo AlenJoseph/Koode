@@ -1,0 +1,54 @@
+{
+  "id": "check-call-care",
+  "kind": "scenario",
+  "title": "Check, call, care",
+  "summary": "Remember the calm first-aid order: check scene, call for help, care within your limits.",
+  "locale": "en",
+  "estimatedMinutes": 15,
+  "objectives": [
+    "Recall check → call → care order",
+    "Know when to get an adult or emergency help"
+  ],
+  "briefMarkdown": "## Mission\n\nIf someone is hurt:\n1. **Check** the scene is safe for you\n2. **Call** an adult / emergency services if needed\n3. **Care** with simple help you know (and stop if unsafe)\n\nYou are not a doctor. Your job is safe response.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "You see a friend faint in a crowded corridor. First step:",
+      "options": [
+        { "id": "a", "label": "Film it for social media" },
+        { "id": "b", "label": "Check if the scene is safe, then call an adult for help" },
+        { "id": "c", "label": "Pour water on them immediately without looking around" },
+        { "id": "d", "label": "Leave quietly" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Safety for you first, then get help. Care comes after that."
+    }
+  ],
+  "reflectionPrompt": "Who are two adults you could call for help at school or home?",
+  "successCriteria": [
+    "Chooses check/call before risky improvisation",
+    "Names real adults to contact"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Repeat check-call-care as a chant."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what 'scene safe' means in their school."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Add a scenario where the scene is NOT safe."
+      }
+    },
+    "tutorBrief": "Strict safety. No advanced medical procedures. Encourage adult/emergency help. No graphic trauma detail.",
+    "personalizeTemplate": "Pace={{pace}}. School layout/local emergency norms={{local_context}}.\nKeep the check-call-care order sacred. Adapt only the setting details."
+  }
+}

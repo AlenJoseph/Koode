@@ -1,0 +1,54 @@
+{
+  "id": "one-climate-habit",
+  "kind": "reflection",
+  "title": "One climate habit",
+  "summary": "Pick one weekly habit that wastes less energy or materials.",
+  "locale": "en",
+  "estimatedMinutes": 12,
+  "objectives": [
+    "Connect a daily habit to climate impact without panic",
+    "Commit to one realistic weekly habit"
+  ],
+  "briefMarkdown": "## Mission\n\nClimate care is often many small habits:\n- Switch off unused fans/lights\n- Carry a bottle instead of buying new plastic\n- Walk short trips when safe\n- Fix/reuse before replace\n\nPick **one** habit for 7 days. Track it.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Best climate habit approach for a student:",
+      "options": [
+        { "id": "a", "label": "Do nothing because only big companies matter" },
+        { "id": "b", "label": "Choose one realistic habit and repeat it" },
+        { "id": "c", "label": "Shame classmates daily" },
+        { "id": "d", "label": "Claim you solved climate change alone" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Agency grows from repeatable habits, not guilt performances."
+    }
+  ],
+  "reflectionPrompt": "Which one habit will you keep for 7 days, and how will you tick it each day?",
+  "successCriteria": [
+    "Selects one realistic habit",
+    "Defines a simple tracking method"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer a menu of 5 easy habits."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what might block the habit."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask how to invite family without lecturing."
+      }
+    },
+    "tutorBrief": "No climate despair dumping. No shaming. Keep habits safe and affordable.",
+    "personalizeTemplate": "Pace={{pace}}. Local climate and transport={{local_context}}.\nSuggest habits that fit heat, rain, walking safety, and household constraints."
+  }
+}

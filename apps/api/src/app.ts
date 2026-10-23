@@ -1,10 +1,18 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
-import { TutorRuntimeError, createTutorRuntime, type TutorRuntime } from '@koode/agent-runtime';
+import {
+  TutorRuntimeError,
+  createContentLoader,
+  createTutorRuntime,
+  type TutorRuntime,
+} from '@koode/agent-runtime';
 import { createGatewayFromEnv, type AiGateway } from '@koode/ai-gateway';
 import { createDatabase, type Database } from '@koode/database';
 import { randomUUID } from 'node:crypto';
+import { existsSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { AuthError, createAuthService, type AuthService } from './auth/service.js';
@@ -15,6 +23,7 @@ import { createInsightsService } from './insights/service.js';
 import { createLearnerChallengeService } from './learning/challenges-learner.js';
 import { createLearnerPathwayService } from './learning/pathways-learner.js';
 import { createProjectService } from './learning/projects.js';
+import { LOG_REDACT_PATHS } from './privacy/redaction.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerAuthRoutes } from './routes/auth.js';
 import { registerClassroomRoutes } from './routes/classroom.js';
@@ -36,12 +45,27 @@ export type AppDeps = {
   disableLogger?: boolean;
 };
 
+function resolveContentRoot(): string | null {
+  const fromEnv = process.env.CONTENT_ROOT;
+  if (fromEnv && existsSync(fromEnv)) {
+    return fromEnv;
+  }
+  const repoContent = join(dirname(fileURLToPath(import.meta.url)), '../../../content');
+  return existsSync(repoContent) ? repoContent : null;
+}
+
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const database = deps.database ?? createDatabase(deps.config.databaseUrl);
   const auth = deps.auth ?? createAuthService(database, deps.config);
   const classroom = deps.classroom ?? createClassroomService(database);
   const gateway = deps.gateway ?? createGatewayFromEnv();
-  const tutorRuntime = deps.tutor ?? createTutorRuntime(gateway);
+  const contentRoot = resolveContentRoot();
+  const tutorRuntime =
+    deps.tutor ??
+    createTutorRuntime(
+      gateway,
+      contentRoot ? { contentLoader: createContentLoader({ contentRoot }) } : {},
+    );
   const tutorService = deps.tutorService ?? createTutorService(database, tutorRuntime);
   const tutorLimiter =
     deps.tutorLimiter ??
@@ -56,16 +80,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       : {
           level: deps.config.logLevel,
           redact: {
-            paths: [
-              'req.headers.authorization',
-              'req.headers.cookie',
-              'req.body.email',
-              'req.body.token',
-              'req.body.learnerMessage',
-              'req.body.devToken',
-              'req.body.secretWords',
-              'req.body.bootstrapSecret',
-            ],
+            paths: [...LOG_REDACT_PATHS],
             remove: true,
           },
         },

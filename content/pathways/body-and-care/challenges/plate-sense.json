@@ -1,0 +1,54 @@
+{
+  "id": "plate-sense",
+  "kind": "quiz",
+  "title": "Plate sense",
+  "summary": "Build a simple balanced plate using foods you can actually get.",
+  "locale": "en",
+  "estimatedMinutes": 12,
+  "objectives": [
+    "Name three plate parts: energy foods, body-building foods, protective foods",
+    "Build one realistic meal from local options"
+  ],
+  "briefMarkdown": "## Mission\n\nA useful plate often mixes:\n- **Energy** (grains, roots)\n- **Body-building** (dal, eggs, beans, fish, dairy if used)\n- **Protective** (veg, fruit)\n\nYou do not need perfect. You need more balance than only snacks.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Which plate is more balanced for a school lunch?",
+      "options": [
+        { "id": "a", "label": "Only chips and soda" },
+        { "id": "b", "label": "Rice, dal, and a vegetable" },
+        { "id": "c", "label": "Three sweets" },
+        { "id": "d", "label": "Only energy drinks" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Mixing energy + body-building + veg is a practical balance pattern."
+    }
+  ],
+  "reflectionPrompt": "Describe one meal you could make this week with foods available near you.",
+  "successCriteria": [
+    "Identifies a more balanced plate",
+    "Names a realistic local meal"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer local food examples in each category."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask what is cheap and available this week."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask how to improve a snack-heavy day without perfectionism."
+      }
+    },
+    "tutorBrief": "No body shaming. No extreme diets. Respect vegetarian/non-veg households. Keep advice general.",
+    "personalizeTemplate": "Pace={{pace}}. Local staples={{local_context}}.\nSwap rice/dal examples for local equivalents if needed. Keep correctOptionId values."
+  }
+}

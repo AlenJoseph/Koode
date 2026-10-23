@@ -1,0 +1,54 @@
+{
+  "id": "shared-space-scan",
+  "kind": "field_task",
+  "title": "Shared space scan",
+  "summary": "Observe one shared place and note what helps or harms care.",
+  "locale": "en",
+  "estimatedMinutes": 15,
+  "objectives": [
+    "Observe a shared space carefully",
+    "Note one problem and one strength"
+  ],
+  "briefMarkdown": "## Mission\n\nPick a shared place you use (school yard, lane, bus stop).\n\nSpend 10 minutes noticing:\n- What looks cared for?\n- What looks neglected?\n- Who uses this space?\n\nDo not confront anyone. Observe only.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Best civic observation habit:",
+      "options": [
+        { "id": "a", "label": "Blame the first person you see" },
+        { "id": "b", "label": "Notice patterns and write them down calmly" },
+        { "id": "c", "label": "Ignore litter because it is normal" },
+        { "id": "d", "label": "Post angry videos with faces visible" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Good civic work starts with calm noticing, not public shaming."
+    }
+  ],
+  "fieldPrompt": "Write 3 bullet notes: one strength, one problem, one question.",
+  "successCriteria": [
+    "Completes observation notes",
+    "Avoids blaming individuals in the write-up"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Give a sample 3-bullet observation."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask who benefits if the space improves."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask for a root-cause guess with humility."
+      }
+    },
+    "tutorBrief": "Safety and dignity. No doxxing. No trespass. Keep observations constructive.",
+    "personalizeTemplate": "Pace={{pace}}. Local shared spaces={{local_context}}.\nSuggest 2–3 likely places near this learner. Keep correctOptionId values."
+  }
+}

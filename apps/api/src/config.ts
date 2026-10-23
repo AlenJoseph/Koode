@@ -15,6 +15,8 @@ export type ApiConfig = {
   rateLimitTutorWindowMs: number;
   /** Required to call first-run admin bootstrap. Empty = bootstrap disabled. */
   bootstrapSecret: string;
+  /** How long tutor evidence rows should be kept (purge job later). See docs/privacy.md. */
+  tutorTurnRetentionDays: number;
 };
 
 function parseBool(value: string | undefined, fallback: boolean): boolean {
@@ -65,5 +67,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     rateLimitTutorMax: parsePositiveInt(env.RATE_LIMIT_TUTOR_MAX, 60),
     rateLimitTutorWindowMs: parsePositiveInt(env.RATE_LIMIT_TUTOR_WINDOW_MS, 60_000),
     bootstrapSecret: env.BOOTSTRAP_SECRET ?? '',
+    tutorTurnRetentionDays: parsePositiveInt(env.TUTOR_TURN_RETENTION_DAYS, 365),
   };
 }

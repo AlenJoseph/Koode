@@ -12,12 +12,16 @@ type Props = {
 
 export function SignUpForm({ locale, dictionary }: Props) {
   const [email, setEmail] = useState('');
+  const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [pending, setPending] = useState(false);
   const [devVerifyUrl, setDevVerifyUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!ageConfirmed) {
+      return;
+    }
     setPending(true);
     setError(null);
     try {
@@ -42,6 +46,7 @@ export function SignUpForm({ locale, dictionary }: Props) {
         {dictionary['auth.learnerHint']}{' '}
         <Link href={`/${locale}/sign-in`}>{dictionary['nav.signIn']}</Link>
       </p>
+      <p data-testid="age-gate">{dictionary['auth.ageGate']}</p>
       <form className="stack" onSubmit={onSubmit}>
         <div>
           <label htmlFor="email">{dictionary['auth.emailLabel']}</label>
@@ -55,7 +60,18 @@ export function SignUpForm({ locale, dictionary }: Props) {
             onChange={(event) => setEmail(event.target.value)}
           />
         </div>
-        <button type="submit" disabled={pending}>
+        <label htmlFor="age-confirm">
+          <input
+            id="age-confirm"
+            name="ageConfirm"
+            type="checkbox"
+            required
+            checked={ageConfirmed}
+            onChange={(event) => setAgeConfirmed(event.target.checked)}
+          />{' '}
+          {dictionary['auth.ageConfirm']}
+        </label>
+        <button type="submit" disabled={pending || !ageConfirmed}>
           {dictionary['auth.sendLink']}
         </button>
       </form>

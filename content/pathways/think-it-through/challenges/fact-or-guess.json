@@ -1,0 +1,66 @@
+{
+  "id": "fact-or-guess",
+  "kind": "quiz",
+  "title": "Fact or guess?",
+  "summary": "Sort statements into fact, guess, or need-more-info.",
+  "locale": "en",
+  "estimatedMinutes": 12,
+  "objectives": [
+    "Tell fact from opinion/guess",
+    "Ask one clarifying question when information is thin"
+  ],
+  "briefMarkdown": "## Mission\n\nClear thinkers label what they know.\n\n- **Fact**: can be checked\n- **Guess**: maybe true, not checked yet\n- **Need more info**: not enough to decide\n\nAnswer the quiz, then write one clarifying question about a claim you heard this week.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "\"Our school has 32 classrooms.\" If the office list shows 32, this is best called a:",
+      "options": [
+        { "id": "a", "label": "Guess" },
+        { "id": "b", "label": "Fact (checkable)" },
+        { "id": "c", "label": "Feeling" },
+        { "id": "d", "label": "Rule for life" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "A fact is checkable against a source. The source can still be wrong later, but the claim is in the fact category."
+    },
+    {
+      "id": "q2",
+      "prompt": "\"Everyone thinks the new rule is unfair.\" Best label:",
+      "options": [
+        { "id": "a", "label": "Solid fact" },
+        { "id": "b", "label": "Guess / overgeneralisation" },
+        { "id": "c", "label": "Math proof" },
+        { "id": "d", "label": "Recipe" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "\"Everyone\" is a red flag. Ask: who was asked? how many?"
+    }
+  ],
+  "reflectionPrompt": "Write one clarifying question about a claim you heard this week.",
+  "successCriteria": [
+    "Quiz shows fact vs guess awareness",
+    "Reflection includes a question (not only a statement)"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Give two example claims labelled fact/guess first."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask where they would check the claim."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask them to rewrite a viral claim into checkable pieces."
+      }
+    },
+    "tutorBrief": "Teach epistemic care. Do not push politics. Do not invent sources.",
+    "personalizeTemplate": "Pace={{pace}}. Local context={{local_context}}. Interests={{interests}}.\nReplace school/classroom examples with local equivalents. Keep correctOptionId values."
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "id": "one-small-fix",
+  "kind": "mini_project",
+  "title": "One small fix",
+  "summary": "Plan and do one safe, respectful improvement in a shared space.",
+  "locale": "en",
+  "estimatedMinutes": 25,
+  "objectives": [
+    "Choose a tiny action that helps shared space",
+    "Reflect on impact without hero talk"
+  ],
+  "briefMarkdown": "## Mission\n\nPick **one** small fix you can do safely this week:\n- Pick up litter with gloves if needed\n- Refill a handwash bottle at home/school if allowed\n- Make a polite reminder sign (no insults)\n- Help organise a 10-minute clean with friends\n\nGet permission when required. Stay safe.",
+  "quiz": [
+    {
+      "id": "q1",
+      "prompt": "Which is the best \"small fix\" principle?",
+      "options": [
+        { "id": "a", "label": "Do something dramatic once and disappear" },
+        { "id": "b", "label": "Choose a safe action you can finish and that others can maintain" },
+        { "id": "c", "label": "Shame neighbours publicly" },
+        { "id": "d", "label": "Break a rule because the cause is good" }
+      ],
+      "correctOptionId": "b",
+      "teachBack": "Sustainable civic care is safe, finishable, and respectful."
+    }
+  ],
+  "projectPrompt": "What will you do, when, and how will you know it helped?",
+  "successCriteria": [
+    "Names a specific safe action",
+    "Includes a simple success check"
+  ],
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer 3 safe action menus to pick from."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask about permission and safety gear."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Ask how to invite one peer without nagging."
+      }
+    },
+    "tutorBrief": "Keep actions legal and safe. No vigilante behaviour. Celebrate small consistent care.",
+    "personalizeTemplate": "Pace={{pace}}. Local context={{local_context}}.\nSuggest fixes that fit their setting (rural lane vs flat complex vs school)."
+  }
+}

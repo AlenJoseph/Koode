@@ -93,11 +93,12 @@ Privacy is a first-class requirement. Design toward:
 - Education-sector expectations (EU + US — e.g. FERPA-minded practices where applicable)  
 - Safe defaults for **13–18** (consent stubs today → real consent flows before public school pilots)
 
-Concrete v1 engineering expectations:
+Concrete v1 engineering expectations (see [`privacy.md`](./privacy.md)):
 
-- No raw chat archives in logs  
+- No raw chat archives in logs (Pino redact checklist)  
 - Hashed / bounded tutor evidence where stored  
-- Export and deletion pathways planned (even if admin-only at first)  
+- Admin export + delete for learner/student accounts  
+- Age gate copy on independent sign-up (13–18; no under-13 path)  
 - Clear role-based access (teacher sees class analytics, not arbitrary user PII)
 
 ## 7. Surfaces (web)

@@ -45,5 +45,9 @@ describe('loadConfig', () => {
       'dev-bootstrap-secret-16',
     );
   });
+
+  it('defaults tutor turn retention to 365 days', () => {
+    expect(loadConfig(baseEnv).tutorTurnRetentionDays).toBe(365);
+  });
 });
 

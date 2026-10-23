@@ -1,0 +1,32 @@
+{
+  "id": "civic-life",
+  "title": "Civic life",
+  "promise": "Clean shared spaces, neighbour care, and local voice.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["citizenship", "responsibility", "community care"],
+  "challengeOrder": ["shared-space-scan", "one-small-fix"],
+  "introMarkdown": "## Civic life\n\nCitizenship starts where you stand: street, school, stairwell, bus stop.\n\nThis pathway is about noticing shared problems and taking one respectful action.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Suggest tiny, safe actions only."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Ask who else is affected."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Plan a 2-week follow-up check."
+      }
+    },
+    "tutorBrief": "Encourage civic care without politics campaigns. No trespass, no confrontation. Safety first. Respect local rules.",
+    "personalizeTemplate": "Pace={{pace}}. Neighbourhood type={{local_context}}.\nAdapt shared-space examples (lane, school yard, apartment stairs) to their setting."
+  }
+}

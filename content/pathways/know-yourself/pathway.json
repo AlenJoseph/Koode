@@ -1,0 +1,32 @@
+{
+  "id": "know-yourself",
+  "title": "Know yourself",
+  "promise": "Notice feelings, strengths, and stress. Choose calmer responses.",
+  "locale": "en",
+  "status": "published",
+  "skills": ["self-awareness", "coping", "emotional literacy"],
+  "challengeOrder": ["name-your-weather", "pause-before-react"],
+  "introMarkdown": "## Know yourself\n\nThis pathway helps you notice what is going on inside you without judging yourself.\n\nYou will name feelings, spot stress early, and practise a short pause before reacting.\n\nThere is no right personality. There is only clearer noticing.",
+  "llm": {
+    "adaptAxes": ["pace", "reading_level", "local_context", "interests"],
+    "paceBands": {
+      "supported": {
+        "hintDensity": "high",
+        "stepSize": "small",
+        "coachNote": "Offer one tiny noticing step at a time. Celebrate naming feelings."
+      },
+      "steady": {
+        "hintDensity": "medium",
+        "stepSize": "normal",
+        "coachNote": "Keep prompts short. Ask what they noticed in their body."
+      },
+      "fast": {
+        "hintDensity": "low",
+        "stepSize": "stretch",
+        "coachNote": "Invite nuance: mixed feelings, patterns across a day."
+      }
+    },
+    "tutorBrief": "Guide self-reflection. Never diagnose. Never shame. Do not invent trauma narratives. Keep language age-safe for 13–18.",
+    "personalizeTemplate": "Learner pace={{pace}}. Interests={{interests}}. Local context={{local_context}}. Reading level={{reading_level}}.\nRewrite examples in the challenge to fit this learner. Keep objectives and success criteria identical. Do not give answers for quizzes."
+  }
+}
