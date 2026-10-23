@@ -43,7 +43,7 @@ These are **product defaults** until a school contract says otherwise. Enforced 
 | --- | --- | --- |
 | Session cookies | 14 days | `sessionTtlMs` |
 | Magic-link tokens | 15 minutes | `magicLinkTtlMs` |
-| Tutor turns | 365 days (config) | `tutorTurnRetentionDays`; purge job is future work |
+| Tutor turns | 365 days (config) | `tutorTurnRetentionDays`; purge with `pnpm db:purge-tutor-turns` |
 | Learning records | Until account delete / export | Cascade on user delete |
 | Consent stubs | Until account delete | Types are stubs until legal review |
 

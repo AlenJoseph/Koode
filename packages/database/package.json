@@ -21,8 +21,10 @@
     "test": "vitest run",
     "generate": "drizzle-kit generate",
     "migrate": "tsx src/migrate.ts",
-    "seed": "tsx src/seed-content.ts"
+    "seed": "tsx src/seed-content.ts",
+    "purge-tutor-turns": "tsx src/purge-tutor-turns.ts"
   },
+
   "dependencies": {
     "@koode/contracts": "workspace:*",
     "drizzle-orm": "^0.44.6",
