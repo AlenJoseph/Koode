@@ -7,7 +7,7 @@ Koode is an open-source, public-interest project exploring how AI agents can hel
 
 Koode is more than an AI tutor or an employability app. It aims to help learners discover interests, build skills, solve real problems, communicate clearly, create useful things, and develop the judgement to use AI wisely.
 
-> **Status:** v1 epics E0–E10 shipped (identity, classroom, learner loop, insights, content manuals + quiz, stub AI, landing-matched app UI). Validated gaps and next work: [`docs/validation-and-next.md`](docs/validation-and-next.md). Longer-term directions below remain aspirational unless marked shipped.
+> **Status:** v1 pre-pilot ready (E0–E10 + P0/P1). Run `pnpm pilot:ready` then `pnpm test:e2e:pilot`. See [`docs/pilot.md`](docs/pilot.md). Remaining: [`docs/validation-and-next.md`](docs/validation-and-next.md).
 
 ## Getting started
 

@@ -31,10 +31,13 @@ test.describe('E2-S3 admin pathways', () => {
 
     const title = `Pathway ${Date.now()}`;
     await page.goto('/en/admin');
-    await expect(page.getByRole('heading', { name: 'Pathways' })).toBeVisible();
-    await page.getByLabel('Title').fill(title);
-    await page.getByLabel('Summary').fill('E2E pathway summary');
-    await page.getByRole('button', { name: 'Create pathway' }).click();
+    const pathwaysPanel = page.locator('div.panel').filter({
+      has: page.getByRole('heading', { name: 'Pathways', exact: true }),
+    });
+    await expect(pathwaysPanel.getByRole('heading', { name: 'Pathways', exact: true })).toBeVisible();
+    await pathwaysPanel.getByRole('textbox', { name: 'Title', exact: true }).fill(title);
+    await pathwaysPanel.getByRole('textbox', { name: 'Summary', exact: true }).fill('E2E pathway summary');
+    await pathwaysPanel.getByRole('button', { name: 'Create pathway' }).click();
 
     const row = page.getByRole('listitem').filter({ hasText: title });
     await expect(row).toBeVisible();

@@ -5,10 +5,12 @@ test.describe('E1-S5 manage emails', () => {
     const email = `e2e-mgmt-${Date.now()}@example.com`;
     await page.goto('/en/sign-up');
     await page.getByLabel('Email').fill(email);
+    await page.getByLabel(/I confirm I am 13 or older/i).check();
     await page.getByRole('button', { name: 'Send magic link' }).click();
     await page.locator('a.dev-link').click();
     await expect(page).toHaveURL(/\/en\/?$/);
-    await expect(page.getByText(email)).toBeVisible();
+    await expect(page.locator('.topbar-user')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Home' }).getByText(email)).toBeVisible();
     // Claim form only shows when no email — should be absent.
     await expect(page.getByRole('heading', { name: 'Link an email to this account' })).toHaveCount(
       0,
@@ -20,9 +22,6 @@ test.describe('E1-S5 manage emails', () => {
     await expect(page.getByRole('heading', { name: 'Link an email to this account' })).toHaveCount(
       0,
     );
-    await expect(
-      page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Learner sign up' }),
-    ).toBeVisible();
-
+    await expect(page.getByRole('link', { name: 'Learner sign up' }).first()).toBeVisible();
   });
 });

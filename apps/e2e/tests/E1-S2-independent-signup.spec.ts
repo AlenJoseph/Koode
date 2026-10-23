@@ -14,7 +14,8 @@ test.describe('E1-S2 independent learner signup', () => {
     await expect(verifyLink).toBeVisible();
     await verifyLink.click();
     await expect(page).toHaveURL(/\/en\/?$/);
-    await expect(page.getByText(email)).toBeVisible();
+    await expect(page.locator('.topbar-user')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Home' }).getByText(email)).toBeVisible();
 
     await page.goto('/en/tutor');
     await expect(page.getByRole('heading', { name: 'Guided tutor' })).toBeVisible();

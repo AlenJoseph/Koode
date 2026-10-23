@@ -21,7 +21,8 @@ test.describe('E2-S1 admin bootstrap', () => {
     await expect(page.getByText('Admin created')).toBeVisible();
     await page.locator('a.dev-link').click();
     await expect(page).toHaveURL(/\/en\/?$/);
-    await expect(page.getByText(email)).toBeVisible();
+    await expect(page.locator('.topbar-user')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Home' }).getByText(email)).toBeVisible();
   });
 
   test('negative: wrong bootstrap secret shows error', async ({ page }) => {

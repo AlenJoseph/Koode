@@ -56,6 +56,6 @@ test.describe('E2-S2 admin authz', () => {
 
     await page.goto('/en/admin');
     await expect(page.getByRole('heading', { name: 'Platform admin' })).toBeVisible();
-    await expect(page.getByText(email)).toBeVisible();
+    await expect(page.locator('.topbar-user')).toHaveAttribute('title', email);
   });
 });

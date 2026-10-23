@@ -17,7 +17,9 @@ test.describe('E4-S2 remove student', () => {
     await page.getByLabel('Student display name').fill('Kabir');
     await page.getByRole('button', { name: 'Add student' }).click();
     await expect(page.getByText('Kabir')).toBeVisible();
-    await expect(page.getByText(/Secret words/i)).toBeVisible();
+    await expect(
+      page.locator('p').filter({ hasText: /Secret words \(save for login card\)/i }),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: 'Remove', exact: true }).click();
     await expect(page.getByText('Kabir')).toHaveCount(0);

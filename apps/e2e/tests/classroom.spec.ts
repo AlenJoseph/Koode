@@ -40,10 +40,12 @@ test.describe('classroom critical path', () => {
     await teacherPage.getByRole('button', { name: 'Add student' }).click();
     await expect(teacherPage.getByText(studentName, { exact: true })).toBeVisible();
 
-    const secretLabel = teacherPage.getByText('Secret words', { exact: false }).first();
-    await expect(secretLabel).toBeVisible();
-    const secretBlock = await secretLabel.locator('..').innerText();
-    const secretMatch = secretBlock.match(/Secret words[^:]*:\s*([A-Za-z]+ [A-Za-z]+)/);
+    const secretCard = teacherPage
+      .locator('p')
+      .filter({ hasText: /Secret words \(save for login card\)/i });
+    await expect(secretCard).toBeVisible();
+    const secretBlock = await secretCard.innerText();
+    const secretMatch = secretBlock.match(/:\s*([A-Z]+ [A-Z]+)/);
     expect(secretMatch).toBeTruthy();
     const secretWords = secretMatch![1]!;
 
@@ -62,7 +64,8 @@ test.describe('classroom critical path', () => {
     await studentPage.getByRole('button', { name: 'Sign in' }).click();
 
     await expect(studentPage).toHaveURL(/\/en\/?$/);
-    await expect(studentPage.getByText(studentName)).toBeVisible();
+    await expect(studentPage.locator('.topbar-user')).toBeVisible();
+    await expect(studentPage.getByRole('region', { name: 'Home' }).getByText(studentName)).toBeVisible();
 
     await student.close();
   });

@@ -8,6 +8,7 @@ test.describe('E1-S3 role isolation', () => {
 
     await page.goto('/en/sign-up');
     await page.getByLabel('Email').fill(email);
+    await page.getByLabel(/I confirm I am 13 or older/i).check();
     await page.getByRole('button', { name: 'Send magic link' }).click();
     await page.locator('a.dev-link').click();
     await expect(page).toHaveURL(/\/en\/?$/);

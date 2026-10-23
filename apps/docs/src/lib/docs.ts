@@ -7,6 +7,7 @@ export const DOC_PAGES = [
   { slug: 'requirements', file: 'requirements-v1.md', title: 'Requirements' },
   { slug: 'epics', file: 'epics-v1.md', title: 'Epics' },
   { slug: 'validation', file: 'validation-and-next.md', title: 'Validation & next' },
+  { slug: 'pilot', file: 'pilot.md', title: 'Pilot runbook' },
   { slug: 'pathways', file: 'pathways-v1.md', title: 'Pathways' },
   { slug: 'testing', file: 'testing.md', title: 'Testing' },
   { slug: 'privacy', file: 'privacy.md', title: 'Privacy' },

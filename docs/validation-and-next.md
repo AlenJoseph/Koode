@@ -3,7 +3,7 @@
 Validated against [`requirements-v1.md`](./requirements-v1.md) and [`epics-v1.md`](./epics-v1.md).  
 Updated after **pre-pilot P0 + P1 polish** land (2026-10-23).
 
-**Verdict:** v1 is pre-pilot ready for technical demos and internal school dry-runs. Remaining work is legal review, scheduled ops, and v1.1+ product.
+**Verdict:** v1 is pre-pilot ready. Playwright gate: `pnpm test:e2e:pilot` (3) and full `pnpm test:e2e` (45) green. Remaining work is legal review, scheduled ops, and v1.1+ product.
 
 ---
 

@@ -47,11 +47,15 @@ Local database + E2E:
 ```bash
 pnpm db:up
 pnpm db:migrate
+pnpm db:seed
 pnpm build
 pnpm --filter @koode/e2e exec playwright install chromium
 pnpm test
-pnpm test:e2e
+pnpm test:e2e:pilot   # classroom + independent learner critical path
+pnpm test:e2e         # full story suite
 ```
+
+Pilot-shot prepare: `pnpm pilot:ready`. See [`pilot.md`](./pilot.md).
 
 ## Adding a message key
 

@@ -8,7 +8,9 @@ test.describe('locale smoke', () => {
 
     await page.goto('/ml');
     await expect(page.getByRole('heading', { name: 'കൂടെ' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'ക്ലാസിൽ ചേരുക' })).toBeVisible();
+    await expect(
+      page.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'ക്ലാസിൽ ചേരുക' }),
+    ).toBeVisible();
   });
 
   test('join page is reachable without auth', async ({ page }) => {

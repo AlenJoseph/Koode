@@ -2,6 +2,7 @@
 
 import type { Locale, MessageKey, SessionUser } from '@koode/contracts';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchMe, logout } from '@/lib/api';
 
@@ -12,13 +13,16 @@ type Props = {
 
 export function ShellHeader({ locale, dictionary }: Props) {
   const otherLocale = locale === 'en' ? 'ml' : 'en';
+  const pathname = usePathname();
   const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
 
+  // Refetch on route change so magic-link verify / join updates the topbar without a full reload.
   useEffect(() => {
+    setUser(undefined);
     void fetchMe()
       .then((result) => setUser(result?.user ?? null))
       .catch(() => setUser(null));
-  }, []);
+  }, [pathname]);
 
   async function onSignOut() {
     await logout();

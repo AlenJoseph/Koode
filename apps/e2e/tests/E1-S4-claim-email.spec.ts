@@ -29,12 +29,11 @@ test.describe('E1-S4 claim email', () => {
 
     await teacherPage.getByLabel('Student display name').fill(studentName);
     await teacherPage.getByRole('button', { name: 'Add student' }).click();
-    const secretBlock = await teacherPage
-      .getByText('Secret words', { exact: false })
-      .first()
-      .locator('..')
-      .innerText();
-    const secretWords = secretBlock.match(/Secret words[^:]*:\s*([A-Za-z]+ [A-Za-z]+)/)![1]!;
+    const secretCard = teacherPage
+      .locator('p')
+      .filter({ hasText: /Secret words \(save for login card\)/i });
+    await expect(secretCard).toBeVisible();
+    const secretWords = (await secretCard.innerText()).match(/:\s*([A-Z]+ [A-Z]+)/)![1]!;
     await teacherCtx.close();
 
     const studentCtx = await browser.newContext();
@@ -53,17 +52,25 @@ test.describe('E1-S4 claim email', () => {
     await studentPage.getByRole('button', { name: 'Send verification link' }).click();
     await studentPage.locator('a.dev-link').click();
     await expect(studentPage).toHaveURL(/\/en\/?$/);
-    await expect(studentPage.getByText(claimEmail)).toBeVisible();
+    // Display name stays on roster; claim form disappears once email is linked.
+    await expect(studentPage.getByRole('region', { name: 'Home' }).getByText(studentName)).toBeVisible();
+    await expect(studentPage.getByRole('heading', { name: 'Link an email to this account' })).toHaveCount(
+      0,
+    );
+    await expect(studentPage.locator('.topbar-user')).toHaveAttribute('title', claimEmail);
     await studentCtx.close();
 
     const laterCtx = await browser.newContext();
     const laterPage = await laterCtx.newPage();
     await laterPage.goto('/en/sign-up');
     await laterPage.getByLabel('Email').fill(claimEmail);
+    await laterPage.getByLabel(/I confirm I am 13 or older/i).check();
     await laterPage.getByRole('button', { name: 'Send magic link' }).click();
     await laterPage.locator('a.dev-link').click();
     await expect(laterPage).toHaveURL(/\/en\/?$/);
-    await expect(laterPage.getByText(claimEmail)).toBeVisible();
+    // Same user: roster display name + claimed email on session.
+    await expect(laterPage.getByRole('region', { name: 'Home' }).getByText(studentName)).toBeVisible();
+    await expect(laterPage.locator('.topbar-user')).toHaveAttribute('title', claimEmail);
     await laterCtx.close();
   });
 });

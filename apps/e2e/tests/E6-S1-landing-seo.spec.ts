@@ -11,9 +11,9 @@ test.describe('E6-S1 SEO landing', () => {
     await expect(page).toHaveTitle(/Learn life skills/i);
     await expect(page.locator('h1')).toContainText(/Learn life skills\. Keep the thinking/i);
     await expect(page.getByRole('heading', { name: 'What you get' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Pathways' })).toBeVisible();
-    await expect(page.getByText('Know yourself')).toBeVisible();
-    await expect(page.getByText('Make & serve')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Pathways', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Know yourself' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Make & serve' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Where we are (honest)' })).toBeVisible();
 
     const body = await page.locator('body').innerText();

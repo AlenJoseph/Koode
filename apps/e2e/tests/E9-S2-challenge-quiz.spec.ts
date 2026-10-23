@@ -21,7 +21,8 @@ test.describe('E9-S2 challenge quiz', () => {
     await expect(verifyLink).toBeVisible();
     await verifyLink.click();
     await expect(page).toHaveURL(/\/en\/?$/);
-    await expect(page.getByText(learnerEmail)).toBeVisible();
+    await expect(page.locator('.topbar-user')).toBeVisible();
+    await expect(page.getByRole('region', { name: 'Home' }).getByText(learnerEmail)).toBeVisible();
 
     await page.goto('/en/challenges');
     await expect(page.getByRole('heading', { name: 'Challenges' })).toBeVisible();
