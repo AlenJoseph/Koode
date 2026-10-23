@@ -69,6 +69,58 @@ export async function registerAuthRoutes(
     return { user };
   });
 
+  app.get('/auth/emails', async (request, reply) => {
+    const sessionToken = readSessionToken(request, config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const rows = await auth.emails.listEmails(user.id);
+    return {
+      emails: rows.map((row) => ({
+        id: row.id,
+        email: row.email,
+        isPrimary: row.isPrimary,
+        verifiedAt: row.verifiedAt,
+      })),
+    };
+  });
+
+  app.post('/auth/emails/:emailId/primary', async (request, reply) => {
+    const sessionToken = readSessionToken(request, config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const { emailId } = request.params as { emailId: string };
+    const result = await auth.emails.setPrimaryEmail(user.id, emailId);
+    return { email: result };
+  });
+
+  app.delete('/auth/emails/:emailId', async (request, reply) => {
+    const sessionToken = readSessionToken(request, config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const { emailId } = request.params as { emailId: string };
+    await auth.emails.removeEmail(user.id, emailId);
+    return { ok: true };
+  });
+
+
   app.post('/auth/logout', async (request, reply) => {
     const sessionToken = readSessionToken(request, config);
     if (sessionToken) {

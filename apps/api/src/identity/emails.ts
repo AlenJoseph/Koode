@@ -110,6 +110,62 @@ export function createEmailService(database: Database) {
         throw error;
       }
     },
+
+    async setPrimaryEmail(userId: string, emailId: string) {
+      const row = await db.query.userEmails.findFirst({
+        where: and(eq(userEmails.id, emailId), eq(userEmails.userId, userId)),
+      });
+      if (!row) {
+        throw new AuthError('Email not found', 404);
+      }
+      if (!row.verifiedAt) {
+        throw new AuthError('Email is not verified', 400);
+      }
+
+      await db.transaction(async (tx) => {
+        await tx
+          .update(userEmails)
+          .set({ isPrimary: false })
+          .where(and(eq(userEmails.userId, userId), eq(userEmails.isPrimary, true)));
+        await tx
+          .update(userEmails)
+          .set({ isPrimary: true })
+          .where(and(eq(userEmails.id, emailId), eq(userEmails.userId, userId)));
+      });
+
+      return { id: row.id, email: row.email, isPrimary: true };
+    },
+
+    async removeEmail(userId: string, emailId: string) {
+      const rows = await db.query.userEmails.findMany({
+        where: eq(userEmails.userId, userId),
+      });
+      const target = rows.find((row) => row.id === emailId);
+      if (!target) {
+        throw new AuthError('Email not found', 404);
+      }
+      if (rows.length <= 1) {
+        throw new AuthError('Cannot remove the last verified email', 400);
+      }
+
+      await db.transaction(async (tx) => {
+        await tx
+          .delete(userEmails)
+          .where(and(eq(userEmails.id, emailId), eq(userEmails.userId, userId)));
+        if (target.isPrimary) {
+          const remaining = rows.filter((row) => row.id !== emailId);
+          const next = remaining[0];
+          if (next) {
+            await tx
+              .update(userEmails)
+              .set({ isPrimary: true })
+              .where(and(eq(userEmails.id, next.id), eq(userEmails.userId, userId)));
+          }
+        }
+      });
+
+      return { ok: true as const };
+    },
   };
 }
 
