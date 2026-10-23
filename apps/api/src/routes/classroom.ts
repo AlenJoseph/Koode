@@ -80,6 +80,24 @@ export async function registerClassroomRoutes(
     return { student };
   });
 
+  app.delete('/classroom/sections/:sectionId/students/:membershipId', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId, membershipId } = request.params as {
+      sectionId: string;
+      membershipId: string;
+    };
+    const result = await classroom.removeStudent(user.id, sectionId, membershipId);
+    request.log.info(
+      { event: 'classroom.student_removed', sectionId, userId: result.userId },
+      'student removed from section',
+    );
+    return { ok: true };
+  });
+
   app.get('/classroom/join/:code', async (request, reply) => {
     const limit = studentSignInLimiter.check(`join-lookup:${request.ip}`);
     if (!limit.ok) {

@@ -148,6 +148,27 @@ export function createClassroomService(database: Database) {
       };
     },
 
+    /** Drop section membership only — the user account remains. */
+    async removeStudent(teacherId: string, sectionId: string, membershipId: string) {
+      await this.getSectionForTeacher(teacherId, sectionId);
+      const membership = await db.query.sectionStudents.findFirst({
+        where: and(
+          eq(sectionStudents.id, membershipId),
+          eq(sectionStudents.sectionId, sectionId),
+        ),
+      });
+      if (!membership) {
+        throw new AuthError('Student not found in section', 404);
+      }
+      const userId = membership.userId;
+      await db.delete(sectionStudents).where(eq(sectionStudents.id, membershipId));
+      const stillExists = await db.query.users.findFirst({ where: eq(users.id, userId) });
+      if (!stillExists) {
+        throw new AuthError('User account missing after remove', 500);
+      }
+      return { ok: true as const, userId };
+    },
+
     async lookupSectionByCode(input: unknown) {
       const { code } = sectionLookupSchema.parse(input);
       const section = await db.query.sections.findFirst({

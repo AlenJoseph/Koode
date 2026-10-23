@@ -88,7 +88,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
 | **E4-S1** | Max class size 50 | 51st add-student → 409/400; message clear | `E4-S1-max-class-size.integration.test.ts` | `done` |
-| **E4-S2** | Remove student from section | Removes membership only; user account remains; student cannot re-join with old secret until re-added | API + e2e | `todo` |
+| **E4-S2** | Remove student from section | Removes membership only; user account remains; student cannot re-join with old secret until re-added | API + `e2e/E4-S2-remove-student.spec.ts` | `done` |
 | **E4-S3** | Reset secret words | Teacher regenerates; old words fail; new words shown once | API + e2e | `todo` |
 | **E4-S4** | Archive section | Archived section not joinable; teacher still sees history | API | `todo` |
 | **E4-S5** | Roster export | Teacher downloads CSV (or JSON) of roster display names + codes metadata (no secret hashes) | API + e2e download | `todo` |

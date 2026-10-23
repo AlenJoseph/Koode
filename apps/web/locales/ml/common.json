@@ -114,6 +114,7 @@
   "classroom.nameLabel": "സെക്ഷൻ പേര്",
   "classroom.codeLabel": "സെക്ഷൻ കോഡ്",
   "classroom.addStudent": "വിദ്യാർത്ഥിയെ ചേർക്കുക",
+  "classroom.removeStudent": "നീക്കം ചെയ്യുക",
   "classroom.studentName": "വിദ്യാർത്ഥിയുടെ പേര്",
   "classroom.secretWords": "രഹസ്യ വാക്കുകൾ (ലോഗിൻ കാർഡിനായി സൂക്ഷിക്കുക)",
   "classroom.roster": "റോസ്റ്റർ",

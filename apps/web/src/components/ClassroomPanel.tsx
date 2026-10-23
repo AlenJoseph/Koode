@@ -9,6 +9,7 @@ import {
   fetchMe,
   listRoster,
   listSections,
+  removeStudent,
   type ClassroomSection,
 } from '@/lib/api';
 
@@ -79,6 +80,17 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     }
   }
 
+  async function onRemoveStudent(membershipId: string) {
+    if (!activeId) return;
+    setError(false);
+    try {
+      await removeStudent(activeId, membershipId);
+      setRoster((prev) => prev.filter((row) => row.id !== membershipId));
+    } catch {
+      setError(true);
+    }
+  }
+
   if (isTeacher === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
   }
@@ -132,9 +144,18 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
             <strong>{dictionary['classroom.codeLabel']}:</strong> {active.code}
           </p>
           <h3>{dictionary['classroom.roster']}</h3>
-          <ul>
+          <ul className="stack">
             {roster.map((row) => (
-              <li key={row.id}>{row.displayName}</li>
+              <li key={row.id} className="nav">
+                <span>{row.displayName}</span>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => void onRemoveStudent(row.id)}
+                >
+                  {dictionary['classroom.removeStudent']}
+                </button>
+              </li>
             ))}
           </ul>
           <form className="stack" onSubmit={(event) => void onAddStudent(event)}>

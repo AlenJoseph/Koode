@@ -340,6 +340,12 @@ export async function addStudent(
   });
 }
 
+export async function removeStudent(sectionId: string, membershipId: string): Promise<{ ok: true }> {
+  return apiFetch(`/classroom/sections/${sectionId}/students/${membershipId}`, {
+    method: 'DELETE',
+  });
+}
+
 export async function lookupSection(code: string): Promise<{
   section: { code: string; name: string; students: Array<{ displayName: string }> };
 }> {

@@ -118,6 +118,7 @@ export const messageKeys = [
   'classroom.nameLabel',
   'classroom.codeLabel',
   'classroom.addStudent',
+  'classroom.removeStudent',
   'classroom.studentName',
   'classroom.secretWords',
   'classroom.roster',
