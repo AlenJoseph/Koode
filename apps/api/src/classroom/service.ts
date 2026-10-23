@@ -64,6 +64,23 @@ export function createClassroomService(database: Database) {
       return section;
     },
 
+    async archiveSection(teacherId: string, sectionId: string) {
+      const section = await this.getSectionForTeacher(teacherId, sectionId);
+      if (section.archivedAt) {
+        return section;
+      }
+      const now = new Date();
+      const [updated] = await db
+        .update(sections)
+        .set({ archivedAt: now, updatedAt: now })
+        .where(eq(sections.id, sectionId))
+        .returning();
+      if (!updated) {
+        throw new AuthError('Section not found', 404);
+      }
+      return updated;
+    },
+
     async listRoster(teacherId: string, sectionId: string) {
       await this.getSectionForTeacher(teacherId, sectionId);
       const roster = await db.query.sectionStudents.findMany({
@@ -79,7 +96,10 @@ export function createClassroomService(database: Database) {
 
     async addStudent(teacherId: string, sectionId: string, input: unknown) {
       const { displayName } = addSectionStudentSchema.parse(input);
-      await this.getSectionForTeacher(teacherId, sectionId);
+      const section = await this.getSectionForTeacher(teacherId, sectionId);
+      if (section.archivedAt) {
+        throw new AuthError('Section is archived', 409);
+      }
 
       const secretWords = generateSecretWords();
       const normalizedName = displayName.trim();
@@ -204,7 +224,7 @@ export function createClassroomService(database: Database) {
       const section = await db.query.sections.findFirst({
         where: eq(sections.code, code),
       });
-      if (!section) {
+      if (!section || section.archivedAt) {
         throw new AuthError('Section not found', 404);
       }
       const roster = await db.query.sectionStudents.findMany({
@@ -222,7 +242,7 @@ export function createClassroomService(database: Database) {
       const section = await db.query.sections.findFirst({
         where: eq(sections.code, parsed.code),
       });
-      if (!section) {
+      if (!section || section.archivedAt) {
         throw new AuthError('Section not found', 404);
       }
 

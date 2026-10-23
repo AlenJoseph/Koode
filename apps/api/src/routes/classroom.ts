@@ -50,7 +50,27 @@ export async function registerClassroomRoutes(
         id: section.id,
         name: section.name,
         code: section.code,
+        archivedAt: section.archivedAt ? section.archivedAt.toISOString() : null,
       })),
+    };
+  });
+
+  app.post('/classroom/sections/:sectionId/archive', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId } = request.params as { sectionId: string };
+    const section = await classroom.archiveSection(user.id, sectionId);
+    request.log.info({ event: 'classroom.section_archived', sectionId }, 'section archived');
+    return {
+      section: {
+        id: section.id,
+        name: section.name,
+        code: section.code,
+        archivedAt: section.archivedAt ? section.archivedAt.toISOString() : null,
+      },
     };
   });
 
