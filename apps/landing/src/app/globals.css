@@ -500,8 +500,11 @@ a {
 }
 
 .section-ink {
-  background: #1f2a37;
-  color: #fff8ef;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.55), transparent 42%),
+    radial-gradient(circle at 12% 80%, rgba(255, 107, 74, 0.12), transparent 40%),
+    linear-gradient(165deg, #ffe566 0%, #ffc800 48%, #f5b700 100%);
+  color: var(--ink);
   max-width: none;
   padding-left: max(1.5rem, calc((100% - 1100px) / 2 + 1.5rem));
   padding-right: max(1.5rem, calc((100% - 1100px) / 2 + 1.5rem));
@@ -514,11 +517,12 @@ a {
 
 .section-ink .section > p,
 .section-ink > p {
-  opacity: 0.9;
+  opacity: 0.92;
+  font-weight: 700;
 }
 
 .section-ink a {
-  color: #ffc800;
+  color: var(--ink);
   font-weight: 800;
 }
 
@@ -542,10 +546,11 @@ a {
 }
 
 .sdg-card {
-  background: rgba(255, 248, 239, 0.08);
-  border: 2px solid rgba(255, 248, 239, 0.22);
+  background: rgba(255, 248, 239, 0.88);
+  border: 3px solid var(--ink);
   border-radius: 18px;
   padding: 1rem;
+  box-shadow: 5px 5px 0 rgba(31, 42, 55, 0.12);
 }
 
 .sdg-card h3 {
@@ -562,20 +567,14 @@ a {
   font-size: 0.92rem;
 }
 
-.sdg-id {
-  font-size: 0.75rem !important;
-  font-weight: 800 !important;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #ffc800 !important;
-  opacity: 1 !important;
-  margin-bottom: 0.35rem !important;
+.section-ink .btn-secondary {
+  background: #fff8ef;
+  color: var(--ink);
 }
 
-.sdg-note {
-  margin-top: 1.25rem !important;
-  max-width: 62ch !important;
-  font-size: 0.92rem;
+.section-ink .btn-accent {
+  background: var(--coral);
+  color: #fff;
 }
 
 .section-mint {
