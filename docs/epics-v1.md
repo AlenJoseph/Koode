@@ -206,6 +206,13 @@ Bridge authored `content/` manuals into the live product.
 
 ---
 
-## v1 + E9 complete
+## v1 + E9 + E10 complete
 
-E1–E9 stories are `done`. E10 aligns the authenticated app UI with the public landing. Remaining: v1.1+ (Google sign-in, full ml + voice, parents/school admin).
+E1–E10 stories are `done` on `main`.  
+**Validated gaps + ordered next work:** [`validation-and-next.md`](./validation-and-next.md) (age API, class-size race, re-add identity, landing/app CTA align, admin≠teacher shell, then v1.1+).
+
+Remaining product buckets (not reopened as E1–E10):
+
+- **Pre-pilot hardening** — see P0/P1 in validation doc  
+- **v1.1** — Google sign-in, full ml UI + voice  
+- **v2** — parents, school admin / multi-org  

@@ -56,8 +56,8 @@ export function TutorPanel({ locale, dictionary }: Props) {
       <div className="panel stack">
         <h2>{dictionary['tutor.title']}</h2>
         <p>{dictionary['tutor.needSignIn']}</p>
-        <Link className="button" href={`/${locale}/sign-in`}>
-          {dictionary['nav.signIn']}
+        <Link className="button" href={`/${locale}/sign-up`}>
+          {dictionary['nav.signUp']}
         </Link>
       </div>
     );

@@ -37,13 +37,13 @@ Config + checklist tests live in `apps/api/src/E7-S1-retention-redaction.test.ts
 
 ## Retention defaults (v1)
 
-These are **product defaults** until a school contract says otherwise. Enforced as documented config (not automatic purge jobs yet).
+These are **product defaults** until a school contract says otherwise. Retention windows are config-enforced; tutor-turn purge is a **manual CLI** today (`pnpm db:purge-tutor-turns`), not a scheduled job.
 
 | Data | Default retention | Notes |
 | --- | --- | --- |
 | Session cookies | 14 days | `sessionTtlMs` |
 | Magic-link tokens | 15 minutes | `magicLinkTtlMs` |
-| Tutor turns | 365 days (config) | `tutorTurnRetentionDays`; purge with `pnpm db:purge-tutor-turns` |
+| Tutor turns | 365 days (config) | `tutorTurnRetentionDays`; run `pnpm db:purge-tutor-turns` (cron TBD) |
 | Learning records | Until account delete / export | Cascade on user delete |
 | Consent stubs | Until account delete | Types are stubs until legal review |
 
