@@ -25,7 +25,12 @@
   "auth.signedInAs": "Signed in as",
   "auth.teacherHint": "Students in a class: use Join class with your section code — no email needed.",
   "auth.learnerHint": "Learn on your own with email. Teachers use Teacher sign in. Class students use Join class.",
+  "auth.claimTitle": "Link an email to this account",
+  "auth.claimHint": "Add a verified email so you can sign in later without your class code.",
+  "auth.claimSend": "Send verification link",
+  "auth.claimDone": "Email linked. You can use Learner sign up with this email next time.",
   "home.welcome": "Welcome back. Your learning progress will live here.",
+
   "home.signedOutHint": "Learners sign up with email. Teachers sign in. Class students join with a code.",
 
   "tutor.title": "Guided tutor",

@@ -42,6 +42,19 @@ export async function verifyMagicLink(token: string): Promise<{ ok: true; user: 
   });
 }
 
+export async function requestClaimEmail(email: string): Promise<{
+  ok: true;
+  email: string;
+  intent: 'claim';
+  devToken?: string;
+  devVerifyUrl?: string;
+}> {
+  return apiFetch('/auth/emails/claim/request', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
 export async function fetchMe(): Promise<{ user: SessionUser } | null> {
   const response = await fetch(`${apiBase}/auth/me`, {
     credentials: 'include',

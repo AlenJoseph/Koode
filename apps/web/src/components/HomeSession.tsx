@@ -3,6 +3,7 @@
 import type { Locale, MessageKey, SessionUser } from '@koode/contracts';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { ClaimEmailForm } from '@/components/ClaimEmailForm';
 import { fetchMe, logout } from '@/lib/api';
 
 type Props = {
@@ -45,15 +46,21 @@ export function HomeSession({ locale, dictionary }: Props) {
   }
 
   return (
-    <div className="panel stack">
-      <p>
-        {dictionary['auth.signedInAs']}{' '}
-        <strong>{user.displayName ?? user.email ?? user.role}</strong>
-      </p>
-      <p>{dictionary['home.welcome']}</p>
-      <button type="button" className="secondary" onClick={() => void onSignOut()}>
-        {dictionary['nav.signOut']}
-      </button>
+    <div className="stack">
+      <div className="panel stack">
+        <p>
+          {dictionary['auth.signedInAs']}{' '}
+          <strong>{user.displayName ?? user.email ?? user.role}</strong>
+          {user.email && user.displayName ? (
+            <span className="muted"> ({user.email})</span>
+          ) : null}
+        </p>
+        <p>{dictionary['home.welcome']}</p>
+        <button type="button" className="secondary" onClick={() => void onSignOut()}>
+          {dictionary['nav.signOut']}
+        </button>
+      </div>
+      {!user.email ? <ClaimEmailForm locale={locale} dictionary={dictionary} /> : null}
     </div>
   );
 }

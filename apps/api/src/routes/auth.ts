@@ -33,6 +33,29 @@ export async function registerAuthRoutes(
     return { ok: true, user: result.user };
   });
 
+  app.post('/auth/emails/claim/request', async (request, reply) => {
+    const sessionToken = readSessionToken(request, config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+
+    const key = `claim:${user.id}`;
+    const limit = magicLinkLimiter.check(key);
+    if (!limit.ok) {
+      reply.header('retry-after', String(limit.retryAfterSec));
+      return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
+    }
+
+    const result = await auth.requestClaimEmail(user.id, request.body);
+    request.log.info({ event: 'auth.email_claim_requested', userId: user.id }, 'claim email requested');
+    return result;
+  });
+
   app.get('/auth/me', async (request, reply) => {
     const sessionToken = readSessionToken(request, config);
     if (!sessionToken) {

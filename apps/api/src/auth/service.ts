@@ -3,9 +3,11 @@ import {
   type MagicLinkIntent,
   type SessionUser,
   type UserRole,
+  claimEmailRequestSchema,
   magicLinkRequestSchema,
   magicLinkVerifySchema,
 } from '@koode/contracts';
+
 import {
   consentRecords,
   learnerProfiles,
@@ -116,13 +118,11 @@ export function createAuthService(database: Database, config: ApiConfig) {
       if (existing.role === 'teacher') {
         throw new AuthError('This email belongs to a teacher account', 403);
       }
-      if (existing.role === 'student') {
-        throw new AuthError('Link this classroom account from settings before using email sign-in', 403);
+      // Classroom students who already claimed this email sign in on the same account.
+      if (existing.role === 'student' || existing.role === 'learner') {
+        return existing;
       }
-      if (existing.role !== 'learner') {
-        throw new AuthError('This email cannot sign in as a learner', 403);
-      }
-      return existing;
+      throw new AuthError('This email cannot sign in as a learner', 403);
     }
     return createAccountWithPrimaryEmail({
       role: 'learner',
@@ -162,6 +162,9 @@ export function createAuthService(database: Database, config: ApiConfig) {
 
     async requestMagicLink(input: unknown) {
       const parsed = magicLinkRequestSchema.parse(input);
+      if (parsed.intent === 'claim') {
+        throw new AuthError('Use the claim-email endpoint while signed in', 400);
+      }
       const normalized = normalizeEmail(parsed.email);
       const intent: MagicLinkIntent = parsed.intent;
       const token = createOpaqueToken();
@@ -181,6 +184,38 @@ export function createAuthService(database: Database, config: ApiConfig) {
         ok: true as const,
         email: normalized,
         intent,
+        ...(config.magicLinkDevMode ? { devToken: token, devVerifyUrl: verifyUrl.toString() } : {}),
+      };
+    },
+
+    async requestClaimEmail(userId: string, input: unknown) {
+      const { email } = claimEmailRequestSchema.parse(input);
+      const normalized = normalizeEmail(email);
+      const existing = await emails.findUserIdByEmail(normalized);
+      if (existing && existing !== userId) {
+        throw new AuthError('Email already linked to another account', 409);
+      }
+      if (existing === userId) {
+        throw new AuthError('Email already linked to this account', 409);
+      }
+
+      const token = createOpaqueToken();
+      const expiresAt = new Date(Date.now() + config.magicLinkTtlMs);
+      await db.insert(magicLinkTokens).values({
+        email: normalized,
+        intent: 'claim',
+        claimUserId: userId,
+        tokenHash: hashToken(token),
+        expiresAt,
+      });
+
+      const verifyUrl = new URL('/auth/verify', config.appOrigin);
+      verifyUrl.searchParams.set('token', token);
+
+      return {
+        ok: true as const,
+        email: normalized,
+        intent: 'claim' as const,
         ...(config.magicLinkDevMode ? { devToken: token, devVerifyUrl: verifyUrl.toString() } : {}),
       };
     },
@@ -206,24 +241,37 @@ export function createAuthService(database: Database, config: ApiConfig) {
         throw new AuthError('Invalid or expired magic link', 401);
       }
 
-      const intent: MagicLinkIntent = record.intent === 'learner' ? 'learner' : 'teacher';
-      const user =
-        intent === 'learner'
-          ? await ensureLearner(record.email)
-          : await ensureTeacher(record.email);
+      let userId: string;
+      if (record.intent === 'claim') {
+        if (!record.claimUserId) {
+          throw new AuthError('Invalid claim link', 400);
+        }
+        const hasPrimary = await emails.getPrimaryEmail(record.claimUserId);
+        await emails.addVerifiedEmail(record.claimUserId, record.email, {
+          primary: !hasPrimary,
+        });
+        userId = record.claimUserId;
+      } else if (record.intent === 'learner') {
+        const user = await ensureLearner(record.email);
+        userId = user.id;
+      } else {
+        const user = await ensureTeacher(record.email);
+        userId = user.id;
+      }
 
       const sessionToken = createOpaqueToken();
       const expiresAt = new Date(Date.now() + config.sessionTtlMs);
 
       await db.insert(sessions).values({
-        userId: user.id,
+        userId,
         tokenHash: hashToken(sessionToken),
         expiresAt,
       });
 
-      const sessionUser = await toSessionUser(user.id);
+      const sessionUser = await toSessionUser(userId);
       return { sessionToken, expiresAt, user: sessionUser };
     },
+
 
     async createSessionForUser(userId: string) {
       const sessionToken = createOpaqueToken();
