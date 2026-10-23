@@ -8,11 +8,15 @@ import {
   createSection,
   exportRosterCsv,
   fetchMe,
+  listLearnerPathways,
   listRoster,
+  listSectionPathways,
   listSections,
   removeStudent,
   resetStudentSecret,
+  setSectionPathways,
   type ClassroomSection,
+  type LearnerPathway,
 } from '@/lib/api';
 
 type Props = {
@@ -28,6 +32,9 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
   const [sectionName, setSectionName] = useState('Class 7A');
   const [studentName, setStudentName] = useState('');
   const [lastSecretWords, setLastSecretWords] = useState<string | null>(null);
+  const [availablePathways, setAvailablePathways] = useState<LearnerPathway[]>([]);
+  const [selectedPathwayIds, setSelectedPathwayIds] = useState<string[]>([]);
+  const [directionSaved, setDirectionSaved] = useState(false);
   const [error, setError] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -52,6 +59,13 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     if (!activeId || !isTeacher) return;
     void listRoster(activeId)
       .then((result) => setRoster(result.roster))
+      .catch(() => setError(true));
+    void Promise.all([listLearnerPathways(), listSectionPathways(activeId)])
+      .then(([published, linked]) => {
+        setAvailablePathways(published.pathways);
+        setSelectedPathwayIds(linked.pathways.map((pathway) => pathway.id));
+        setDirectionSaved(false);
+      })
       .catch(() => setError(true));
   }, [activeId, isTeacher]);
 
@@ -120,6 +134,27 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     }
   }
 
+  async function onSaveDirection(event: FormEvent) {
+    event.preventDefault();
+    if (!activeId) return;
+    setError(false);
+    setDirectionSaved(false);
+    try {
+      const { pathways } = await setSectionPathways(activeId, selectedPathwayIds);
+      setSelectedPathwayIds(pathways.map((pathway) => pathway.id));
+      setDirectionSaved(true);
+    } catch {
+      setError(true);
+    }
+  }
+
+  function togglePathway(pathwayId: string) {
+    setSelectedPathwayIds((prev) =>
+      prev.includes(pathwayId) ? prev.filter((id) => id !== pathwayId) : [...prev, pathwayId],
+    );
+    setDirectionSaved(false);
+  }
+
   if (isTeacher === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
   }
@@ -175,6 +210,34 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
           <button type="button" className="secondary" onClick={() => void onExportRoster()}>
             {dictionary['classroom.exportRoster']}
           </button>
+
+          <h3>{dictionary['classroom.pathwayDirection']}</h3>
+          <p className="muted">{dictionary['classroom.pathwayDirectionHint']}</p>
+          <form className="stack" onSubmit={(event) => void onSaveDirection(event)}>
+            {availablePathways.length === 0 ? (
+              <p className="muted">{dictionary['classroom.pathwayDirectionEmpty']}</p>
+            ) : (
+              <ul className="stack">
+                {availablePathways.map((pathway) => (
+                  <li key={pathway.id}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={selectedPathwayIds.includes(pathway.id)}
+                        onChange={() => togglePathway(pathway.id)}
+                      />{' '}
+                      {pathway.title}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <button type="submit">{dictionary['classroom.pathwayDirectionSave']}</button>
+            {directionSaved ? (
+              <p className="muted">{dictionary['classroom.pathwayDirectionSaved']}</p>
+            ) : null}
+          </form>
+
           <h3>{dictionary['classroom.roster']}</h3>
           <ul className="stack">
             {roster.map((row) => (

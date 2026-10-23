@@ -5,6 +5,7 @@ export { consentRecords } from './consent.js';
 export { sessions, magicLinkTokens } from './sessions.js';
 export { tutorTurns } from './tutor-turns.js';
 export { sections, sectionStudents } from './sections.js';
+export { sectionPathways } from './section-pathways.js';
 export { pathways } from './pathways.js';
 export { challenges } from './challenges.js';
 export { pathwayEnrollments } from './enrollments.js';

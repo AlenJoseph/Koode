@@ -55,6 +55,32 @@ export async function registerClassroomRoutes(
     };
   });
 
+  app.get('/classroom/sections/:sectionId/pathways', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId } = request.params as { sectionId: string };
+    const pathways = await classroom.listSectionPathways(user.id, sectionId);
+    return { pathways };
+  });
+
+  app.put('/classroom/sections/:sectionId/pathways', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId } = request.params as { sectionId: string };
+    const pathways = await classroom.setSectionPathways(user.id, sectionId, request.body);
+    request.log.info(
+      { event: 'classroom.section_pathways_set', sectionId, count: pathways.length },
+      'section pathway direction updated',
+    );
+    return { pathways };
+  });
+
   app.post('/classroom/sections/:sectionId/archive', async (request, reply) => {
     const user = await currentUser(request);
     if (!user) {

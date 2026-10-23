@@ -92,7 +92,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | **E4-S3** | Reset secret words | Teacher regenerates; old words fail; new words shown once | API + `e2e/E4-S3-reset-secret.spec.ts` | `done` |
 | **E4-S4** | Archive section | Archived section not joinable; teacher still sees history | `E4-S4-archive-section.integration.test.ts` | `done` |
 | **E4-S5** | Roster export | Teacher downloads CSV (or JSON) of roster display names + codes metadata (no secret hashes) | API + `e2e/E4-S5-roster-export.spec.ts` | `done` |
-| **E4-S6** | Assign pathway direction | Teacher attaches pathway id(s) to section as guidance (not forced lock) | API + e2e | `todo` |
+| **E4-S6** | Assign pathway direction | Teacher attaches pathway id(s) to section as guidance (not forced lock) | API + `e2e/E4-S6-section-pathways.spec.ts` | `done` |
 
 ---
 

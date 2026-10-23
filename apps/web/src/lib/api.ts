@@ -318,6 +318,22 @@ export type ClassroomSection = {
   archivedAt?: string | null;
 };
 
+export async function listSectionPathways(
+  sectionId: string,
+): Promise<{ pathways: Array<{ id: string; title: string; summary: string; status: string }> }> {
+  return apiFetch(`/classroom/sections/${sectionId}/pathways`);
+}
+
+export async function setSectionPathways(
+  sectionId: string,
+  pathwayIds: string[],
+): Promise<{ pathways: Array<{ id: string; title: string; summary: string; status: string }> }> {
+  return apiFetch(`/classroom/sections/${sectionId}/pathways`, {
+    method: 'PUT',
+    body: JSON.stringify({ pathwayIds }),
+  });
+}
+
 export async function exportRosterCsv(sectionId: string): Promise<Blob> {
   const response = await fetch(
     `${apiBase}/classroom/sections/${sectionId}/export?format=csv`,

@@ -2,17 +2,20 @@ import {
   addSectionStudentSchema,
   createSectionSchema,
   sectionLookupSchema,
+  setSectionPathwaysSchema,
   studentSignInSchema,
 } from '@koode/contracts';
 import {
   consentRecords,
   learnerProfiles,
+  pathways,
+  sectionPathways,
   sectionStudents,
   sections,
   users,
   type Database,
 } from '@koode/database';
-import { and, eq } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { AuthError } from '../auth/service.js';
 import { hashToken } from '../crypto.js';
 import { generateSecretWords, normalizeSecretWords } from '../lib/secret-words.js';
@@ -62,6 +65,57 @@ export function createClassroomService(database: Database) {
         throw new AuthError('Section not found', 404);
       }
       return section;
+    },
+
+    async listSectionPathways(teacherId: string, sectionId: string) {
+      await this.getSectionForTeacher(teacherId, sectionId);
+      const links = await db.query.sectionPathways.findMany({
+        where: eq(sectionPathways.sectionId, sectionId),
+      });
+      if (links.length === 0) {
+        return [];
+      }
+      const rows = await db
+        .select()
+        .from(pathways)
+        .where(
+          inArray(
+            pathways.id,
+            links.map((link) => link.pathwayId),
+          ),
+        );
+      return rows.map((row) => ({
+        id: row.id,
+        title: row.title,
+        summary: row.summary,
+        status: row.status,
+      }));
+    },
+
+    async setSectionPathways(teacherId: string, sectionId: string, input: unknown) {
+      const { pathwayIds } = setSectionPathwaysSchema.parse(input);
+      await this.getSectionForTeacher(teacherId, sectionId);
+
+      if (pathwayIds.length > 0) {
+        const found = await db
+          .select({ id: pathways.id })
+          .from(pathways)
+          .where(inArray(pathways.id, pathwayIds));
+        if (found.length !== pathwayIds.length) {
+          throw new AuthError('One or more pathways were not found', 404);
+        }
+      }
+
+      await db.transaction(async (tx) => {
+        await tx.delete(sectionPathways).where(eq(sectionPathways.sectionId, sectionId));
+        if (pathwayIds.length > 0) {
+          await tx.insert(sectionPathways).values(
+            pathwayIds.map((pathwayId) => ({ sectionId, pathwayId })),
+          );
+        }
+      });
+
+      return this.listSectionPathways(teacherId, sectionId);
     },
 
     async archiveSection(teacherId: string, sectionId: string) {

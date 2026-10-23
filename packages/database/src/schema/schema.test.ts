@@ -8,6 +8,7 @@ import {
   pathwayEnrollments,
   pathways,
   projects,
+  sectionPathways,
   sectionStudents,
   sections,
   sessions,
@@ -27,6 +28,7 @@ describe('database schema', () => {
     expect(tutorTurns).toBeDefined();
     expect(sections).toBeDefined();
     expect(sectionStudents).toBeDefined();
+    expect(sectionPathways).toBeDefined();
     expect(pathways).toBeDefined();
     expect(challenges).toBeDefined();
     expect(pathwayEnrollments).toBeDefined();

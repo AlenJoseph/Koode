@@ -92,6 +92,13 @@
       "when": 1761242400000,
       "tag": "0012_section_archive",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1761246000000,
+      "tag": "0013_section_pathways",
+      "breakpoints": true
     }
   ]
 }
