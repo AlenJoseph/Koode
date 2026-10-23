@@ -4,7 +4,7 @@ import type { Locale, MessageKey, SessionUser } from '@koode/contracts';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { ClaimEmailForm } from '@/components/ClaimEmailForm';
-import { fetchMe, logout } from '@/lib/api';
+import { fetchMe } from '@/lib/api';
 
 type Props = {
   locale: Locale;
@@ -19,11 +19,6 @@ export function HomeSession({ locale, dictionary }: Props) {
       .then((result) => setUser(result?.user ?? null))
       .catch(() => setUser(null));
   }, []);
-
-  async function onSignOut() {
-    await logout();
-    setUser(null);
-  }
 
   if (user === undefined) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
@@ -73,9 +68,6 @@ export function HomeSession({ locale, dictionary }: Props) {
           <Link className="btn btn-accent" href={`/${locale}/tutor`}>
             {dictionary['nav.tutor']}
           </Link>
-          <button type="button" className="btn-ghost" onClick={() => void onSignOut()}>
-            {dictionary['nav.signOut']}
-          </button>
         </div>
       </section>
       {!user.email ? <ClaimEmailForm locale={locale} dictionary={dictionary} /> : null}

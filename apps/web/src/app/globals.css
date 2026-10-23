@@ -123,6 +123,16 @@ a {
   justify-content: flex-end;
 }
 
+.topbar-user {
+  max-width: 12rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  font-weight: 800;
+  opacity: 0.7;
+}
+
 .btn-sm {
   padding: 0.55rem 0.9rem !important;
   font-size: 0.88rem !important;
@@ -196,32 +206,43 @@ a {
 }
 
 .hero-strip .ctas {
+  position: relative;
+  z-index: 1;
   margin-top: 1.25rem;
+}
+
+.hero-strip .brand-hero,
+.hero-strip .headline,
+.hero-strip .support {
+  position: relative;
+  z-index: 1;
 }
 
 .blob {
   position: absolute;
   border-radius: 50%;
   filter: blur(2px);
-  opacity: 0.45;
+  opacity: 0.28;
   pointer-events: none;
   animation: float 9s ease-in-out infinite;
+  z-index: 0;
 }
 
 .blob.a {
   width: 10rem;
   height: 10rem;
   background: #fff;
-  top: -2rem;
-  right: -1rem;
+  top: -2.5rem;
+  right: -2rem;
 }
 
 .blob.b {
-  width: 7rem;
-  height: 7rem;
+  width: 5.5rem;
+  height: 5.5rem;
   background: var(--path);
-  bottom: -1.5rem;
-  left: 10%;
+  bottom: -1.25rem;
+  right: 12%;
+  left: auto;
   animation-delay: -3s;
 }
 
