@@ -4,6 +4,8 @@ import { users } from './users.js';
 /** Learning pathway shell — content only (E2-S3). */
 export const pathways = pgTable('pathways', {
   id: uuid('id').defaultRandom().primaryKey(),
+  /** Stable content manual id (kebab-case), e.g. know-yourself. Null for admin-only drafts. */
+  slug: text('slug'),
   title: text('title').notNull(),
   summary: text('summary').notNull().default(''),
   locale: text('locale').notNull().default('en'),

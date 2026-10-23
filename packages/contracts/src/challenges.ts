@@ -19,6 +19,7 @@ export const updateChallengeSchema = z.object({
 
 export const challengeSchema = z.object({
   id: z.string().uuid(),
+  slug: z.string().nullable().optional(),
   title: z.string(),
   summary: z.string(),
   locale: z.string(),

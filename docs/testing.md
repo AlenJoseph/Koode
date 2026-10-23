@@ -27,6 +27,7 @@ pnpm build
 | --- | --- |
 | Locale parity | `packages/contracts/src/i18n/parity.test.ts` |
 | Content manuals | `packages/contracts/src/content.validation.test.ts` |
+| Content DB seed | `packages/database/src/seed-content.integration.test.ts` |
 | Web dictionaries | `apps/web/src/i18n/dictionaries.test.ts` |
 | API health / crypto | `apps/api/src/health.test.ts`, `crypto.test.ts` |
 | Auth integration | `apps/api/src/auth.integration.test.ts` (needs `DATABASE_URL`) |

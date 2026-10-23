@@ -10,6 +10,7 @@ import { AuthError } from '../auth/errors.js';
 
 export type PathwayRow = {
   id: string;
+  slug: string | null;
   title: string;
   summary: string;
   locale: string;
@@ -22,6 +23,7 @@ export type PathwayRow = {
 function toPublic(row: PathwayRow) {
   return {
     id: row.id,
+    slug: row.slug,
     title: row.title,
     summary: row.summary,
     locale: row.locale,

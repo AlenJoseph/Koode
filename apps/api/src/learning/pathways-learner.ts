@@ -4,6 +4,7 @@ import { AuthError } from '../auth/errors.js';
 
 function toPathwayPublic(row: {
   id: string;
+  slug: string | null;
   title: string;
   summary: string;
   locale: string;
@@ -11,6 +12,7 @@ function toPathwayPublic(row: {
 }) {
   return {
     id: row.id,
+    slug: row.slug,
     title: row.title,
     summary: row.summary,
     locale: row.locale,

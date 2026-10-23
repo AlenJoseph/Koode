@@ -213,6 +213,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@koode/contracts':
+        specifier: workspace:*
+        version: link:../contracts
       drizzle-orm:
         specifier: ^0.44.6
         version: 0.44.7(postgres@3.4.9)

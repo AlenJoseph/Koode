@@ -74,10 +74,18 @@ pnpm --filter @koode/contracts test -- src/content.validation.test.ts
 ## Runtime
 
 1. CI validates JSON via `@koode/contracts` `content.validation.test.ts`.  
-2. Tutor personalization (E8-S2): pass `contentPathwayId` + `contentChallengeId` (+ optional `paceBand`, `localContext`, `interests`) on `/tutor/turn`.  
-3. Agent runtime loads the challenge JSON, fills `personalizeTemplate`, appends pace-band coach notes.  
-4. Locked: `correctOptionId`, objectives, success criteria.  
-5. Still open: seed/publish manuals into DB shells; quiz UI rendering of personalized option text.
+2. Publish shells into Postgres (idempotent):
+
+```bash
+pnpm db:migrate
+pnpm db:seed
+```
+
+   Upserts by `slug` (= content `id`), status `published`.  
+3. Tutor personalization (E8-S2): pass `contentPathwayId` + `contentChallengeId` (+ optional `paceBand`, `localContext`, `interests`) on `/tutor/turn`.  
+4. Agent runtime loads the challenge JSON, fills `personalizeTemplate`, appends pace-band coach notes.  
+5. Locked: `correctOptionId`, objectives, success criteria.  
+6. Still open: quiz UI (E9-S2).
 
 ## Status
 

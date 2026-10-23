@@ -184,6 +184,18 @@ Start here and move only after gate:
 
 ---
 
+## Epic E9 — Content runtime (post-v1 manuals)
+
+Bridge authored `content/` manuals into the live product.
+
+| ID | Story | Acceptance criteria | Independent test suite | Status |
+| --- | --- | --- | --- | --- |
+| **E9-S1** | Seed manuals into DB | `pnpm db:seed` upserts 6 pathways + challenges by slug as published | `seed-content.integration.test.ts` | `done` |
+| **E9-S2** | Quiz UI | Learner can open a seeded challenge quiz, submit, complete attempt | e2e + API | `todo` |
+| **E9-S3** | Tutor turn purge | Job/CLI deletes tutor turns older than retention days | unit + integration | `todo` |
+
+---
+
 ## v1 complete
 
-E1–E8 stories are `done`. Follow-ups (not blocking v1 gate): quiz UI for personalized option text, DB seed from `content/` manuals, automated tutor-turn purge job, Google sign-in (v1.1).
+E1–E8 stories are `done`. E9 continues content runtime (seed → quiz → purge). Google sign-in remains v1.1.

@@ -5,6 +5,8 @@ import { users } from './users.js';
 /** Challenge shell — content only (E2-S4); optional pathway link. */
 export const challenges = pgTable('challenges', {
   id: uuid('id').defaultRandom().primaryKey(),
+  /** Stable content manual id (kebab-case), e.g. pause-before-react. */
+  slug: text('slug'),
   title: text('title').notNull(),
   summary: text('summary').notNull().default(''),
   locale: text('locale').notNull().default('en'),
