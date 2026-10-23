@@ -3,12 +3,16 @@ import cors from '@fastify/cors';
 import { TutorRuntimeError, createTutorRuntime, type TutorRuntime } from '@koode/agent-runtime';
 import { createGatewayFromEnv, type AiGateway } from '@koode/ai-gateway';
 import { createDatabase, type Database } from '@koode/database';
-import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
+import { randomUUID } from 'node:crypto';
+import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { AuthError, createAuthService, type AuthService } from './auth/service.js';
 import type { ApiConfig } from './config.js';
-import { signCookieValue, verifyCookieValue } from './crypto.js';
-import { getHealth } from './health.js';
+import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
+import { registerAuthRoutes } from './routes/auth.js';
+import { registerHealthRoutes } from './routes/health.js';
+import { registerTutorRoutes } from './routes/tutor.js';
+import { createTutorService, type TutorService } from './tutor/service.js';
 
 export type AppDeps = {
   config: ApiConfig;
@@ -16,53 +20,58 @@ export type AppDeps = {
   auth?: AuthService;
   gateway?: AiGateway;
   tutor?: TutorRuntime;
+  tutorService?: TutorService;
+  magicLinkLimiter?: MemoryRateLimiter;
+  tutorLimiter?: MemoryRateLimiter;
+  /** Silence logs in tests. */
+  disableLogger?: boolean;
 };
-
-declare module 'fastify' {
-  interface FastifyRequest {
-    sessionToken?: string;
-  }
-}
-
-function readSessionToken(request: FastifyRequest, config: ApiConfig): string | null {
-  const raw = request.cookies[config.cookieName];
-  if (!raw) {
-    return null;
-  }
-  return verifyCookieValue(raw, config.sessionSecret);
-}
-
-function sessionCookieOptions(config: ApiConfig) {
-  return {
-    path: '/',
-    httpOnly: true,
-    sameSite: 'lax' as const,
-    secure: config.cookieSecure,
-  };
-}
-
-function setSessionCookie(
-  reply: FastifyReply,
-  config: ApiConfig,
-  sessionToken: string,
-  expiresAt: Date,
-): void {
-  reply.setCookie(config.cookieName, signCookieValue(sessionToken, config.sessionSecret), {
-    ...sessionCookieOptions(config),
-    expires: expiresAt,
-  });
-}
-
-function clearSessionCookie(reply: FastifyReply, config: ApiConfig): void {
-  reply.clearCookie(config.cookieName, sessionCookieOptions(config));
-}
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const database = deps.database ?? createDatabase(deps.config.databaseUrl);
   const auth = deps.auth ?? createAuthService(database, deps.config);
   const gateway = deps.gateway ?? createGatewayFromEnv();
-  const tutor = deps.tutor ?? createTutorRuntime(gateway);
-  const app = Fastify({ logger: false });
+  const tutorRuntime = deps.tutor ?? createTutorRuntime(gateway);
+  const tutorService = deps.tutorService ?? createTutorService(database, tutorRuntime);
+  const magicLinkLimiter =
+    deps.magicLinkLimiter ??
+    createMemoryRateLimiter({
+      windowMs: deps.config.rateLimitMagicLinkWindowMs,
+      max: deps.config.rateLimitMagicLinkMax,
+    });
+  const tutorLimiter =
+    deps.tutorLimiter ??
+    createMemoryRateLimiter({
+      windowMs: deps.config.rateLimitTutorWindowMs,
+      max: deps.config.rateLimitTutorMax,
+    });
+
+  const app = Fastify({
+    logger: deps.disableLogger
+      ? false
+      : {
+          level: deps.config.logLevel,
+          redact: {
+            paths: [
+              'req.headers.authorization',
+              'req.headers.cookie',
+              'req.body.email',
+              'req.body.token',
+              'req.body.learnerMessage',
+              'req.body.devToken',
+            ],
+            remove: true,
+          },
+        },
+    genReqId: (request) => {
+      const incoming = request.headers['x-request-id'];
+      if (typeof incoming === 'string' && incoming.length > 0 && incoming.length <= 128) {
+        return incoming;
+      }
+      return randomUUID();
+    },
+    requestIdHeader: 'x-request-id',
+  });
 
   await app.register(cors, {
     origin: deps.config.appOrigin,
@@ -70,7 +79,11 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   });
   await app.register(cookie);
 
-  app.setErrorHandler((error, _request, reply) => {
+  app.addHook('onRequest', async (request, reply) => {
+    reply.header('x-request-id', request.id);
+  });
+
+  app.setErrorHandler((error, request, reply) => {
     if (error instanceof ZodError) {
       return reply.status(400).send({ error: 'invalid_request', details: error.flatten() });
     }
@@ -80,65 +93,18 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (error instanceof TutorRuntimeError) {
       return reply.status(error.statusCode).send({ error: error.message });
     }
-    app.log.error(error);
+    request.log.error({ err: error }, 'unhandled error');
     return reply.status(500).send({ error: 'internal_error' });
   });
 
-  app.get('/health', async () => ({
-    ...getHealth(),
-    aiAdapter: gateway.adapterId,
-  }));
-
-  app.post('/auth/magic-link/request', async (request) => {
-    return auth.requestMagicLink(request.body);
-  });
-
-  app.post('/auth/magic-link/verify', async (request, reply) => {
-    const result = await auth.verifyMagicLink(request.body);
-    setSessionCookie(reply, deps.config, result.sessionToken, result.expiresAt);
-    return { ok: true, user: result.user };
-  });
-
-  app.get('/auth/me', async (request, reply) => {
-    const sessionToken = readSessionToken(request, deps.config);
-    if (!sessionToken) {
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
-    const user = await auth.getUserForSessionToken(sessionToken);
-    if (!user) {
-      clearSessionCookie(reply, deps.config);
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
-    return { user };
-  });
-
-  app.post('/auth/logout', async (request, reply) => {
-    const sessionToken = readSessionToken(request, deps.config);
-    if (sessionToken) {
-      await auth.revokeSession(sessionToken);
-    }
-    clearSessionCookie(reply, deps.config);
-    return { ok: true };
-  });
-
-  app.post('/tutor/turn', async (request, reply) => {
-    const sessionToken = readSessionToken(request, deps.config);
-    if (!sessionToken) {
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
-    const user = await auth.getUserForSessionToken(sessionToken);
-    if (!user) {
-      clearSessionCookie(reply, deps.config);
-      return reply.status(401).send({ error: 'Unauthorized' });
-    }
-
-    const turn = await tutor.runTurn(request.body);
-    return {
-      ok: true,
-      adapter: tutor.gatewayId,
-      userId: user.id,
-      turn,
-    };
+  await registerHealthRoutes(app, gateway);
+  await registerAuthRoutes(app, { config: deps.config, auth, magicLinkLimiter });
+  await registerTutorRoutes(app, {
+    config: deps.config,
+    auth,
+    tutorService,
+    adapterId: gateway.adapterId,
+    tutorLimiter,
   });
 
   app.addHook('onClose', async () => {

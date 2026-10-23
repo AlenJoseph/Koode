@@ -32,4 +32,10 @@ describe('loadConfig', () => {
     );
     expect(loadConfig({ ...baseEnv, COOKIE_SECURE: 'true' }).cookieSecure).toBe(true);
   });
+
+  it('loads rate-limit defaults', () => {
+    const config = loadConfig(baseEnv);
+    expect(config.rateLimitMagicLinkMax).toBe(10);
+    expect(config.rateLimitTutorMax).toBe(60);
+  });
 });

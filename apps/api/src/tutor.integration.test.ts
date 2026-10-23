@@ -1,25 +1,15 @@
 import { createTutorRuntime } from '@koode/agent-runtime';
 import { createAiGateway, createStubAdapter } from '@koode/ai-gateway';
-import { createDatabase } from '@koode/database';
+import { createDatabase, tutorTurns } from '@koode/database';
+import { eq } from 'drizzle-orm';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from './app.js';
-import type { ApiConfig } from './config.js';
+import { testConfig } from './test-config.js';
 
 const databaseUrl = process.env.DATABASE_URL;
 
 describe.runIf(Boolean(databaseUrl))('tutor integration', () => {
-  const config: ApiConfig = {
-    port: 0,
-    databaseUrl: databaseUrl!,
-    sessionSecret: 'ci-session-secret-at-least-32-chars-long',
-    appOrigin: 'http://localhost:3000',
-    magicLinkDevMode: true,
-    cookieSecure: false,
-    sessionTtlMs: 1000 * 60 * 60,
-    magicLinkTtlMs: 1000 * 60 * 15,
-    cookieName: 'koode_session',
-  };
-
+  const config = testConfig(databaseUrl!);
   const database = createDatabase(config.databaseUrl);
   const gateway = createAiGateway({
     adapter: createStubAdapter({
@@ -56,7 +46,7 @@ describe.runIf(Boolean(databaseUrl))('tutor integration', () => {
   }
 
   it('rejects unauthenticated tutor turns', async () => {
-    const app = await buildApp({ config, database, gateway, tutor });
+    const app = await buildApp({ config, database, gateway, tutor, disableLogger: true });
     const response = await app.inject({
       method: 'POST',
       url: '/tutor/turn',
@@ -70,15 +60,16 @@ describe.runIf(Boolean(databaseUrl))('tutor integration', () => {
     await app.close();
   });
 
-  it('returns a schema-valid tutor turn for en and ml', async () => {
-    const app = await buildApp({ config, database, gateway, tutor });
+  it('returns and persists a schema-valid tutor turn for en and ml', async () => {
+    const app = await buildApp({ config, database, gateway, tutor, disableLogger: true });
     const cookie = await signIn(app, `tutor-${Date.now()}@example.com`);
 
+    let userId = '';
     for (const locale of ['en', 'ml'] as const) {
       const response = await app.inject({
         method: 'POST',
         url: '/tutor/turn',
-        headers: { cookie },
+        headers: { cookie, 'x-request-id': `req-${locale}-test` },
         payload: {
           locale,
           topic: 'local rainfall',
@@ -87,7 +78,14 @@ describe.runIf(Boolean(databaseUrl))('tutor integration', () => {
         },
       });
       expect(response.statusCode).toBe(200);
-      expect(response.json()).toMatchObject({
+      expect(response.headers['x-request-id']).toBe(`req-${locale}-test`);
+      const body = response.json() as {
+        ok: true;
+        adapter: string;
+        userId: string;
+        turn: { phase: string; nextPhase: string };
+      };
+      expect(body).toMatchObject({
         ok: true,
         adapter: 'stub',
         turn: {
@@ -95,7 +93,15 @@ describe.runIf(Boolean(databaseUrl))('tutor integration', () => {
           nextPhase: 'guiding_question',
         },
       });
+      userId = body.userId;
     }
+
+    const rows = await database.db.query.tutorTurns.findMany({
+      where: eq(tutorTurns.userId, userId),
+    });
+    expect(rows.length).toBeGreaterThanOrEqual(2);
+    expect(rows.every((row) => row.learnerMessageHash.length === 64)).toBe(true);
+    expect(rows.every((row) => !row.reply.includes('I want to learn'))).toBe(true);
 
     await app.close();
   });

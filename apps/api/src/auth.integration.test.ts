@@ -1,23 +1,13 @@
 import { createDatabase } from '@koode/database';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from './app.js';
-import type { ApiConfig } from './config.js';
+import { createMemoryRateLimiter } from './lib/rate-limit.js';
+import { testConfig } from './test-config.js';
 
 const databaseUrl = process.env.DATABASE_URL;
 
 describe.runIf(Boolean(databaseUrl))('auth integration', () => {
-  const config: ApiConfig = {
-    port: 0,
-    databaseUrl: databaseUrl!,
-    sessionSecret: 'ci-session-secret-at-least-32-chars-long',
-    appOrigin: 'http://localhost:3000',
-    magicLinkDevMode: true,
-    cookieSecure: false,
-    sessionTtlMs: 1000 * 60 * 60,
-    magicLinkTtlMs: 1000 * 60 * 15,
-    cookieName: 'koode_session',
-  };
-
+  const config = testConfig(databaseUrl!);
   const database = createDatabase(config.databaseUrl);
 
   afterAll(async () => {
@@ -25,14 +15,15 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
   });
 
   it('rejects unauthenticated /auth/me', async () => {
-    const app = await buildApp({ config, database });
+    const app = await buildApp({ config, database, disableLogger: true });
     const response = await app.inject({ method: 'GET', url: '/auth/me' });
     expect(response.statusCode).toBe(401);
+    expect(response.headers['x-request-id']).toBeTruthy();
     await app.close();
   });
 
   it('completes magic-link sign-in and logout', async () => {
-    const app = await buildApp({ config, database });
+    const app = await buildApp({ config, database, disableLogger: true });
     const email = `learner-${Date.now()}@example.com`;
 
     const requestLink = await app.inject({
@@ -86,7 +77,7 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
   });
 
   it('rejects reused magic-link tokens', async () => {
-    const app = await buildApp({ config, database });
+    const app = await buildApp({ config, database, disableLogger: true });
     const email = `reuse-${Date.now()}@example.com`;
 
     const requestLink = await app.inject({
@@ -117,6 +108,7 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
     const app = await buildApp({
       config: { ...config, magicLinkDevMode: false },
       database,
+      disableLogger: true,
     });
     const response = await app.inject({
       method: 'POST',
@@ -127,6 +119,45 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
     const body = response.json() as Record<string, unknown>;
     expect(body.devToken).toBeUndefined();
     expect(body.devVerifyUrl).toBeUndefined();
+    await app.close();
+  });
+
+  it('rate limits magic-link requests', async () => {
+    const limiter = createMemoryRateLimiter({ windowMs: 60_000, max: 2 });
+    const app = await buildApp({
+      config,
+      database,
+      magicLinkLimiter: limiter,
+      disableLogger: true,
+    });
+
+    const email = `rate-${Date.now()}@example.com`;
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/auth/magic-link/request',
+          payload: { email },
+        })
+      ).statusCode,
+    ).toBe(200);
+    expect(
+      (
+        await app.inject({
+          method: 'POST',
+          url: '/auth/magic-link/request',
+          payload: { email },
+        })
+      ).statusCode,
+    ).toBe(200);
+    const limited = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/request',
+      payload: { email },
+    });
+    expect(limited.statusCode).toBe(429);
+    expect(limited.headers['retry-after']).toBeTruthy();
+
     await app.close();
   });
 });

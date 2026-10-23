@@ -28,6 +28,8 @@ pnpm build
 | Web dictionaries | `apps/web/src/i18n/dictionaries.test.ts` |
 | API health / crypto | `apps/api/src/health.test.ts`, `crypto.test.ts` |
 | Auth integration | `apps/api/src/auth.integration.test.ts` (needs `DATABASE_URL`) |
+| Tutor integration | `apps/api/src/tutor.integration.test.ts` (persist + locales) |
+| Rate limiter | `apps/api/src/lib/rate-limit.test.ts` |
 
 Local database:
 

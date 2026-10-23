@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { consentRecords, learnerProfiles, magicLinkTokens, sessions, users } from './index.js';
+import {
+  consentRecords,
+  learnerProfiles,
+  magicLinkTokens,
+  sessions,
+  tutorTurns,
+  users,
+} from './index.js';
 
 describe('database schema', () => {
   it('exports learner-owned tables', () => {
@@ -8,5 +15,6 @@ describe('database schema', () => {
     expect(consentRecords).toBeDefined();
     expect(sessions).toBeDefined();
     expect(magicLinkTokens).toBeDefined();
+    expect(tutorTurns).toBeDefined();
   });
 });

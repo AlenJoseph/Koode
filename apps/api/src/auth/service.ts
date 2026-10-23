@@ -30,28 +30,30 @@ export function createAuthService(database: Database, config: ApiConfig) {
   const { db } = database;
 
   async function ensureUser(email: string, preferredLocale: Locale = 'en') {
-    const existing = await db.query.users.findFirst({
-      where: eq(users.email, email),
-    });
-    if (existing) {
-      return existing;
-    }
+    return db.transaction(async (tx) => {
+      const existing = await tx.query.users.findFirst({
+        where: eq(users.email, email),
+      });
+      if (existing) {
+        return existing;
+      }
 
-    const [created] = await db.insert(users).values({ email }).returning();
-    if (!created) {
-      throw new AuthError('Failed to create user', 500);
-    }
+      const [created] = await tx.insert(users).values({ email }).returning();
+      if (!created) {
+        throw new AuthError('Failed to create user', 500);
+      }
 
-    await db.insert(learnerProfiles).values({
-      userId: created.id,
-      preferredLocale,
+      await tx.insert(learnerProfiles).values({
+        userId: created.id,
+        preferredLocale,
+      });
+      await tx.insert(consentRecords).values({
+        userId: created.id,
+        consentType: 'terms_of_use_stub',
+        granted: true,
+      });
+      return created;
     });
-    await db.insert(consentRecords).values({
-      userId: created.id,
-      consentType: 'terms_of_use_stub',
-      granted: true,
-    });
-    return created;
   }
 
   async function toSessionUser(userId: string): Promise<SessionUser> {
