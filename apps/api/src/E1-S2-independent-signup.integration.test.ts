@@ -23,7 +23,7 @@ describe.runIf(Boolean(databaseUrl))('E1-S2 independent learner signup', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     expect(requestLink.statusCode).toBe(200);
     const { devToken } = requestLink.json() as { devToken: string };
@@ -99,6 +99,17 @@ describe.runIf(Boolean(databaseUrl))('E1-S2 independent learner signup', () => {
     await app.close();
   });
 
+  it('negative: learner request without ageConfirmed is rejected', async () => {
+    const app = await buildApp({ config, database, disableLogger: true });
+    const denied = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/request',
+      payload: { email: `no-age-${randomUUID()}@example.com`, intent: 'learner' },
+    });
+    expect(denied.statusCode).toBe(400);
+    await app.close();
+  });
+
   it('negative: invalid and reused tokens fail', async () => {
     const app = await buildApp({ config, database, disableLogger: true });
 
@@ -114,7 +125,7 @@ describe.runIf(Boolean(databaseUrl))('E1-S2 independent learner signup', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = requestLink.json() as { devToken: string };
 

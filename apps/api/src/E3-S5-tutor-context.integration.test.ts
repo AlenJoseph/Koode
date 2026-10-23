@@ -63,7 +63,11 @@ describe.runIf(Boolean(databaseUrl))('E3-S5 tutor context', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent },
+      payload: {
+        email,
+        intent,
+        ...(intent === 'learner' ? { ageConfirmed: true } : {}),
+      },
     });
     const { devToken } = requestLink.json() as { devToken: string };
     const verify = await app.inject({
@@ -126,8 +130,20 @@ describe.runIf(Boolean(databaseUrl))('E3-S5 tutor context', () => {
       url: '/tutor/turns',
       headers: { cookie: teacher },
     });
-    expect(teacherTurns.statusCode).toBe(200);
-    expect(teacherTurns.json()).toMatchObject({ turns: [] });
+    expect(teacherTurns.statusCode).toBe(403);
+
+    const teacherTurn = await app.inject({
+      method: 'POST',
+      url: '/tutor/turn',
+      headers: { cookie: teacher },
+      payload: {
+        locale: 'en',
+        topic: 'should-fail',
+        learnerMessage: 'Teachers cannot use tutor',
+        phase: 'explain',
+      },
+    });
+    expect(teacherTurn.statusCode).toBe(403);
 
     await app.close();
   });

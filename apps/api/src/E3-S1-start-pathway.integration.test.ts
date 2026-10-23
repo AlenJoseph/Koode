@@ -50,7 +50,7 @@ describe.runIf(Boolean(databaseUrl))('E3-S1 start pathway', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = requestLink.json() as { devToken: string };
     const verify = await app.inject({

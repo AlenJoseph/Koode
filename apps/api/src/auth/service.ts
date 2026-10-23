@@ -32,7 +32,7 @@ function asSessionRole(role: string): UserRole {
   if (role === 'student' || role === 'learner' || role === 'teacher' || role === 'admin') {
     return role;
   }
-  return 'teacher';
+  throw new AuthError('Invalid account role', 500);
 }
 
 export function createAuthService(database: Database, config: ApiConfig) {
@@ -150,11 +150,17 @@ export function createAuthService(database: Database, config: ApiConfig) {
       }
       throw new AuthError('This email cannot sign in as a learner', 403);
     }
-    return createAccountWithPrimaryEmail({
+    const created = await createAccountWithPrimaryEmail({
       role: 'learner',
       email: normalized,
       preferredLocale,
     });
+    await db.insert(consentRecords).values({
+      userId: created.id,
+      consentType: 'age_13_plus_confirmed',
+      granted: true,
+    });
+    return created;
   }
 
   async function toSessionUser(userId: string): Promise<SessionUser> {
@@ -401,6 +407,13 @@ export function createAuthService(database: Database, config: ApiConfig) {
     requireAdmin(user: SessionUser): void {
       if (user.role !== 'admin') {
         throw new AuthError('Admins only', 403);
+      }
+    },
+
+    /** Independent learners and classroom students — not teachers/admins. */
+    requireLearnerSide(user: SessionUser): void {
+      if (user.role !== 'learner' && user.role !== 'student') {
+        throw new AuthError('Learners only', 403);
       }
     },
   };

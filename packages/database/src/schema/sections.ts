@@ -29,6 +29,8 @@ export const sectionStudents = pgTable(
       .references(() => users.id, { onDelete: 'cascade' }),
     displayName: text('display_name').notNull(),
     secretWordsHash: text('secret_words_hash').notNull(),
+    /** Soft-remove from roster; re-add with same display name revives this row/user. */
+    removedAt: timestamp('removed_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [

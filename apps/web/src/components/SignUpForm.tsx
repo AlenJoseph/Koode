@@ -25,7 +25,7 @@ export function SignUpForm({ locale, dictionary }: Props) {
     setPending(true);
     setError(null);
     try {
-      const result = await requestMagicLink(email, 'learner');
+      const result = await requestMagicLink(email, 'learner', { ageConfirmed: true });
       if (result.devVerifyUrl) {
         const url = new URL(result.devVerifyUrl);
         setDevVerifyUrl(`/${locale}/auth/verify?token=${url.searchParams.get('token')}`);

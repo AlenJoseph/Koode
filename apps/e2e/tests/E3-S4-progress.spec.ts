@@ -40,7 +40,7 @@ test.describe('E3-S4 learner progress', () => {
 
     const learnerEmail = `e2e-e3s4-learner-${Date.now()}@example.com`;
     const requested = await page.request.post(`${apiBase}/auth/magic-link/request`, {
-      data: { email: learnerEmail, intent: 'learner' },
+      data: { email: learnerEmail, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = (await requested.json()) as { devToken: string };
     await page.request.post(`${apiBase}/auth/magic-link/verify`, {

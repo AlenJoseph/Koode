@@ -27,6 +27,7 @@ export async function registerTutorRoutes(
       clearSessionCookie(reply, config);
       return reply.status(401).send({ error: 'Unauthorized' });
     }
+    auth.requireLearnerSide(user);
     const turns = await tutorService.listForUser(user.id);
     return { turns };
   });
@@ -41,6 +42,7 @@ export async function registerTutorRoutes(
       clearSessionCookie(reply, config);
       return reply.status(401).send({ error: 'Unauthorized' });
     }
+    auth.requireLearnerSide(user);
 
     const limit = tutorLimiter.check(`tutor:${user.id}`);
     if (!limit.ok) {

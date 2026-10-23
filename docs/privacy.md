@@ -6,6 +6,7 @@ Koode is built for school-age learners (13–18). This document is the product s
 
 - Independent learner sign-up states that Koode is for ages **13–18**.
 - There is **no under-13 sign-up path** in the product UI.
+- Learner magic-link requests require `ageConfirmed: true`; the API rejects learner sign-up without it and records `age_13_plus_confirmed` consent on new learner accounts.
 - Classroom students may join via section code without email; teachers remain accountable for local school policy.
 
 ## Data classification

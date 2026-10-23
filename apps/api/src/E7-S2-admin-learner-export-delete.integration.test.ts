@@ -48,7 +48,7 @@ describe.runIf(Boolean(databaseUrl))('E7-S2 admin learner export/delete', () => 
     const requested = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     expect(requested.statusCode).toBe(200);
     const { devToken } = requested.json() as { devToken: string };

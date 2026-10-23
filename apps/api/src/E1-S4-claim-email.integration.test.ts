@@ -96,7 +96,7 @@ describe.runIf(Boolean(databaseUrl))('E1-S4 claim email', () => {
     const later = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email: claimEmail, intent: 'learner' },
+      payload: { email: claimEmail, intent: 'learner', ageConfirmed: true },
     });
     const laterToken = (later.json() as { devToken: string }).devToken;
     const laterVerify = await app.inject({

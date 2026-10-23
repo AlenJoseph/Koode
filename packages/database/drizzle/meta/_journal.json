@@ -106,6 +106,13 @@
       "when": 1761249600000,
       "tag": "0014_content_slugs",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1761253200000,
+      "tag": "0015_section_students_removed",
+      "breakpoints": true
     }
   ]
 }

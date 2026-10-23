@@ -30,7 +30,11 @@ describe.runIf(Boolean(databaseUrl))('E2-S2 admin authz', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent },
+      payload: {
+        email,
+        intent,
+        ...(intent === 'learner' ? { ageConfirmed: true } : {}),
+      },
     });
     expect(requestLink.statusCode).toBe(200);
     const { devToken } = requestLink.json() as { devToken: string };

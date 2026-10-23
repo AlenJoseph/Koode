@@ -9,7 +9,11 @@ async function signInWithIntent(
   intent: 'teacher' | 'learner',
 ): Promise<void> {
   const requested = await page.request.post(`${apiBase}/auth/magic-link/request`, {
-    data: { email, intent },
+    data: {
+      email,
+      intent,
+      ...(intent === 'learner' ? { ageConfirmed: true } : {}),
+    },
   });
   expect(requested.ok()).toBeTruthy();
   const { devToken } = (await requested.json()) as { devToken: string };

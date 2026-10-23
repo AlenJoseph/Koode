@@ -39,6 +39,19 @@ export async function registerLearningRoutes(
     return user;
   }
 
+  async function requireLearner(
+    request: FastifyRequest,
+    reply: FastifyReply,
+  ): Promise<SessionUser | null> {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return null;
+    }
+    auth.requireLearnerSide(user);
+    return user;
+  }
+
+  /** Catalog browse — any authenticated role (teachers may peek). */
   app.get('/pathways', async (request, reply) => {
     const user = await requireUser(request, reply);
     if (!user) {
@@ -49,7 +62,7 @@ export async function registerLearningRoutes(
   });
 
   app.get('/pathways/enrollments', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -58,7 +71,7 @@ export async function registerLearningRoutes(
   });
 
   app.post('/pathways/:pathwayId/enroll', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -81,7 +94,7 @@ export async function registerLearningRoutes(
   });
 
   app.get('/challenges/attempts', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -90,7 +103,7 @@ export async function registerLearningRoutes(
   });
 
   app.post('/challenges/:challengeId/attempts', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -104,7 +117,7 @@ export async function registerLearningRoutes(
   });
 
   app.post('/challenges/attempts/:attemptId/complete', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -119,7 +132,7 @@ export async function registerLearningRoutes(
 
   /** E9-S2 — quiz from content manuals (no correctOptionId until submit). */
   app.get('/challenges/:challengeId/quiz', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -129,7 +142,7 @@ export async function registerLearningRoutes(
   });
 
   app.post('/challenges/attempts/:attemptId/quiz', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -149,7 +162,7 @@ export async function registerLearningRoutes(
   });
 
   app.get('/projects', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -158,7 +171,7 @@ export async function registerLearningRoutes(
   });
 
   app.post('/projects', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }
@@ -168,7 +181,7 @@ export async function registerLearningRoutes(
   });
 
   app.patch('/projects/:projectId', async (request, reply) => {
-    const user = await requireUser(request, reply);
+    const user = await requireLearner(request, reply);
     if (!user) {
       return;
     }

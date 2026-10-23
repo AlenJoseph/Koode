@@ -20,7 +20,7 @@ describe.runIf(Boolean(databaseUrl))('E1-S5 manage emails', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = requestLink.json() as { devToken: string };
     const verify = await app.inject({

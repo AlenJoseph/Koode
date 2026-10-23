@@ -24,7 +24,7 @@ async function bootstrapAdmin(page: Page): Promise<string> {
 async function createLearner(page: Page): Promise<{ userId: string; email: string }> {
   const email = `e2e-gdpr-learner-${Date.now()}@example.com`;
   const requested = await page.request.post(`${apiBase}/auth/magic-link/request`, {
-    data: { email, intent: 'learner' },
+    data: { email, intent: 'learner', ageConfirmed: true },
   });
   expect(requested.ok()).toBeTruthy();
   const { devToken } = (await requested.json()) as { devToken: string };
@@ -70,7 +70,7 @@ test.describe('E7-S2 admin learner export/delete', () => {
     const victim = await createLearner(page);
     const attackerEmail = `e2e-gdpr-attacker-${Date.now()}@example.com`;
     const requested = await page.request.post(`${apiBase}/auth/magic-link/request`, {
-      data: { email: attackerEmail, intent: 'learner' },
+      data: { email: attackerEmail, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = (await requested.json()) as { devToken: string };
     await page.request.post(`${apiBase}/auth/magic-link/verify`, { data: { token: devToken } });

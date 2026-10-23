@@ -209,10 +209,10 @@ Bridge authored `content/` manuals into the live product.
 ## v1 + E9 + E10 complete
 
 E1–E10 stories are `done` on `main`.  
-**Validated gaps + ordered next work:** [`validation-and-next.md`](./validation-and-next.md) (age API, class-size race, re-add identity, landing/app CTA align, admin≠teacher shell, then v1.1+).
+**Pre-pilot P0 + P1 polish landed** — see [`validation-and-next.md`](./validation-and-next.md).
 
 Remaining product buckets (not reopened as E1–E10):
 
-- **Pre-pilot hardening** — see P0/P1 in validation doc  
+- **Legal / ops** — ToS review; scheduled tutor purge cron  
 - **v1.1** — Google sign-in, full ml UI + voice  
 - **v2** — parents, school admin / multi-org  

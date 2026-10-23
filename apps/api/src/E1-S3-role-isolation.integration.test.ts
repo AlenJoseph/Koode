@@ -25,7 +25,11 @@ describe.runIf(Boolean(databaseUrl))('E1-S3 role isolation', () => {
     const requestLink = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent },
+      payload: {
+        email,
+        intent,
+        ...(intent === 'learner' ? { ageConfirmed: true } : {}),
+      },
     });
     const { devToken } = requestLink.json() as { devToken: string };
     return app.inject({

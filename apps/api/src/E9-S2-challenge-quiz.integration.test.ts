@@ -37,7 +37,7 @@ describe.runIf(Boolean(databaseUrl))('E9-S2 challenge quiz', () => {
     const requested = await app.inject({
       method: 'POST',
       url: '/auth/magic-link/request',
-      payload: { email, intent: 'learner' },
+      payload: { email, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = requested.json() as { devToken: string };
     const verify = await app.inject({

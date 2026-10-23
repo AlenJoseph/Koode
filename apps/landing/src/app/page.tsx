@@ -73,14 +73,14 @@ export default function LandingPage() {
               with a join code. No email required for kids in a section.
             </p>
             <div className="ctas">
-              <a className="btn btn-primary" href={`${appOrigin}/en/sign-in`}>
-                I’m a teacher
-              </a>
-              <a className="btn btn-secondary" href={`${appOrigin}/en/sign-up`}>
+              <a className="btn btn-primary" href={`${appOrigin}/en/sign-up`}>
                 I’m a student
               </a>
               <a className="btn btn-accent" href={`${appOrigin}/en/join`}>
                 Join my class
+              </a>
+              <a className="btn btn-secondary" href={`${appOrigin}/en/sign-in`}>
+                I’m a teacher
               </a>
             </div>
           </div>
@@ -172,14 +172,6 @@ export default function LandingPage() {
         <p>Three doors. Same product behind them.</p>
         <div className="paths">
           <article className="path-card">
-            <div className="badge teacher">Teachers</div>
-            <h3>Run a section</h3>
-            <p>Sign in, create a class, share the code, add students, point them at a pathway.</p>
-            <p className="card-link">
-              <a href={`${appOrigin}/en/sign-in`}>Teacher sign in →</a>
-            </p>
-          </article>
-          <article className="path-card">
             <div className="badge">Solo learners</div>
             <h3>Learn on your own</h3>
             <p>Sign up with email, pick a pathway, and practise at your pace.</p>
@@ -193,6 +185,14 @@ export default function LandingPage() {
             <p>No email. Section code plus secret words from your teacher.</p>
             <p className="card-link">
               <a href={`${appOrigin}/en/join`}>Join class →</a>
+            </p>
+          </article>
+          <article className="path-card">
+            <div className="badge teacher">Teachers</div>
+            <h3>Run a section</h3>
+            <p>Sign in, create a class, share the code, add students, point them at a pathway.</p>
+            <p className="card-link">
+              <a href={`${appOrigin}/en/sign-in`}>Teacher sign in →</a>
             </p>
           </article>
         </div>

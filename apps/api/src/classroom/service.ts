@@ -15,7 +15,7 @@ import {
   users,
   type Database,
 } from '@koode/database';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
 import { AuthError } from '../auth/service.js';
 import { hashToken } from '../crypto.js';
 import { generateSecretWords, normalizeSecretWords } from '../lib/secret-words.js';
@@ -138,7 +138,7 @@ export function createClassroomService(database: Database) {
     async listRoster(teacherId: string, sectionId: string) {
       await this.getSectionForTeacher(teacherId, sectionId);
       const roster = await db.query.sectionStudents.findMany({
-        where: eq(sectionStudents.sectionId, sectionId),
+        where: and(eq(sectionStudents.sectionId, sectionId), isNull(sectionStudents.removedAt)),
       });
       return roster.map((row) => ({
         id: row.id,
@@ -175,12 +175,16 @@ export function createClassroomService(database: Database) {
       }
 
       const secretWords = generateSecretWords();
+      const secretWordsHash = hashToken(normalizeSecretWords(secretWords));
       const normalizedName = displayName.trim();
 
       const created = await db.transaction(async (tx) => {
+        // Serialize roster mutations for this section (class-size race).
+        await tx.execute(sql`SELECT id FROM sections WHERE id = ${sectionId} FOR UPDATE`);
+
         const rosterCount = await tx.$count(
           sectionStudents,
-          eq(sectionStudents.sectionId, sectionId),
+          and(eq(sectionStudents.sectionId, sectionId), isNull(sectionStudents.removedAt)),
         );
         if (rosterCount >= MAX_SECTION_STUDENTS) {
           throw new AuthError(
@@ -189,14 +193,26 @@ export function createClassroomService(database: Database) {
           );
         }
 
-        const clash = await tx.query.sectionStudents.findFirst({
+        const existing = await tx.query.sectionStudents.findFirst({
           where: and(
             eq(sectionStudents.sectionId, sectionId),
             eq(sectionStudents.displayName, normalizedName),
           ),
         });
-        if (clash) {
+        if (existing && !existing.removedAt) {
           throw new AuthError('Display name already used in this section', 409);
+        }
+
+        if (existing?.removedAt) {
+          const [membership] = await tx
+            .update(sectionStudents)
+            .set({ secretWordsHash, removedAt: null })
+            .where(eq(sectionStudents.id, existing.id))
+            .returning();
+          if (!membership) {
+            throw new AuthError('Failed to re-add student', 500);
+          }
+          return { membership, studentUserId: existing.userId };
         }
 
         const [studentUser] = await tx.insert(users).values({ role: 'student' }).returning();
@@ -221,7 +237,7 @@ export function createClassroomService(database: Database) {
             sectionId,
             userId: studentUser.id,
             displayName: normalizedName,
-            secretWordsHash: hashToken(normalizeSecretWords(secretWords)),
+            secretWordsHash,
           })
           .returning();
 
@@ -229,12 +245,12 @@ export function createClassroomService(database: Database) {
           throw new AuthError('Failed to add student', 500);
         }
 
-        return { membership, studentUser };
+        return { membership, studentUserId: studentUser.id };
       });
 
       return {
         id: created.membership.id,
-        userId: created.studentUser.id,
+        userId: created.studentUserId,
         displayName: created.membership.displayName,
         /** Shown once for teacher login cards — not stored in plaintext. */
         secretWords,
@@ -248,6 +264,7 @@ export function createClassroomService(database: Database) {
         where: and(
           eq(sectionStudents.id, membershipId),
           eq(sectionStudents.sectionId, sectionId),
+          isNull(sectionStudents.removedAt),
         ),
       });
       if (!membership) {
@@ -271,20 +288,24 @@ export function createClassroomService(database: Database) {
       };
     },
 
-    /** Drop section membership only — the user account remains. */
+    /** Soft-remove membership — user account remains; re-add revives same user. */
     async removeStudent(teacherId: string, sectionId: string, membershipId: string) {
       await this.getSectionForTeacher(teacherId, sectionId);
       const membership = await db.query.sectionStudents.findFirst({
         where: and(
           eq(sectionStudents.id, membershipId),
           eq(sectionStudents.sectionId, sectionId),
+          isNull(sectionStudents.removedAt),
         ),
       });
       if (!membership) {
         throw new AuthError('Student not found in section', 404);
       }
       const userId = membership.userId;
-      await db.delete(sectionStudents).where(eq(sectionStudents.id, membershipId));
+      await db
+        .update(sectionStudents)
+        .set({ removedAt: new Date() })
+        .where(eq(sectionStudents.id, membershipId));
       const stillExists = await db.query.users.findFirst({ where: eq(users.id, userId) });
       if (!stillExists) {
         throw new AuthError('User account missing after remove', 500);
@@ -301,7 +322,7 @@ export function createClassroomService(database: Database) {
         throw new AuthError('Section not found', 404);
       }
       const roster = await db.query.sectionStudents.findMany({
-        where: eq(sectionStudents.sectionId, section.id),
+        where: and(eq(sectionStudents.sectionId, section.id), isNull(sectionStudents.removedAt)),
       });
       return {
         code: section.code,
@@ -323,6 +344,7 @@ export function createClassroomService(database: Database) {
         where: and(
           eq(sectionStudents.sectionId, section.id),
           eq(sectionStudents.displayName, parsed.displayName.trim()),
+          isNull(sectionStudents.removedAt),
         ),
       });
       if (!membership) {

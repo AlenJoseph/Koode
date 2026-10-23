@@ -10,10 +10,6 @@ type Props = {
   dictionary: Record<MessageKey, string>;
 };
 
-function isTeacherRole(role: string | undefined): boolean {
-  return role === 'teacher' || role === 'admin';
-}
-
 export function ShellHeader({ locale, dictionary }: Props) {
   const otherLocale = locale === 'en' ? 'ml' : 'en';
   const [user, setUser] = useState<SessionUser | null | undefined>(undefined);
@@ -30,7 +26,11 @@ export function ShellHeader({ locale, dictionary }: Props) {
     window.location.href = `/${locale}`;
   }
 
-  const teacher = user ? isTeacherRole(user.role) : false;
+  const role = user?.role;
+  const isTeacher = role === 'teacher';
+  const isAdmin = role === 'admin';
+  const isLearnerSide = role === 'learner' || role === 'student';
+  const sessionPending = user === undefined;
 
   return (
     <header className="topbar">
@@ -45,8 +45,11 @@ export function ShellHeader({ locale, dictionary }: Props) {
         </Link>
       </div>
 
-      <nav className="topbar-nav" aria-label="Primary">
-        {!user || !teacher ? (
+      <nav className="topbar-nav" aria-label="Primary" aria-busy={sessionPending || undefined}>
+        {sessionPending ? (
+          <span className="nav-quiet">{dictionary['health.ok']}…</span>
+        ) : null}
+        {!sessionPending && (!user || isLearnerSide) ? (
           <>
             <Link href={`/${locale}/pathways`}>{dictionary['nav.pathways']}</Link>
             <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
@@ -54,7 +57,7 @@ export function ShellHeader({ locale, dictionary }: Props) {
             <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
           </>
         ) : null}
-        {teacher ? (
+        {!sessionPending && isTeacher ? (
           <>
             <Link href={`/${locale}/classroom`}>{dictionary['nav.classroom']}</Link>
             <Link href={`/${locale}/insights`}>{dictionary['nav.insights']}</Link>
@@ -63,7 +66,10 @@ export function ShellHeader({ locale, dictionary }: Props) {
             </Link>
           </>
         ) : null}
-        {!user ? (
+        {!sessionPending && isAdmin ? (
+          <Link href={`/${locale}/admin`}>{dictionary['nav.admin']}</Link>
+        ) : null}
+        {!sessionPending && !user ? (
           <Link className="nav-quiet" href={`/${locale}/join`}>
             {dictionary['nav.join']}
           </Link>
@@ -71,7 +77,7 @@ export function ShellHeader({ locale, dictionary }: Props) {
       </nav>
 
       <div className="topbar-actions">
-        {!user ? (
+        {sessionPending ? null : !user ? (
           <>
             <Link className="btn btn-primary btn-sm" href={`/${locale}/sign-up`}>
               {dictionary['nav.signUp']}

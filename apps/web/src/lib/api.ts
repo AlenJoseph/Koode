@@ -29,6 +29,7 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
 export async function requestMagicLink(
   email: string,
   intent: 'teacher' | 'learner' = 'teacher',
+  options?: { ageConfirmed?: boolean },
 ): Promise<{
   ok: true;
   email: string;
@@ -38,7 +39,11 @@ export async function requestMagicLink(
 }> {
   return apiFetch('/auth/magic-link/request', {
     method: 'POST',
-    body: JSON.stringify({ email, intent }),
+    body: JSON.stringify({
+      email,
+      intent,
+      ...(options?.ageConfirmed === true ? { ageConfirmed: true } : {}),
+    }),
   });
 }
 

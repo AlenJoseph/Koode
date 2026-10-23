@@ -8,10 +8,22 @@ export const userRoleSchema = z.enum(['teacher', 'student', 'learner', 'admin'])
 
 export const magicLinkIntentSchema = z.enum(['teacher', 'learner', 'claim', 'admin']);
 
-export const magicLinkRequestSchema = z.object({
-  email: emailSchema,
-  intent: magicLinkIntentSchema.default('teacher'),
-});
+export const magicLinkRequestSchema = z
+  .object({
+    email: emailSchema,
+    intent: magicLinkIntentSchema.default('teacher'),
+    /** Required when intent is learner (independent sign-up age gate). */
+    ageConfirmed: z.boolean().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.intent === 'learner' && data.ageConfirmed !== true) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Age confirmation required for learner sign-up (13+)',
+        path: ['ageConfirmed'],
+      });
+    }
+  });
 
 export const magicLinkVerifySchema = z.object({
   token: z.string().min(20).max(200),

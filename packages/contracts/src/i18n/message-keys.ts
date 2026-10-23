@@ -16,6 +16,8 @@ export const messageKeys = [
   'nav.signIn',
   'nav.signUp',
   'nav.signOut',
+  'nav.admin',
+  'auth.teacherOnlyHint',
   'locale.switch',
   'locale.en',
   'locale.ml',

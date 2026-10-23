@@ -84,7 +84,9 @@ describe.runIf(Boolean(databaseUrl))('E4-S2 remove student', () => {
       payload: { displayName: 'Riya' },
     });
     expect(readd.statusCode).toBe(200);
-    const newSecret = (readd.json() as { student: { secretWords: string } }).student.secretWords;
+    const revived = (readd.json() as { student: { userId: string; secretWords: string } }).student;
+    expect(revived.userId).toBe(student.userId);
+    const newSecret = revived.secretWords;
 
     const oldStillFails = await app.inject({
       method: 'POST',

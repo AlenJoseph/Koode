@@ -51,7 +51,7 @@ test.describe('E2-S3 admin pathways', () => {
   test('negative: learner cannot create pathways via API', async ({ page }) => {
     const email = `e2e-path-learner-${Date.now()}@example.com`;
     const requested = await page.request.post(`${apiBase}/auth/magic-link/request`, {
-      data: { email, intent: 'learner' },
+      data: { email, intent: 'learner', ageConfirmed: true },
     });
     const { devToken } = (await requested.json()) as { devToken: string };
     await page.request.post(`${apiBase}/auth/magic-link/verify`, {
