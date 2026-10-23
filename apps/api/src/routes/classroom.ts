@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyRequest } from 'fastify';
 import type { AuthService } from '../auth/service.js';
 import type { ClassroomService } from '../classroom/service.js';
 import type { ApiConfig } from '../config.js';
+import type { createInsightsService } from '../insights/service.js';
 import { clearSessionCookie, readSessionToken, setSessionCookie } from '../lib/cookies.js';
 import { authRateLimitConfig } from '../lib/route-rate-limit.js';
 
@@ -11,9 +12,10 @@ export async function registerClassroomRoutes(
     config: ApiConfig;
     auth: AuthService;
     classroom: ClassroomService;
+    insights: ReturnType<typeof createInsightsService>;
   },
 ): Promise<void> {
-  const { config, auth, classroom } = deps;
+  const { config, auth, classroom, insights } = deps;
   const rateLimit = authRateLimitConfig(config);
 
   async function currentUser(request: FastifyRequest) {
@@ -109,6 +111,17 @@ export async function registerClassroomRoutes(
     const { sectionId } = request.params as { sectionId: string };
     const roster = await classroom.listRoster(user.id, sectionId);
     return { roster };
+  });
+
+  app.get('/classroom/sections/:sectionId/insights', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId } = request.params as { sectionId: string };
+    const insightsPayload = await insights.getSectionLearningInsights(user.id, sectionId);
+    return { insights: insightsPayload };
   });
 
   app.get('/classroom/sections/:sectionId/export', async (request, reply) => {

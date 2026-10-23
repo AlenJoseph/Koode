@@ -11,6 +11,7 @@ import { AuthError, createAuthService, type AuthService } from './auth/service.j
 import { createClassroomService, type ClassroomService } from './classroom/service.js';
 import type { ApiConfig } from './config.js';
 import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
+import { createInsightsService } from './insights/service.js';
 import { createLearnerChallengeService } from './learning/challenges-learner.js';
 import { createLearnerPathwayService } from './learning/pathways-learner.js';
 import { createProjectService } from './learning/projects.js';
@@ -150,6 +151,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     config: deps.config,
     auth,
     classroom,
+    insights: createInsightsService(database, classroom),
   });
   await registerTutorRoutes(app, {
     config: deps.config,
