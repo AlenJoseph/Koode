@@ -13,6 +13,8 @@ export type ApiConfig = {
   rateLimitMagicLinkWindowMs: number;
   rateLimitTutorMax: number;
   rateLimitTutorWindowMs: number;
+  /** Required to call first-run admin bootstrap. Empty = bootstrap disabled. */
+  bootstrapSecret: string;
 };
 
 function parseBool(value: string | undefined, fallback: boolean): boolean {
@@ -62,5 +64,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     rateLimitMagicLinkWindowMs: parsePositiveInt(env.RATE_LIMIT_MAGIC_LINK_WINDOW_MS, 15 * 60_000),
     rateLimitTutorMax: parsePositiveInt(env.RATE_LIMIT_TUTOR_MAX, 60),
     rateLimitTutorWindowMs: parsePositiveInt(env.RATE_LIMIT_TUTOR_WINDOW_MS, 60_000),
+    bootstrapSecret: env.BOOTSTRAP_SECRET ?? '',
   };
 }

@@ -6,14 +6,16 @@ Derived from [`requirements-v1.md`](./requirements-v1.md).
 ## Delivery rules (mandatory)
 
 1. **One story at a time** — small PR-sized slice; no epic-wide dumps.
-2. **Independent test suite per story** — own Vitest file(s) and/or Playwright spec file named after the story id (e.g. `e2e/E1-S2-independent-signup.spec.ts`). Suites must not share mutable fixtures or depend on another story’s e2e having run first.
-3. **Happy + negative paths** in that suite before calling the story done.
-4. **Gate before next story:**
-   - `pnpm test` (unit/integration) green  
-   - Story’s Playwright suite green (`pnpm test:e2e -- <spec>` or filter by name)  
-   - **Subagent verification** (explore or generalPurpose): review diff against acceptance criteria, confirm tests cover happy/negative, flag gaps  
-5. **Commit only after gate passes** (when you ask to commit).
-6. Ask before new packages/frameworks (OAuth/Google is **v1.1**, not these epics).
+2. **Independent test suite per story** — own Vitest file(s) **and** a Playwright spec named after the story id (e.g. `apps/e2e/tests/E2-S1-admin-bootstrap.spec.ts`). Suites must not share mutable fixtures or depend on another story’s e2e having run first.
+3. **Playwright is mandatory for every story** — at least one happy path and one negative path in the browser (or UI-visible API failure). API-only stories still get a thin Playwright smoke against the UI/route that exposes the behaviour.
+4. **Happy + negative paths** in API + Playwright before calling the story done.
+5. **Gate before next story:**
+   - Story Vitest suite green  
+   - Story Playwright suite green (`pnpm --filter @koode/e2e exec playwright test tests/E*-S*-*.spec.ts`)  
+   - **Subagent verification** against acceptance criteria  
+6. **Commit + push** after gate passes.
+7. Ask before new packages/frameworks (OAuth/Google is **v1.1**, not these epics).
+
 
 ### Status legend
 
@@ -58,8 +60,8 @@ Reference only — not re-opened unless a later story requires a fix.
 
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
-| **E2-S1** | First-run admin bootstrap | Empty DB / flag: bootstrap creates one platform admin; second bootstrap refused; credentials not logged in plaintext | `E2-S1-admin-bootstrap.integration.test.ts` | `todo` |
-| **E2-S2** | Admin authz | Only `role=admin` hits `/admin/*`; teacher/learner get 403 | API negative tests | `todo` |
+| **E2-S1** | First-run admin bootstrap | Empty DB / flag: bootstrap creates one platform admin; second bootstrap refused; credentials not logged in plaintext | `E2-S1-admin-bootstrap.integration.test.ts` + `e2e/E2-S1-admin-bootstrap.spec.ts` | `done` |
+| **E2-S2** | Admin authz | Only `role=admin` hits `/admin/*`; teacher/learner get 403 | API + `e2e/E2-S2-admin-authz.spec.ts` | `todo` |
 | **E2-S3** | Pathways CRUD | Admin create/list/update/archive pathway (title, summary, locale=en) | API + `e2e/E2-S3-admin-pathways.spec.ts` | `todo` |
 | **E2-S4** | Challenges CRUD | Admin create/list/update/archive challenge; optional link to pathway | API + `e2e/E2-S4-admin-challenges.spec.ts` | `todo` |
 

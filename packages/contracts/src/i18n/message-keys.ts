@@ -33,8 +33,17 @@ export const messageKeys = [
   'auth.claimHint',
   'auth.claimSend',
   'auth.claimDone',
+  'admin.bootstrapTitle',
+  'admin.bootstrapHint',
+  'admin.bootstrapSecret',
+  'admin.bootstrapSubmit',
+  'admin.bootstrapDone',
+  'admin.bootstrapAlready',
+  'admin.bootstrapDisabled',
+  'admin.bootstrapError',
   'home.welcome',
   'home.signedOutHint',
+
 
 
   'tutor.title',

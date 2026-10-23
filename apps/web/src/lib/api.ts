@@ -55,6 +55,30 @@ export async function requestClaimEmail(email: string): Promise<{
   });
 }
 
+export async function getBootstrapStatus(): Promise<{
+  bootstrapped: boolean;
+  bootstrapEnabled: boolean;
+}> {
+  return apiFetch('/admin/bootstrap/status');
+}
+
+export async function bootstrapAdmin(
+  email: string,
+  bootstrapSecret: string,
+): Promise<{
+  ok: true;
+  email: string;
+  userId: string;
+  devToken?: string;
+  devVerifyUrl?: string;
+}> {
+  return apiFetch('/admin/bootstrap', {
+    method: 'POST',
+    body: JSON.stringify({ email, bootstrapSecret }),
+  });
+}
+
+
 export async function fetchMe(): Promise<{ user: SessionUser } | null> {
   const response = await fetch(`${apiBase}/auth/me`, {
     credentials: 'include',

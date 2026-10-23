@@ -27,11 +27,18 @@ export async function registerAuthRoutes(
   });
 
   app.post('/auth/magic-link/verify', async (request, reply) => {
+    const limit = magicLinkLimiter.check(`magic-verify:${request.ip}`);
+    if (!limit.ok) {
+      reply.header('retry-after', String(limit.retryAfterSec));
+      return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
+    }
+
     const result = await auth.verifyMagicLink(request.body);
     setSessionCookie(reply, config, result.sessionToken, result.expiresAt);
     request.log.info({ event: 'auth.session_created', userId: result.user.id }, 'session created');
     return { ok: true, user: result.user };
   });
+
 
   app.post('/auth/emails/claim/request', async (request, reply) => {
     const sessionToken = readSessionToken(request, config);

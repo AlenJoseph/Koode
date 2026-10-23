@@ -27,5 +27,8 @@ export default defineConfig({
   test: {
     name: 'api',
     include: ['src/**/*.test.ts'],
+    // Shared Postgres — avoid cross-file races on emails/roles.
+    fileParallelism: false,
   },
 });
+

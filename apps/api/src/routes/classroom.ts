@@ -80,20 +80,27 @@ export async function registerClassroomRoutes(
     return { student };
   });
 
-  app.get('/classroom/join/:code', async (request) => {
+  app.get('/classroom/join/:code', async (request, reply) => {
+    const limit = studentSignInLimiter.check(`join-lookup:${request.ip}`);
+    if (!limit.ok) {
+      reply.header('retry-after', String(limit.retryAfterSec));
+      return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
+    }
+
     const { code } = request.params as { code: string };
     const section = await classroom.lookupSectionByCode({ code });
     return { section };
   });
 
   app.post('/classroom/student/sign-in', async (request, reply) => {
-    const limit = studentSignInLimiter.check(`student:${request.ip}`);
+    const limit = studentSignInLimiter.check(`student-signin:${request.ip}`);
     if (!limit.ok) {
       reply.header('retry-after', String(limit.retryAfterSec));
       return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
     }
 
     const authenticated = await classroom.authenticateStudent(request.body);
+
     const session = await auth.createSessionForUser(authenticated.userId);
     setSessionCookie(reply, config, session.sessionToken, session.expiresAt);
     request.log.info(

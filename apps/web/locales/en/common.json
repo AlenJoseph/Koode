@@ -29,7 +29,16 @@
   "auth.claimHint": "Add a verified email so you can sign in later without your class code.",
   "auth.claimSend": "Send verification link",
   "auth.claimDone": "Email linked. You can use Learner sign up with this email next time.",
+  "admin.bootstrapTitle": "Create the first platform admin",
+  "admin.bootstrapHint": "One-time setup. Requires the server BOOTSTRAP_SECRET.",
+  "admin.bootstrapSecret": "Bootstrap secret",
+  "admin.bootstrapSubmit": "Create admin",
+  "admin.bootstrapDone": "Admin created. Use the verification link to sign in.",
+  "admin.bootstrapAlready": "A platform admin already exists.",
+  "admin.bootstrapDisabled": "Bootstrap is disabled on this server.",
+  "admin.bootstrapError": "Bootstrap failed. Check the secret and try again.",
   "home.welcome": "Welcome back. Your learning progress will live here.",
+
 
   "home.signedOutHint": "Learners sign up with email. Teachers sign in. Class students join with a code.",
 

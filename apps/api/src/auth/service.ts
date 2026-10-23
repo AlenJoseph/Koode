@@ -3,10 +3,12 @@ import {
   type MagicLinkIntent,
   type SessionUser,
   type UserRole,
+  adminBootstrapSchema,
   claimEmailRequestSchema,
   magicLinkRequestSchema,
   magicLinkVerifySchema,
 } from '@koode/contracts';
+
 
 import {
   consentRecords,
@@ -27,7 +29,7 @@ import { AuthError } from './errors.js';
 export { AuthError } from './errors.js';
 
 function asSessionRole(role: string): UserRole {
-  if (role === 'student' || role === 'learner' || role === 'teacher') {
+  if (role === 'student' || role === 'learner' || role === 'teacher' || role === 'admin') {
     return role;
   }
   return 'teacher';
@@ -38,7 +40,7 @@ export function createAuthService(database: Database, config: ApiConfig) {
   const emails = createEmailService(database);
 
   async function createAccountWithPrimaryEmail(input: {
-    role: 'teacher' | 'learner';
+    role: 'teacher' | 'learner' | 'admin';
     email: string;
     preferredLocale: Locale;
   }) {
@@ -75,9 +77,10 @@ export function createAuthService(database: Database, config: ApiConfig) {
       const racedId = await emails.findUserIdByEmail(normalized);
       if (racedId) {
         const raced = await db.query.users.findFirst({ where: eq(users.id, racedId) });
-        if (raced) {
+        if (raced && raced.role === input.role) {
           return raced;
         }
+        throw new AuthError('Email already linked to another account', 409);
       }
       throw error;
     }
@@ -103,6 +106,29 @@ export function createAuthService(database: Database, config: ApiConfig) {
       email: normalized,
       preferredLocale,
     });
+  }
+
+  async function ensureAdmin(email: string, preferredLocale: Locale = 'en') {
+    const normalized = normalizeEmail(email);
+    const existingId = await emails.findUserIdByEmail(normalized);
+    if (!existingId) {
+      throw new AuthError('Admin account not found — run bootstrap first', 404);
+    }
+    const existing = await db.query.users.findFirst({
+      where: eq(users.id, existingId),
+    });
+    if (!existing || existing.role !== 'admin') {
+      throw new AuthError('This email is not a platform admin', 403);
+    }
+    void preferredLocale;
+    return existing;
+  }
+
+  async function countAdmins(): Promise<number> {
+    const admins = await db.query.users.findMany({
+      where: eq(users.role, 'admin'),
+    });
+    return admins.length;
   }
 
   async function ensureLearner(email: string, preferredLocale: Locale = 'en') {
@@ -167,6 +193,16 @@ export function createAuthService(database: Database, config: ApiConfig) {
       }
       const normalized = normalizeEmail(parsed.email);
       const intent: MagicLinkIntent = parsed.intent;
+      if (intent === 'admin') {
+        const existingId = await emails.findUserIdByEmail(normalized);
+        if (!existingId) {
+          throw new AuthError('Admin account not found — run bootstrap first', 404);
+        }
+        const existing = await db.query.users.findFirst({ where: eq(users.id, existingId) });
+        if (existing?.role !== 'admin') {
+          throw new AuthError('This email is not a platform admin', 403);
+        }
+      }
       const token = createOpaqueToken();
       const expiresAt = new Date(Date.now() + config.magicLinkTtlMs);
 
@@ -187,6 +223,59 @@ export function createAuthService(database: Database, config: ApiConfig) {
         ...(config.magicLinkDevMode ? { devToken: token, devVerifyUrl: verifyUrl.toString() } : {}),
       };
     },
+
+    async getBootstrapStatus() {
+      const admins = await countAdmins();
+      return {
+        bootstrapped: admins > 0,
+        bootstrapEnabled: config.bootstrapSecret.length >= 16,
+      };
+    },
+
+    async bootstrapAdmin(input: unknown) {
+      if (config.bootstrapSecret.length < 16) {
+        throw new AuthError('Bootstrap is disabled', 503);
+      }
+      const parsed = adminBootstrapSchema.parse(input);
+      if (parsed.bootstrapSecret !== config.bootstrapSecret) {
+        throw new AuthError('Invalid bootstrap secret', 403);
+      }
+      if ((await countAdmins()) > 0) {
+        throw new AuthError('Platform admin already exists', 409);
+      }
+
+      const normalized = normalizeEmail(parsed.email);
+      const existingId = await emails.findUserIdByEmail(normalized);
+      if (existingId) {
+        throw new AuthError('Email already linked to another account', 409);
+      }
+
+      const created = await createAccountWithPrimaryEmail({
+        role: 'admin',
+        email: normalized,
+        preferredLocale: 'en',
+      });
+
+      const token = createOpaqueToken();
+      const expiresAt = new Date(Date.now() + config.magicLinkTtlMs);
+      await db.insert(magicLinkTokens).values({
+        email: normalized,
+        intent: 'admin',
+        tokenHash: hashToken(token),
+        expiresAt,
+      });
+
+      const verifyUrl = new URL('/auth/verify', config.appOrigin);
+      verifyUrl.searchParams.set('token', token);
+
+      return {
+        ok: true as const,
+        email: normalized,
+        userId: created.id,
+        ...(config.magicLinkDevMode ? { devToken: token, devVerifyUrl: verifyUrl.toString() } : {}),
+      };
+    },
+
 
     async requestClaimEmail(userId: string, input: unknown) {
       const { email } = claimEmailRequestSchema.parse(input);
@@ -254,6 +343,9 @@ export function createAuthService(database: Database, config: ApiConfig) {
       } else if (record.intent === 'learner') {
         const user = await ensureLearner(record.email);
         userId = user.id;
+      } else if (record.intent === 'admin') {
+        const user = await ensureAdmin(record.email);
+        userId = user.id;
       } else {
         const user = await ensureTeacher(record.email);
         userId = user.id;
@@ -303,6 +395,12 @@ export function createAuthService(database: Database, config: ApiConfig) {
     requireTeacher(user: SessionUser): void {
       if (user.role !== 'teacher') {
         throw new AuthError('Teachers only', 403);
+      }
+    },
+
+    requireAdmin(user: SessionUser): void {
+      if (user.role !== 'admin') {
+        throw new AuthError('Admins only', 403);
       }
     },
   };

@@ -1,3 +1,5 @@
+import { randomInt } from 'node:crypto';
+
 /** Simple child-friendly word bank for classroom secret-word passwords (no external package). */
 const WORDS = [
   'APPLE',
@@ -34,7 +36,7 @@ const WORDS = [
 
 function pickWord(exclude?: string): string {
   const pool = exclude ? WORDS.filter((word) => word !== exclude) : [...WORDS];
-  const index = Math.floor(Math.random() * pool.length);
+  const index = randomInt(pool.length);
   return pool[index] ?? 'APPLE';
 }
 

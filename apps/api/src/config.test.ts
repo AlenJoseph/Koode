@@ -38,4 +38,12 @@ describe('loadConfig', () => {
     expect(config.rateLimitMagicLinkMax).toBe(10);
     expect(config.rateLimitTutorMax).toBe(60);
   });
+
+  it('defaults bootstrap secret to empty (disabled)', () => {
+    expect(loadConfig(baseEnv).bootstrapSecret).toBe('');
+    expect(loadConfig({ ...baseEnv, BOOTSTRAP_SECRET: 'dev-bootstrap-secret-16' }).bootstrapSecret).toBe(
+      'dev-bootstrap-secret-16',
+    );
+  });
 });
+
