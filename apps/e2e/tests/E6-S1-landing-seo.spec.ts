@@ -9,11 +9,14 @@ test.describe('E6-S1 SEO landing', () => {
     await page.goto('/');
 
     await expect(page).toHaveTitle(/Personal intelligence for human growth/i);
-    await expect(page.locator('h1')).toContainText(/Learn your way\. Grow with Koode/i);
-    await expect(page.getByText(/curiosity is the point/i)).toBeVisible();
+    await expect(page.locator('h1')).toContainText(/Learn life\. Practise judgement/i);
+    await expect(page.getByRole('heading', { name: 'Worlds you can chase' })).toBeVisible();
+    await expect(page.getByText(/Wildlife & habitats/i)).toBeVisible();
+    await expect(page.getByText(/First aid & calm under pressure/i)).toBeVisible();
+    await expect(page.getByText(/Software when it helps/i)).toBeVisible();
 
     const description = page.locator('meta[name="description"]');
-    await expect(description).toHaveAttribute('content', /human growth|curiosity/i);
+    await expect(description).toHaveAttribute('content', /life skills|first aid|wildlife/i);
 
     const ogTitle = page.locator('meta[property="og:title"]');
     await expect(ogTitle).toHaveAttribute('content', /human growth/i);

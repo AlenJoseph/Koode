@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Koode — Personal intelligence for human growth',
   description:
-    'Learn your way. Grow with Koode. Pathways, challenges, projects, and a gentle tutor for classrooms and independent learners — coding is one path; curiosity is the point.',
+    'Learn life skills that matter: money sense, wildlife care, civic duty, cooking, first aid, business, teaching — and software when it helps. Pathways and a gentle tutor for classrooms and independent learners.',
   openGraph: {
     title: 'Koode — Personal intelligence for human growth',
     description:
-      'Learn your way. Grow with Koode. Pathways, challenges, projects, and a gentle tutor for classrooms and independent learners.',
+      'Learn life. Practise judgement. Grow capable — money, nature, civic sense, cooking, first aid, business, teaching, and making tools when they serve a real need.',
     url: siteUrl,
     siteName: 'Koode',
     type: 'website',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Koode — Personal intelligence for human growth',
     description:
-      'Learn your way. Grow with Koode. Pathways, challenges, projects, and a gentle tutor for classrooms and independent learners.',
+      'Learn life. Practise judgement. Grow capable — real-world pathways for classrooms and independent learners.',
   },
   alternates: {
     canonical: '/',
