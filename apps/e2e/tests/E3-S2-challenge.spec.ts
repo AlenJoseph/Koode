@@ -32,6 +32,7 @@ test.describe('E3-S2 challenge attempt', () => {
     const learnerEmail = `e2e-e3s2-learner-${Date.now()}@example.com`;
     await page.goto('/en/sign-up');
     await page.getByLabel('Email').fill(learnerEmail);
+    await page.getByLabel(/I confirm I am 13 or older/i).check();
     await page.getByRole('button', { name: 'Send magic link' }).click();
     await page.locator('a.dev-link').click();
     await expect(page).toHaveURL(/\/en\/?$/);

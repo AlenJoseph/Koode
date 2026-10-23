@@ -5,12 +5,16 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import {
   completeChallengeAttempt,
+  fetchChallengeQuiz,
   fetchMe,
   listLearnerChallenges,
   listMyChallengeAttempts,
   startChallengeAttempt,
+  submitChallengeQuiz,
   type ChallengeAttempt,
   type LearnerChallenge,
+  type LearnerQuiz,
+  type QuizSubmitResult,
 } from '@/lib/api';
 
 type Props = {
@@ -24,6 +28,11 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
   const [attempts, setAttempts] = useState<ChallengeAttempt[]>([]);
   const [error, setError] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
+  const [quiz, setQuiz] = useState<LearnerQuiz | null>(null);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [result, setResult] = useState<QuizSubmitResult | null>(null);
+  const [quizMissing, setQuizMissing] = useState(false);
 
   const refresh = useCallback(async () => {
     const me = await fetchMe();
@@ -57,6 +66,8 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
   async function onStart(challengeId: string) {
     setError(false);
     setBusyId(challengeId);
+    setResult(null);
+    setQuizMissing(false);
     try {
       const { attempt } = await startChallengeAttempt(challengeId);
       setAttempts((prev) => {
@@ -65,6 +76,16 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
         }
         return [attempt, ...prev];
       });
+      try {
+        const { quiz: loaded } = await fetchChallengeQuiz(challengeId);
+        setQuiz(loaded);
+        setAnswers({});
+        setActiveChallengeId(challengeId);
+      } catch {
+        setQuiz(null);
+        setQuizMissing(true);
+        setActiveChallengeId(challengeId);
+      }
     } catch {
       setError(true);
     } finally {
@@ -78,6 +99,37 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
     try {
       const { attempt } = await completeChallengeAttempt(attemptId);
       setAttempts((prev) => prev.map((row) => (row.id === attemptId ? attempt : row)));
+      setActiveChallengeId(null);
+      setQuiz(null);
+      setResult(null);
+    } catch {
+      setError(true);
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function onSubmitQuiz(challengeId: string) {
+    const open = openAttempt(challengeId);
+    if (!open || !quiz) {
+      return;
+    }
+    setError(false);
+    setBusyId(challengeId);
+    try {
+      const payload = quiz.quiz.map((item) => ({
+        quizItemId: item.id,
+        optionId: answers[item.id]!,
+      }));
+      if (payload.some((row) => !row.optionId)) {
+        setError(true);
+        return;
+      }
+      const submitted = await submitChallengeQuiz(open.id, payload);
+      setResult(submitted);
+      setAttempts((prev) =>
+        prev.map((row) => (row.id === submitted.attempt.id ? submitted.attempt : row)),
+      );
     } catch {
       setError(true);
     } finally {
@@ -114,21 +166,15 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
           {challenges.map((challenge) => {
             const open = openAttempt(challenge.id);
             const done = completedAttempt(challenge.id);
+            const isActive = activeChallengeId === challenge.id;
             return (
-              <li key={challenge.id} className="stack">
+              <li key={challenge.id} className="stack" data-challenge-slug={challenge.slug ?? ''}>
                 <strong>{challenge.title}</strong>
                 {challenge.summary ? <p>{challenge.summary}</p> : null}
-                {done ? (
+                {done && !isActive ? (
                   <p className="muted">{dictionary['challenges.completed']}</p>
-                ) : open ? (
-                  <button
-                    type="button"
-                    disabled={busyId === challenge.id}
-                    onClick={() => void onComplete(open.id, challenge.id)}
-                  >
-                    {dictionary['challenges.complete']}
-                  </button>
-                ) : (
+                ) : null}
+                {!done && !open ? (
                   <button
                     type="button"
                     disabled={busyId === challenge.id}
@@ -136,7 +182,90 @@ export function ChallengesBrowsePanel({ locale, dictionary }: Props) {
                   >
                     {dictionary['challenges.start']}
                   </button>
-                )}
+                ) : null}
+                {open && !isActive ? (
+                  <button
+                    type="button"
+                    disabled={busyId === challenge.id}
+                    onClick={() => void onStart(challenge.id)}
+                  >
+                    {dictionary['challenges.openQuiz']}
+                  </button>
+                ) : null}
+
+                {isActive && quiz ? (
+                  <div className="stack" data-testid="challenge-quiz">
+                    <p>
+                      <strong>{dictionary['challenges.objectives']}</strong>
+                    </p>
+                    <ul>
+                      {quiz.objectives.map((objective) => (
+                        <li key={objective}>{objective}</li>
+                      ))}
+                    </ul>
+                    <p>{quiz.briefMarkdown.replace(/[#*_`]/g, '').slice(0, 400)}</p>
+                    {quiz.quiz.map((item) => (
+                      <fieldset key={item.id} className="stack">
+                        <legend>{item.prompt}</legend>
+                        {item.options.map((option) => (
+                          <label key={option.id}>
+                            <input
+                              type="radio"
+                              name={`${challenge.id}-${item.id}`}
+                              value={option.id}
+                              checked={answers[item.id] === option.id}
+                              disabled={Boolean(result)}
+                              onChange={() =>
+                                setAnswers((prev) => ({ ...prev, [item.id]: option.id }))
+                              }
+                            />{' '}
+                            {option.label}
+                          </label>
+                        ))}
+                      </fieldset>
+                    ))}
+                    {!result ? (
+                      <button
+                        type="button"
+                        disabled={
+                          busyId === challenge.id ||
+                          quiz.quiz.some((item) => !answers[item.id])
+                        }
+                        onClick={() => void onSubmitQuiz(challenge.id)}
+                      >
+                        {dictionary['challenges.submitQuiz']}
+                      </button>
+                    ) : (
+                      <div className="stack" data-testid="quiz-result">
+                        <p>
+                          {dictionary['challenges.quizScore']}: {result.score.correct}/
+                          {result.score.total}
+                        </p>
+                        {result.items.map((item) => (
+                          <p key={item.quizItemId} className="muted">
+                            {item.isCorrect ? '✓' : '✗'} {item.teachBack}
+                          </p>
+                        ))}
+                        <p className="muted">{dictionary['challenges.completed']}</p>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
+
+                {isActive && quizMissing ? (
+                  <div className="stack">
+                    <p className="muted">{dictionary['challenges.noQuiz']}</p>
+                    {open ? (
+                      <button
+                        type="button"
+                        disabled={busyId === challenge.id}
+                        onClick={() => void onComplete(open.id, challenge.id)}
+                      >
+                        {dictionary['challenges.complete']}
+                      </button>
+                    ) : null}
+                  </div>
+                ) : null}
               </li>
             );
           })}

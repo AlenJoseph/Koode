@@ -191,7 +191,7 @@ Bridge authored `content/` manuals into the live product.
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
 | **E9-S1** | Seed manuals into DB | `pnpm db:seed` upserts 6 pathways + challenges by slug as published | `seed-content.integration.test.ts` | `done` |
-| **E9-S2** | Quiz UI | Learner can open a seeded challenge quiz, submit, complete attempt | e2e + API | `todo` |
+| **E9-S2** | Quiz UI | Learner can open a seeded challenge quiz, submit, complete attempt | `E9-S2-challenge-quiz.integration.test.ts` + e2e | `done` |
 | **E9-S3** | Tutor turn purge | Job/CLI deletes tutor turns older than retention days | unit + integration | `todo` |
 
 ---

@@ -20,6 +20,7 @@ import { createClassroomService, type ClassroomService } from './classroom/servi
 import type { ApiConfig } from './config.js';
 import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
 import { createInsightsService } from './insights/service.js';
+import { createChallengeQuizService } from './learning/challenge-quiz.js';
 import { createLearnerChallengeService } from './learning/challenges-learner.js';
 import { createLearnerPathwayService } from './learning/pathways-learner.js';
 import { createProjectService } from './learning/projects.js';
@@ -160,6 +161,10 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     auth,
     learnerPathways: createLearnerPathwayService(database),
     learnerChallenges: createLearnerChallengeService(database),
+    challengeQuiz: createChallengeQuizService(
+      database,
+      contentRoot ? createContentLoader({ contentRoot }) : null,
+    ),
     projects: createProjectService(database),
   });
   await registerClassroomRoutes(app, {

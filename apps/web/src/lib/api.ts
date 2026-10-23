@@ -190,6 +190,7 @@ export async function enrollInPathway(
 
 export type LearnerChallenge = {
   id: string;
+  slug?: string | null;
   title: string;
   summary: string;
   locale: string;
@@ -203,6 +204,34 @@ export type ChallengeAttempt = {
   status: string;
   startedAt: string;
   completedAt: string | null;
+};
+
+export type LearnerQuiz = {
+  challengeId: string;
+  slug: string;
+  pathwaySlug: string;
+  title: string;
+  summary: string;
+  briefMarkdown: string;
+  objectives: string[];
+  reflectionPrompt: string | null;
+  quiz: Array<{
+    id: string;
+    prompt: string;
+    options: Array<{ id: string; label: string }>;
+  }>;
+};
+
+export type QuizSubmitResult = {
+  attempt: ChallengeAttempt;
+  score: { correct: number; total: number };
+  items: Array<{
+    quizItemId: string;
+    selectedOptionId: string;
+    correctOptionId: string;
+    isCorrect: boolean;
+    teachBack: string;
+  }>;
 };
 
 export async function listLearnerChallenges(): Promise<{ challenges: LearnerChallenge[] }> {
@@ -223,6 +252,20 @@ export async function completeChallengeAttempt(
   attemptId: string,
 ): Promise<{ attempt: ChallengeAttempt }> {
   return apiFetch(`/challenges/attempts/${attemptId}/complete`, { method: 'POST' });
+}
+
+export async function fetchChallengeQuiz(challengeId: string): Promise<{ quiz: LearnerQuiz }> {
+  return apiFetch(`/challenges/${challengeId}/quiz`);
+}
+
+export async function submitChallengeQuiz(
+  attemptId: string,
+  answers: Array<{ quizItemId: string; optionId: string }>,
+): Promise<QuizSubmitResult> {
+  return apiFetch(`/challenges/attempts/${attemptId}/quiz`, {
+    method: 'POST',
+    body: JSON.stringify({ answers }),
+  });
 }
 
 export type LearnerProject = {

@@ -85,7 +85,7 @@ pnpm db:seed
 3. Tutor personalization (E8-S2): pass `contentPathwayId` + `contentChallengeId` (+ optional `paceBand`, `localContext`, `interests`) on `/tutor/turn`.  
 4. Agent runtime loads the challenge JSON, fills `personalizeTemplate`, appends pace-band coach notes.  
 5. Locked: `correctOptionId`, objectives, success criteria.  
-6. Still open: quiz UI (E9-S2).
+6. Quiz UI (E9-S2): Challenges page loads manuals and grades quizzes via `/challenges/:id/quiz`.
 
 ## Status
 

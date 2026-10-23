@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { SessionUser } from '@koode/contracts';
 import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
+import type { ChallengeQuizService } from '../learning/challenge-quiz.js';
 import type { LearnerChallengeService } from '../learning/challenges-learner.js';
 import type { LearnerPathwayService } from '../learning/pathways-learner.js';
 import type { ProjectService } from '../learning/projects.js';
@@ -14,10 +15,11 @@ export async function registerLearningRoutes(
     auth: AuthService;
     learnerPathways: LearnerPathwayService;
     learnerChallenges: LearnerChallengeService;
+    challengeQuiz: ChallengeQuizService;
     projects: ProjectService;
   },
 ): Promise<void> {
-  const { config, auth, learnerPathways, learnerChallenges, projects } = deps;
+  const { config, auth, learnerPathways, learnerChallenges, challengeQuiz, projects } = deps;
 
   async function requireUser(
     request: FastifyRequest,
@@ -113,6 +115,37 @@ export async function registerLearningRoutes(
       'challenge attempt completed',
     );
     return { attempt };
+  });
+
+  /** E9-S2 — quiz from content manuals (no correctOptionId until submit). */
+  app.get('/challenges/:challengeId/quiz', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const { challengeId } = request.params as { challengeId: string };
+    const quiz = await challengeQuiz.getLearnerQuiz(challengeId);
+    return { quiz };
+  });
+
+  app.post('/challenges/attempts/:attemptId/quiz', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const { attemptId } = request.params as { attemptId: string };
+    const result = await challengeQuiz.submitQuiz(user.id, attemptId, request.body);
+    request.log.info(
+      {
+        event: 'learning.quiz_submitted',
+        attemptId,
+        challengeId: result.attempt.challengeId,
+        correct: result.score.correct,
+        total: result.score.total,
+      },
+      'challenge quiz submitted',
+    );
+    return result;
   });
 
   app.get('/projects', async (request, reply) => {
