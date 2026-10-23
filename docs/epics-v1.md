@@ -114,7 +114,7 @@ Reference only — not re-opened unless a later story requires a fix.
 
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
-| **E6-S1** | SEO landing page | Indexable landing (title/meta/OG); clear CTAs: teacher / learner / join class | Playwright SEO smoke (title, h1, meta) | `todo` |
+| **E6-S1** | SEO landing page | Indexable landing (title/meta/OG); clear CTAs: teacher / learner / join class | Playwright SEO smoke (title, h1, meta) | `done` |
 | **E6-S2** | Docs site shell | Docs home + architecture/requirements/epics linked; works locally | Smoke e2e or build check | `todo` |
 
 ---

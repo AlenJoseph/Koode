@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Koode — landing preview (E6 mock)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --sky: #7ec8f2;
+        --sky-deep: #4ba3d9;
+        --mint: #58cc02;
+        --mint-deep: #3fa000;
+        --coral: #ff6b4a;
+        --ink: #1f2a37;
+        --cream: #fff8ef;
+        --cloud: #ffffff;
+        --path: #ffc800;
+        --shadow: 0 10px 0 rgba(31, 42, 55, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        color: var(--ink);
+        font-family: Nunito, system-ui, sans-serif;
+        background: var(--cream);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      /* Full-bleed hero plane */
+      .hero {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.55), transparent 42%),
+          radial-gradient(circle at 82% 18%, rgba(255, 200, 0, 0.35), transparent 36%),
+          linear-gradient(165deg, #9ed8f7 0%, #7ec8f2 38%, #6fd0b0 78%, #58cc02 140%);
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .hero::before {
+        content: '';
+        position: absolute;
+        inset: auto 0 0;
+        height: 28%;
+        background:
+          radial-gradient(ellipse 60% 80% at 20% 100%, rgba(255, 107, 74, 0.25), transparent),
+          radial-gradient(ellipse 50% 70% at 80% 100%, rgba(255, 200, 0, 0.28), transparent);
+        pointer-events: none;
+      }
+
+      /* Soft “terrain” blobs — product atmosphere, not flat fill */
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(2px);
+        opacity: 0.55;
+        animation: float 9s ease-in-out infinite;
+      }
+      .blob.a {
+        width: 18rem;
+        height: 18rem;
+        background: #fff;
+        top: 12%;
+        right: -4rem;
+        animation-delay: -2s;
+      }
+      .blob.b {
+        width: 11rem;
+        height: 11rem;
+        background: var(--path);
+        bottom: 22%;
+        left: -3rem;
+        animation-delay: -4s;
+      }
+      .blob.c {
+        width: 7rem;
+        height: 7rem;
+        background: var(--coral);
+        top: 38%;
+        left: 42%;
+        opacity: 0.35;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+
+      .topbar {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1rem 1.5rem;
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .wordmark {
+        font-family: Fredoka, Nunito, sans-serif;
+        font-weight: 700;
+        font-size: 1.65rem;
+        letter-spacing: 0.02em;
+        color: var(--ink);
+      }
+
+      .topbar nav {
+        display: flex;
+        gap: 1rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+      }
+
+      .topbar nav a {
+        opacity: 0.85;
+      }
+
+      .hero-main {
+        position: relative;
+        z-index: 2;
+        max-width: 1100px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 1rem 1.5rem 3.5rem;
+        display: grid;
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 2rem;
+        align-items: center;
+      }
+
+      @media (max-width: 860px) {
+        .hero-main {
+          grid-template-columns: 1fr;
+          padding-top: 0.5rem;
+        }
+        .stage {
+          order: -1;
+          min-height: 220px;
+        }
+      }
+
+      .brand-hero {
+        font-family: Fredoka, Nunito, sans-serif;
+        font-size: clamp(3.4rem, 8vw, 5.4rem);
+        font-weight: 700;
+        line-height: 0.95;
+        margin: 0 0 0.85rem;
+        letter-spacing: -0.02em;
+        text-shadow: 0 3px 0 rgba(255, 255, 255, 0.35);
+        animation: rise 0.7s ease-out both;
+      }
+
+      .headline {
+        font-family: Fredoka, Nunito, sans-serif;
+        font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+        font-weight: 600;
+        line-height: 1.25;
+        margin: 0 0 0.75rem;
+        max-width: 18ch;
+        animation: rise 0.7s ease-out 0.08s both;
+      }
+
+      .support {
+        font-size: 1.08rem;
+        font-weight: 600;
+        line-height: 1.45;
+        margin: 0 0 1.6rem;
+        max-width: 34ch;
+        opacity: 0.92;
+        animation: rise 0.7s ease-out 0.16s both;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .ctas {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        animation: rise 0.7s ease-out 0.24s both;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-bottom: 4px solid rgba(0, 0, 0, 0.18);
+        border-radius: 16px;
+        padding: 0.85rem 1.25rem;
+        font-family: Nunito, sans-serif;
+        font-weight: 800;
+        font-size: 1.02rem;
+        cursor: pointer;
+        transition: transform 0.12s ease, filter 0.12s ease;
+        box-shadow: var(--shadow);
+      }
+
+      .btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(1.03);
+      }
+
+      .btn:active {
+        transform: translateY(2px);
+        border-bottom-width: 2px;
+      }
+
+      .btn-primary {
+        background: var(--mint);
+        color: #fff;
+        border-bottom-color: var(--mint-deep);
+      }
+
+      .btn-secondary {
+        background: var(--cloud);
+        color: var(--ink);
+      }
+
+      .btn-accent {
+        background: var(--coral);
+        color: #fff;
+        border-bottom-color: #d94d30;
+      }
+
+      /* Illustration stage — classroom + streak energy */
+      .stage {
+        position: relative;
+        min-height: 340px;
+        display: grid;
+        place-items: center;
+        animation: rise 0.8s ease-out 0.12s both;
+      }
+
+      .board {
+        width: min(100%, 360px);
+        aspect-ratio: 1.05;
+        background: var(--cloud);
+        border-radius: 28px;
+        border: 4px solid var(--ink);
+        box-shadow: 12px 12px 0 rgba(31, 42, 55, 0.18);
+        padding: 1.25rem;
+        display: grid;
+        gap: 0.85rem;
+        transform: rotate(-2deg);
+      }
+
+      .streak {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        align-self: start;
+        background: #fff3cd;
+        border: 3px solid var(--path);
+        border-radius: 999px;
+        padding: 0.35rem 0.75rem;
+        font-weight: 800;
+        font-size: 0.9rem;
+      }
+
+      .path-row {
+        display: grid;
+        gap: 0.55rem;
+      }
+
+      .node {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.65rem;
+        align-items: center;
+        background: #f3fbff;
+        border-radius: 14px;
+        padding: 0.55rem 0.7rem;
+        border: 2px solid #cfeaf8;
+      }
+
+      .node.done {
+        background: #e9f9d8;
+        border-color: #b6e88a;
+      }
+
+      .node.active {
+        background: #ffe8e1;
+        border-color: #ffb39f;
+        transform: scale(1.02);
+      }
+
+      .dot {
+        width: 1.35rem;
+        height: 1.35rem;
+        border-radius: 50%;
+        border: 3px solid var(--ink);
+        background: var(--path);
+      }
+
+      .node.done .dot {
+        background: var(--mint);
+      }
+
+      .node.active .dot {
+        background: var(--coral);
+        animation: pulse 1.4s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.12);
+        }
+      }
+
+      .node strong {
+        display: block;
+        font-size: 0.95rem;
+      }
+
+      .node span {
+        font-size: 0.8rem;
+        font-weight: 700;
+        opacity: 0.7;
+      }
+
+      .mascot {
+        position: absolute;
+        right: 4%;
+        bottom: 2%;
+        width: 92px;
+        height: 92px;
+        background: var(--path);
+        border: 4px solid var(--ink);
+        border-radius: 42% 42% 38% 38%;
+        display: grid;
+        place-items: center;
+        box-shadow: 6px 6px 0 rgba(31, 42, 55, 0.16);
+        animation: bob 2.4s ease-in-out infinite;
+      }
+
+      .mascot::before,
+      .mascot::after {
+        content: '';
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: var(--ink);
+        border-radius: 50%;
+        top: 34%;
+      }
+      .mascot::before {
+        left: 28%;
+      }
+      .mascot::after {
+        right: 28%;
+      }
+
+      .beak {
+        width: 22px;
+        height: 14px;
+        background: var(--coral);
+        border-radius: 0 0 12px 12px;
+        margin-top: 10px;
+        border: 3px solid var(--ink);
+        border-top: 0;
+      }
+
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0) rotate(4deg);
+        }
+        50% {
+          transform: translateY(-10px) rotate(4deg);
+        }
+      }
+
+      /* One-job section below fold */
+      .section {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 3.5rem 1.5rem 4.5rem;
+      }
+
+      .section h2 {
+        font-family: Fredoka, Nunito, sans-serif;
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        margin: 0 0 0.5rem;
+      }
+
+      .section > p {
+        margin: 0 0 1.75rem;
+        font-weight: 700;
+        opacity: 0.8;
+        max-width: 42ch;
+      }
+
+      .paths {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      @media (max-width: 760px) {
+        .paths {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .path-card {
+        background: var(--cloud);
+        border: 3px solid var(--ink);
+        border-radius: 22px;
+        padding: 1.25rem;
+        box-shadow: 6px 6px 0 rgba(31, 42, 55, 0.1);
+      }
+
+      .path-card h3 {
+        font-family: Fredoka, Nunito, sans-serif;
+        margin: 0 0 0.4rem;
+        font-size: 1.25rem;
+      }
+
+      .path-card p {
+        margin: 0;
+        font-weight: 600;
+        line-height: 1.4;
+        opacity: 0.85;
+      }
+
+      .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: #e9f9d8;
+        border-radius: 999px;
+        padding: 0.25rem 0.55rem;
+        margin-bottom: 0.65rem;
+      }
+
+      .badge.teacher {
+        background: #dff1fb;
+      }
+      .badge.join {
+        background: #ffe8e1;
+      }
+
+      .preview-note {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        background: var(--ink);
+        color: #fff;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 700;
+        padding: 0.45rem 0.75rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-note">Design reference — live site is apps/landing (port 3002).</div>
+
+    <section class="hero" aria-label="Koode landing hero">
+      <div class="blob a" aria-hidden="true"></div>
+      <div class="blob b" aria-hidden="true"></div>
+      <div class="blob c" aria-hidden="true"></div>
+
+      <header class="topbar">
+        <div class="wordmark">Koode</div>
+        <nav aria-label="Preview">
+          <a href="#how">How it works</a>
+          <a href="#paths">Get started</a>
+        </nav>
+      </header>
+
+      <div class="hero-main">
+        <div>
+          <p class="brand-hero">Koode</p>
+          <h1 class="headline">Learn coding like a game. Teach it like a class.</h1>
+          <p class="support">
+            Pathways, challenges, and a friendly tutor — built for classrooms and curious learners.
+          </p>
+          <div class="ctas" id="paths">
+            <a class="btn btn-primary" href="#">I’m a teacher</a>
+            <a class="btn btn-secondary" href="#">I’m learning alone</a>
+            <a class="btn btn-accent" href="#">Join my class</a>
+          </div>
+        </div>
+
+        <div class="stage" aria-hidden="true">
+          <div class="board">
+            <div class="streak">🔥 5-day streak</div>
+            <div class="path-row">
+              <div class="node done">
+                <div class="dot"></div>
+                <div>
+                  <strong>Loops</strong>
+                  <span>Challenge cleared</span>
+                </div>
+              </div>
+              <div class="node active">
+                <div class="dot"></div>
+                <div>
+                  <strong>Make a game</strong>
+                  <span>Your turn</span>
+                </div>
+              </div>
+              <div class="node">
+                <div class="dot"></div>
+                <div>
+                  <strong>Share project</strong>
+                  <span>Up next</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mascot"><div class="beak"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="how">
+      <h2>Three ways in</h2>
+      <p>Same product energy as Code.org classrooms + Duolingo momentum — pick your door.</p>
+      <div class="paths">
+        <article class="path-card">
+          <div class="badge teacher">Teachers</div>
+          <h3>Run a section</h3>
+          <p>Create a class, share a code, watch learning-support signals — not vanity dashboards.</p>
+        </article>
+        <article class="path-card">
+          <div class="badge">Learners</div>
+          <h3>Chase a pathway</h3>
+          <p>Start a pathway, knock out challenges, keep a streak going with a gentle tutor.</p>
+        </article>
+        <article class="path-card">
+          <div class="badge join">Classmates</div>
+          <h3>Join with a code</h3>
+          <p>No email needed for classroom kids — secret words + section code, Code.org-style.</p>
+        </article>
+      </div>
+    </section>
+  </body>
+</html>

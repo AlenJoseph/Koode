@@ -8,12 +8,16 @@ loadRootEnv();
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const appOrigin = process.env.APP_ORIGIN ?? 'http://localhost:3000';
 const apiOrigin = process.env.API_ORIGIN ?? 'http://localhost:3001';
+const landingOrigin = process.env.LANDING_ORIGIN ?? 'http://localhost:3002';
 
 const sharedEnv = {
   ...process.env,
   APP_ORIGIN: appOrigin,
   API_ORIGIN: apiOrigin,
+  LANDING_ORIGIN: landingOrigin,
   NEXT_PUBLIC_API_URL: apiOrigin,
+  NEXT_PUBLIC_APP_ORIGIN: appOrigin,
+  NEXT_PUBLIC_LANDING_ORIGIN: landingOrigin,
   MAGIC_LINK_DEV_MODE: process.env.MAGIC_LINK_DEV_MODE ?? 'true',
   COOKIE_SECURE: process.env.COOKIE_SECURE ?? 'false',
   AI_PROVIDER: process.env.AI_PROVIDER ?? 'stub',
@@ -54,6 +58,14 @@ export default defineConfig({
       command: 'pnpm --filter @koode/web start',
       cwd: root,
       url: appOrigin,
+      reuseExistingServer: process.env.PW_REUSE === '1',
+      timeout: 120_000,
+      env: sharedEnv,
+    },
+    {
+      command: 'pnpm --filter @koode/landing start',
+      cwd: root,
+      url: landingOrigin,
       reuseExistingServer: process.env.PW_REUSE === '1',
       timeout: 120_000,
       env: sharedEnv,
