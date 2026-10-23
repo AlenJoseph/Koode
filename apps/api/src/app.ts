@@ -7,9 +7,11 @@ import { randomUUID } from 'node:crypto';
 import Fastify, { type FastifyInstance } from 'fastify';
 import { ZodError } from 'zod';
 import { AuthError, createAuthService, type AuthService } from './auth/service.js';
+import { createClassroomService, type ClassroomService } from './classroom/service.js';
 import type { ApiConfig } from './config.js';
 import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
 import { registerAuthRoutes } from './routes/auth.js';
+import { registerClassroomRoutes } from './routes/classroom.js';
 import { registerHealthRoutes } from './routes/health.js';
 import { registerTutorRoutes } from './routes/tutor.js';
 import { createTutorService, type TutorService } from './tutor/service.js';
@@ -18,18 +20,20 @@ export type AppDeps = {
   config: ApiConfig;
   database?: Database;
   auth?: AuthService;
+  classroom?: ClassroomService;
   gateway?: AiGateway;
   tutor?: TutorRuntime;
   tutorService?: TutorService;
   magicLinkLimiter?: MemoryRateLimiter;
   tutorLimiter?: MemoryRateLimiter;
-  /** Silence logs in tests. */
+  studentSignInLimiter?: MemoryRateLimiter;
   disableLogger?: boolean;
 };
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const database = deps.database ?? createDatabase(deps.config.databaseUrl);
   const auth = deps.auth ?? createAuthService(database, deps.config);
+  const classroom = deps.classroom ?? createClassroomService(database);
   const gateway = deps.gateway ?? createGatewayFromEnv();
   const tutorRuntime = deps.tutor ?? createTutorRuntime(gateway);
   const tutorService = deps.tutorService ?? createTutorService(database, tutorRuntime);
@@ -45,6 +49,12 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       windowMs: deps.config.rateLimitTutorWindowMs,
       max: deps.config.rateLimitTutorMax,
     });
+  const studentSignInLimiter =
+    deps.studentSignInLimiter ??
+    createMemoryRateLimiter({
+      windowMs: deps.config.rateLimitMagicLinkWindowMs,
+      max: deps.config.rateLimitMagicLinkMax,
+    });
 
   const app = Fastify({
     logger: deps.disableLogger
@@ -59,6 +69,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
               'req.body.token',
               'req.body.learnerMessage',
               'req.body.devToken',
+              'req.body.secretWords',
             ],
             remove: true,
           },
@@ -99,6 +110,12 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
 
   await registerHealthRoutes(app, gateway);
   await registerAuthRoutes(app, { config: deps.config, auth, magicLinkLimiter });
+  await registerClassroomRoutes(app, {
+    config: deps.config,
+    auth,
+    classroom,
+    studentSignInLimiter,
+  });
   await registerTutorRoutes(app, {
     config: deps.config,
     auth,

@@ -42,7 +42,8 @@ export function HomeSession({ locale, dictionary }: Props) {
   return (
     <div className="panel stack">
       <p>
-        {dictionary['auth.signedInAs']} <strong>{user.email}</strong>
+        {dictionary['auth.signedInAs']}{' '}
+        <strong>{user.displayName ?? user.email ?? user.role}</strong>
       </p>
       <p>{dictionary['home.welcome']}</p>
       <button type="button" className="secondary" onClick={() => void onSignOut()}>

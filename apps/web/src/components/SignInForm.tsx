@@ -38,6 +38,10 @@ export function SignInForm({ locale, dictionary }: Props) {
   return (
     <div className="panel stack">
       <h2>{dictionary['auth.title']}</h2>
+      <p className="muted">
+        {dictionary['auth.teacherHint']}{' '}
+        <Link href={`/${locale}/join`}>{dictionary['nav.join']}</Link>
+      </p>
       <form className="stack" onSubmit={onSubmit}>
         <div>
           <label htmlFor="email">{dictionary['auth.emailLabel']}</label>

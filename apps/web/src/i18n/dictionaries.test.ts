@@ -6,6 +6,8 @@ describe('web dictionaries', () => {
     expect(t('en', 'app.name')).toBe('Koode');
     expect(t('ml', 'app.name')).toBe('കൂടെ');
     expect(getDictionary('en')['auth.sendLink']).toContain('magic');
-    expect(getDictionary('ml')['nav.signIn']).toBe('സൈൻ ഇൻ');
+    expect(getDictionary('ml')['nav.signIn']).toContain('സൈൻ ഇൻ');
+    expect(getDictionary('en')['nav.join']).toBe('Join class');
+    expect(getDictionary('ml')['classroom.title']).toBeTruthy();
   });
 });

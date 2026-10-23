@@ -21,6 +21,8 @@ export function ShellHeader({ locale, dictionary }: Props) {
       </div>
       <nav className="nav" aria-label="Primary">
         <Link href={`/${locale}`}>{dictionary['nav.home']}</Link>
+        <Link href={`/${locale}/classroom`}>{dictionary['nav.classroom']}</Link>
+        <Link href={`/${locale}/join`}>{dictionary['nav.join']}</Link>
         <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
         <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
         <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>

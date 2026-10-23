@@ -63,3 +63,49 @@ export async function runTutorTurn(
     body: JSON.stringify(input),
   });
 }
+
+export type ClassroomSection = { id: string; name: string; code: string };
+
+export async function listSections(): Promise<{ sections: ClassroomSection[] }> {
+  return apiFetch('/classroom/sections');
+}
+
+export async function createSection(name: string): Promise<{ section: ClassroomSection }> {
+  return apiFetch('/classroom/sections', {
+    method: 'POST',
+    body: JSON.stringify({ name }),
+  });
+}
+
+export async function listRoster(
+  sectionId: string,
+): Promise<{ roster: Array<{ id: string; userId: string; displayName: string }> }> {
+  return apiFetch(`/classroom/sections/${sectionId}/roster`);
+}
+
+export async function addStudent(
+  sectionId: string,
+  displayName: string,
+): Promise<{ student: { id: string; userId: string; displayName: string; secretWords: string } }> {
+  return apiFetch(`/classroom/sections/${sectionId}/students`, {
+    method: 'POST',
+    body: JSON.stringify({ displayName }),
+  });
+}
+
+export async function lookupSection(code: string): Promise<{
+  section: { code: string; name: string; students: Array<{ displayName: string }> };
+}> {
+  return apiFetch(`/classroom/join/${encodeURIComponent(code.toUpperCase())}`);
+}
+
+export async function studentSignIn(input: {
+  code: string;
+  displayName: string;
+  secretWords: string;
+}): Promise<{ ok: true; user: SessionUser }> {
+  return apiFetch('/classroom/student/sign-in', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}

@@ -8,6 +8,7 @@ import {
   consentRecords,
   learnerProfiles,
   magicLinkTokens,
+  sectionStudents,
   sessions,
   users,
   type Database,
@@ -29,16 +30,19 @@ export class AuthError extends Error {
 export function createAuthService(database: Database, config: ApiConfig) {
   const { db } = database;
 
-  async function ensureUser(email: string, preferredLocale: Locale = 'en') {
+  async function ensureTeacher(email: string, preferredLocale: Locale = 'en') {
     return db.transaction(async (tx) => {
       const existing = await tx.query.users.findFirst({
         where: eq(users.email, email),
       });
       if (existing) {
+        if (existing.role !== 'teacher') {
+          throw new AuthError('This email belongs to a student account', 403);
+        }
         return existing;
       }
 
-      const [created] = await tx.insert(users).values({ email }).returning();
+      const [created] = await tx.insert(users).values({ email, role: 'teacher' }).returning();
       if (!created) {
         throw new AuthError('Failed to create user', 500);
       }
@@ -66,16 +70,24 @@ export function createAuthService(database: Database, config: ApiConfig) {
     const profile = await db.query.learnerProfiles.findFirst({
       where: eq(learnerProfiles.userId, userId),
     });
+    const membership = await db.query.sectionStudents.findFirst({
+      where: eq(sectionStudents.userId, userId),
+    });
     const preferredLocale = (profile?.preferredLocale === 'ml' ? 'ml' : 'en') as Locale;
+    const role = user.role === 'student' ? 'student' : 'teacher';
     return {
       id: user.id,
-      email: user.email,
+      email: user.email ?? null,
+      role,
       preferredLocale,
-      displayName: profile?.displayName ?? null,
+      displayName: membership?.displayName ?? profile?.displayName ?? null,
+      sectionId: membership?.sectionId ?? null,
     };
   }
 
   return {
+    toSessionUser,
+
     async requestMagicLink(input: unknown) {
       const { email } = magicLinkRequestSchema.parse(input);
       const normalized = email.toLowerCase();
@@ -94,9 +106,7 @@ export function createAuthService(database: Database, config: ApiConfig) {
       return {
         ok: true as const,
         email: normalized,
-        ...(config.magicLinkDevMode
-          ? { devToken: token, devVerifyUrl: verifyUrl.toString() }
-          : {}),
+        ...(config.magicLinkDevMode ? { devToken: token, devVerifyUrl: verifyUrl.toString() } : {}),
       };
     },
 
@@ -105,7 +115,6 @@ export function createAuthService(database: Database, config: ApiConfig) {
       const tokenHash = hashToken(token);
       const now = new Date();
 
-      // Atomic consume: only one concurrent verify can mark the token used.
       const [record] = await db
         .update(magicLinkTokens)
         .set({ usedAt: now })
@@ -122,7 +131,7 @@ export function createAuthService(database: Database, config: ApiConfig) {
         throw new AuthError('Invalid or expired magic link', 401);
       }
 
-      const user = await ensureUser(record.email);
+      const user = await ensureTeacher(record.email);
       const sessionToken = createOpaqueToken();
       const expiresAt = new Date(Date.now() + config.sessionTtlMs);
 
@@ -136,13 +145,22 @@ export function createAuthService(database: Database, config: ApiConfig) {
       return { sessionToken, expiresAt, user: sessionUser };
     },
 
+    async createSessionForUser(userId: string) {
+      const sessionToken = createOpaqueToken();
+      const expiresAt = new Date(Date.now() + config.sessionTtlMs);
+      await db.insert(sessions).values({
+        userId,
+        tokenHash: hashToken(sessionToken),
+        expiresAt,
+      });
+      const user = await toSessionUser(userId);
+      return { sessionToken, expiresAt, user };
+    },
+
     async getUserForSessionToken(sessionToken: string): Promise<SessionUser | null> {
       const now = new Date();
       const session = await db.query.sessions.findFirst({
-        where: and(
-          eq(sessions.tokenHash, hashToken(sessionToken)),
-          gt(sessions.expiresAt, now),
-        ),
+        where: and(eq(sessions.tokenHash, hashToken(sessionToken)), gt(sessions.expiresAt, now)),
       });
       if (!session) {
         return null;
@@ -152,6 +170,12 @@ export function createAuthService(database: Database, config: ApiConfig) {
 
     async revokeSession(sessionToken: string): Promise<void> {
       await db.delete(sessions).where(eq(sessions.tokenHash, hashToken(sessionToken)));
+    },
+
+    requireTeacher(user: SessionUser): void {
+      if (user.role !== 'teacher') {
+        throw new AuthError('Teachers only', 403);
+      }
     },
   };
 }

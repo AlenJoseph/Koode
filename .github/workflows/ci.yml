@@ -73,3 +73,12 @@ jobs:
 
       - name: Locale parity (explicit)
         run: pnpm locale:parity
+
+      - name: Install Playwright Chromium
+        run: pnpm --filter @koode/e2e exec playwright install --with-deps chromium
+
+      - name: E2E (Playwright)
+        run: pnpm test:e2e
+        env:
+          CI: true
+          NEXT_PUBLIC_API_URL: http://localhost:3001

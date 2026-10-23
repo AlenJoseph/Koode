@@ -9,6 +9,11 @@ coverage
 !.env.example
 .DS_Store
 *.log
+/test-results/
+/playwright-report/
+/blob-report/
+/apps/e2e/test-results/
+/apps/e2e/playwright-report/
 .vscode/*
 !.vscode/extensions.json
 .idea

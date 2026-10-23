@@ -26,7 +26,8 @@ Requirements: Node.js 22+, pnpm 10+, Docker (for local Postgres).
 
 | Layer | Command | Purpose |
 | --- | --- | --- |
-| Unit / locale parity | `pnpm test` | Pure logic, i18n keys, health helpers |
+| Unit / locale parity | `pnpm test` | Pure logic, i18n keys, API integration |
+| Critical-path E2E | `pnpm test:e2e` | Playwright: locales + classroom join |
 | Locale gate | `pnpm locale:parity` | `en` and `ml` catalogs match canonical keys |
 | Lint / types | `pnpm lint` · `pnpm typecheck` | Style and TypeScript |
 
