@@ -40,12 +40,18 @@ export function SignUpForm({ locale, dictionary }: Props) {
   }
 
   return (
-    <div className="panel stack">
-      <h2>{dictionary['auth.signUpTitle']}</h2>
-      <p className="muted">
-        {dictionary['auth.learnerHint']}{' '}
-        <Link href={`/${locale}/sign-in`}>{dictionary['nav.signIn']}</Link>
-      </p>
+    <div className="stack">
+      <section className="hero-strip">
+        <div className="blob a" aria-hidden="true" />
+        <h1 className="brand-hero" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
+          {dictionary['auth.signUpTitle']}
+        </h1>
+        <p className="support">
+          {dictionary['auth.learnerHint']}{' '}
+          <Link href={`/${locale}/sign-in`}>{dictionary['nav.signIn']}</Link>
+        </p>
+      </section>
+      <div className="panel stack">
       <p data-testid="age-gate">{dictionary['auth.ageGate']}</p>
       <form className="stack" onSubmit={onSubmit}>
         <div>
@@ -71,7 +77,7 @@ export function SignUpForm({ locale, dictionary }: Props) {
           />{' '}
           {dictionary['auth.ageConfirm']}
         </label>
-        <button type="submit" disabled={pending || !ageConfirmed}>
+        <button type="submit" className="btn btn-primary" disabled={pending || !ageConfirmed}>
           {dictionary['auth.sendLink']}
         </button>
       </form>
@@ -84,6 +90,7 @@ export function SignUpForm({ locale, dictionary }: Props) {
         </div>
       ) : null}
       {error ? <p className="muted">{dictionary['auth.verifyFailed']}</p> : null}
+      </div>
     </div>
   );
 }

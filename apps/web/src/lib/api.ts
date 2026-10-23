@@ -161,6 +161,7 @@ export async function archiveAdminChallenge(
 
 export type LearnerPathway = {
   id: string;
+  slug?: string | null;
   title: string;
   summary: string;
   locale: string;

@@ -36,38 +36,45 @@ export function SignInForm({ locale, dictionary }: Props) {
   }
 
   return (
-    <div className="panel stack">
-      <h2>{dictionary['auth.title']}</h2>
-      <p className="muted">
-        {dictionary['auth.teacherHint']}{' '}
-        <Link href={`/${locale}/join`}>{dictionary['nav.join']}</Link>
-      </p>
-      <form className="stack" onSubmit={onSubmit}>
-        <div>
-          <label htmlFor="email">{dictionary['auth.emailLabel']}</label>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-          />
-        </div>
-        <button type="submit" disabled={pending}>
-          {dictionary['auth.sendLink']}
-        </button>
-      </form>
-      {devVerifyUrl ? (
-        <div className="stack">
-          <p>{dictionary['auth.linkSent']}</p>
-          <Link className="dev-link" href={devVerifyUrl}>
-            {devVerifyUrl}
-          </Link>
-        </div>
-      ) : null}
-      {error ? <p className="muted">{dictionary['auth.verifyFailed']}</p> : null}
+    <div className="stack">
+      <section className="hero-strip">
+        <div className="blob b" aria-hidden="true" />
+        <h1 className="brand-hero" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)' }}>
+          {dictionary['auth.title']}
+        </h1>
+        <p className="support">
+          {dictionary['auth.teacherHint']}{' '}
+          <Link href={`/${locale}/join`}>{dictionary['nav.join']}</Link>
+        </p>
+      </section>
+      <div className="panel stack">
+        <form className="stack" onSubmit={onSubmit}>
+          <div>
+            <label htmlFor="email">{dictionary['auth.emailLabel']}</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+            />
+          </div>
+          <button type="submit" className="btn btn-primary" disabled={pending}>
+            {dictionary['auth.sendLink']}
+          </button>
+        </form>
+        {devVerifyUrl ? (
+          <div className="stack">
+            <p>{dictionary['auth.linkSent']}</p>
+            <Link className="dev-link" href={devVerifyUrl}>
+              {devVerifyUrl}
+            </Link>
+          </div>
+        ) : null}
+        {error ? <p className="muted">{dictionary['auth.verifyFailed']}</p> : null}
+      </div>
     </div>
   );
 }

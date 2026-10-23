@@ -4,13 +4,13 @@ import type { Locale, MessageKey } from '@koode/contracts';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import {
-  enrollInPathway,
   fetchMe,
   listLearnerPathways,
   listMyPathwayEnrollments,
   type LearnerPathway,
   type PathwayEnrollment,
 } from '@/lib/api';
+import { pathwayBadge } from '@/lib/pathway-meta';
 
 type Props = {
   locale: Locale;
@@ -22,7 +22,6 @@ export function PathwaysBrowsePanel({ locale, dictionary }: Props) {
   const [pathways, setPathways] = useState<LearnerPathway[]>([]);
   const [enrollments, setEnrollments] = useState<PathwayEnrollment[]>([]);
   const [error, setError] = useState(false);
-  const [busyId, setBusyId] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     const me = await fetchMe();
@@ -40,26 +39,11 @@ export function PathwaysBrowsePanel({ locale, dictionary }: Props) {
   }, []);
 
   useEffect(() => {
-    void refresh().catch(() => setSignedIn(false));
-  }, [refresh]);
-
-  async function onStart(pathwayId: string) {
-    setError(false);
-    setBusyId(pathwayId);
-    try {
-      const { enrollment } = await enrollInPathway(pathwayId);
-      setEnrollments((prev) => {
-        if (prev.some((row) => row.id === enrollment.id)) {
-          return prev;
-        }
-        return [enrollment, ...prev];
-      });
-    } catch {
+    void refresh().catch(() => {
+      setSignedIn(false);
       setError(true);
-    } finally {
-      setBusyId(null);
-    }
-  }
+    });
+  }, [refresh]);
 
   if (signedIn === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
@@ -68,9 +52,9 @@ export function PathwaysBrowsePanel({ locale, dictionary }: Props) {
   if (!signedIn) {
     return (
       <div className="panel stack">
-        <h2>{dictionary['pathways.title']}</h2>
+        <h2 className="section-title">{dictionary['pathways.title']}</h2>
         <p>{dictionary['pathways.needSignIn']}</p>
-        <Link className="button" href={`/${locale}/sign-up`}>
+        <Link className="btn btn-primary" href={`/${locale}/sign-up`}>
           {dictionary['nav.signUp']}
         </Link>
       </div>
@@ -80,36 +64,37 @@ export function PathwaysBrowsePanel({ locale, dictionary }: Props) {
   const enrolledIds = new Set(enrollments.map((row) => row.pathwayId));
 
   return (
-    <div className="panel stack">
-      <h2>{dictionary['pathways.title']}</h2>
-      <p className="muted">{dictionary['pathways.hint']}</p>
+    <div className="stack">
+      <div>
+        <h2 className="section-title">{dictionary['pathways.title']}</h2>
+        <p className="section-support">{dictionary['pathways.hint']}</p>
+      </div>
       {error ? <p role="alert">{dictionary['pathways.error']}</p> : null}
 
       {pathways.length === 0 ? (
         <p className="muted">{dictionary['pathways.empty']}</p>
       ) : (
-        <ul className="stack">
+        <div className="worlds">
           {pathways.map((pathway) => {
+            const badge = pathwayBadge(pathway.slug);
             const enrolled = enrolledIds.has(pathway.id);
             return (
-              <li key={pathway.id} className="stack">
-                <strong>{pathway.title}</strong>
+              <Link
+                key={pathway.id}
+                className="path-card"
+                href={`/${locale}/pathways/${pathway.id}`}
+                data-pathway-slug={pathway.slug ?? ''}
+              >
+                <span className={badge.className}>{badge.label}</span>
+                <h3>{pathway.title}</h3>
                 {pathway.summary ? <p>{pathway.summary}</p> : null}
-                {enrolled ? (
-                  <p className="muted">{dictionary['pathways.enrolled']}</p>
-                ) : (
-                  <button
-                    type="button"
-                    disabled={busyId === pathway.id}
-                    onClick={() => void onStart(pathway.id)}
-                  >
-                    {dictionary['pathways.start']}
-                  </button>
-                )}
-              </li>
+                <p className="card-link muted">
+                  {enrolled ? dictionary['pathways.enrolled'] : dictionary['pathways.start']} →
+                </p>
+              </Link>
             );
           })}
-        </ul>
+        </div>
       )}
     </div>
   );

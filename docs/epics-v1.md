@@ -197,6 +197,15 @@ Bridge authored `content/` manuals into the live product.
 
 ---
 
+## Epic E10 — Learner UI (landing visual system)
+
+| ID | Story | Acceptance criteria | Independent test suite | Status |
+| --- | --- | --- | --- | --- |
+| **E10-S1** | App shell matches landing | Fredoka/Nunito, cream/sky/mint tokens, topbar, path-cards, Duolingo-style buttons | Visual smoke + existing e2e | `done` |
+| **E10-S2** | Pathway → challenge journey | Worlds grid → pathway detail path nodes → challenge play page with quiz | `E9-S2` e2e (updated) | `done` |
+
+---
+
 ## v1 + E9 complete
 
-E1–E9 stories are `done`. Remaining product work is v1.1+ (Google sign-in, full ml + voice, parents/school admin).
+E1–E9 stories are `done`. E10 aligns the authenticated app UI with the public landing. Remaining: v1.1+ (Google sign-in, full ml + voice, parents/school admin).

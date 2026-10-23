@@ -31,35 +31,53 @@ export function HomeSession({ locale, dictionary }: Props) {
 
   if (!user) {
     return (
-      <div className="panel stack">
-        <p>{dictionary['home.signedOutHint']}</p>
-        <div className="nav">
-          <Link className="button" href={`/${locale}/sign-up`}>
+      <section className="hero-strip" aria-label="Welcome">
+        <div className="blob a" aria-hidden="true" />
+        <div className="blob b" aria-hidden="true" />
+        <p className="brand-hero">{dictionary['app.name']}</p>
+        <h1 className="headline">{dictionary['app.tagline']}</h1>
+        <p className="support">{dictionary['home.signedOutHint']}</p>
+        <div className="ctas" style={{ marginTop: '1.25rem' }}>
+          <Link className="btn btn-primary" href={`/${locale}/sign-up`}>
             {dictionary['nav.signUp']}
           </Link>
-          <Link className="button secondary" href={`/${locale}/sign-in`}>
+          <Link className="btn btn-secondary" href={`/${locale}/sign-in`}>
             {dictionary['nav.signIn']}
           </Link>
+          <Link className="btn btn-accent" href={`/${locale}/join`}>
+            {dictionary['nav.join']}
+          </Link>
         </div>
-      </div>
+      </section>
     );
   }
 
   return (
     <div className="stack">
-      <div className="panel stack">
-        <p>
+      <section className="hero-strip" aria-label="Home">
+        <div className="blob a" aria-hidden="true" />
+        <div className="blob b" aria-hidden="true" />
+        <p className="brand-hero">{dictionary['app.name']}</p>
+        <h1 className="headline">{dictionary['home.welcome']}</h1>
+        <p className="support">
           {dictionary['auth.signedInAs']}{' '}
           <strong>{user.displayName ?? user.email ?? user.role}</strong>
-          {user.email && user.displayName ? (
-            <span className="muted"> ({user.email})</span>
-          ) : null}
         </p>
-        <p>{dictionary['home.welcome']}</p>
-        <button type="button" className="secondary" onClick={() => void onSignOut()}>
-          {dictionary['nav.signOut']}
-        </button>
-      </div>
+        <div className="ctas" style={{ marginTop: '1.25rem' }}>
+          <Link className="btn btn-primary" href={`/${locale}/pathways`}>
+            {dictionary['nav.pathways']}
+          </Link>
+          <Link className="btn btn-secondary" href={`/${locale}/challenges`}>
+            {dictionary['nav.challenges']}
+          </Link>
+          <Link className="btn btn-accent" href={`/${locale}/tutor`}>
+            {dictionary['nav.tutor']}
+          </Link>
+          <button type="button" className="btn-ghost" onClick={() => void onSignOut()}>
+            {dictionary['nav.signOut']}
+          </button>
+        </div>
+      </section>
       {!user.email ? <ClaimEmailForm locale={locale} dictionary={dictionary} /> : null}
     </div>
   );

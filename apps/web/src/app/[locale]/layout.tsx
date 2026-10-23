@@ -40,12 +40,20 @@ export default async function LocaleLayout({ children, params }: Props) {
 
   return (
     <html lang={locale}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;600;700;800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
         <ServiceWorkerRegister />
-        <main>
+        <div className="app-shell">
           <ShellHeader locale={locale} dictionary={dictionary} />
-          {children}
-        </main>
+          <main className="app-main">{children}</main>
+        </div>
       </body>
     </html>
   );

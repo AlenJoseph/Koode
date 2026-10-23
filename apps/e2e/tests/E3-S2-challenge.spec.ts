@@ -39,11 +39,14 @@ test.describe('E3-S2 challenge attempt', () => {
 
     await page.goto('/en/challenges');
     await expect(page.getByRole('heading', { name: 'Challenges' })).toBeVisible();
-    const row = page.getByRole('listitem').filter({ hasText: title });
-    await expect(row).toBeVisible();
-    await row.getByRole('button', { name: 'Start challenge' }).click();
-    await row.getByRole('button', { name: 'Mark complete' }).click();
-    await expect(row.getByText('Completed')).toBeVisible();
+    const card = page.locator('.path-card').filter({ hasText: title });
+    await expect(card).toBeVisible();
+    await card.click();
+    await page.getByRole('button', { name: 'Start challenge' }).click();
+    // Admin-created challenges have no content manual quiz — stub complete path.
+    await expect(page.getByText(/No quiz for this challenge/i)).toBeVisible();
+    await page.getByRole('button', { name: 'Mark complete' }).click();
+    await expect(page.getByText('Completed').first()).toBeVisible();
   });
 
   test('negative: unauthenticated challenges page prompts sign-in', async ({ page }) => {
