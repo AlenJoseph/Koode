@@ -9,11 +9,11 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: 'Koode | Personal intelligence for human growth',
   description:
-    'Open learning platform for life skills and UN SDG-aligned pathways: money, wildlife, civic sense, cooking, first aid, business, teaching. Classrooms and independent learners. AI tutor that scaffolds, not spoils.',
+    'Open learning platform for research-grounded life skill pathways: self-awareness, thinking, communication, health, money sense, civic life, living world, and making useful things. Classrooms and independent learners. AI tutor that scaffolds.',
   openGraph: {
     title: 'Koode | Personal intelligence for human growth',
     description:
-      'Students practise real life skills with pathways and a gentle tutor. Teachers run classrooms. Aligned with UN Sustainable Development Goals.',
+      'Students practise WHO and OECD-aligned life skills with pathways and a gentle tutor. Teachers run classrooms. Connected to UN SDGs.',
     url: siteUrl,
     siteName: 'Koode',
     type: 'website',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Koode | Personal intelligence for human growth',
     description:
-      'Life-skill pathways for students and classrooms, mapped to UN SDGs. Clear product for learners, teachers, and investors.',
+      'Life-skill pathways for students and classrooms, grounded in WHO, UNICEF, OECD, and UN SDGs.',
   },
   alternates: {
     canonical: '/',
