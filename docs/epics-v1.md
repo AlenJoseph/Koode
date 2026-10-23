@@ -193,9 +193,10 @@ Bridge authored `content/` manuals into the live product.
 | **E9-S1** | Seed manuals into DB | `pnpm db:seed` upserts 6 pathways + challenges by slug as published | `seed-content.integration.test.ts` | `done` |
 | **E9-S2** | Quiz UI | Learner can open a seeded challenge quiz, submit, complete attempt | `E9-S2-challenge-quiz.integration.test.ts` + e2e | `done` |
 | **E9-S3** | Tutor turn purge | Job/CLI deletes tutor turns older than retention days | `purge-tutor-turns.test.ts` + integration | `done` |
+| **E9-S4** | Stub-default LLM verify | CI/e2e health shows `aiAdapter=stub`; live path stays opt-in via [`demo-llm.md`](./demo-llm.md) | `E8-S1-stub-default*` tests | `done` |
 
 ---
 
-## v1 complete
+## v1 + E9 complete
 
-E1–E8 stories are `done`. E9 continues content runtime (seed → quiz → purge). Google sign-in remains v1.1.
+E1–E9 stories are `done`. Remaining product work is v1.1+ (Google sign-in, full ml + voice, parents/school admin).

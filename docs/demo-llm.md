@@ -4,8 +4,9 @@ CI and default local always use the stub. Use this checklist only for a **manual
 
 ## Preconditions
 
-- [ ] Postgres running; `pnpm db:migrate`
+- [ ] Postgres running; `pnpm db:migrate` (+ `pnpm db:seed` for manuals)
 - [ ] `SESSION_SECRET` set (≥32 chars)
+- [ ] Confirm baseline: `curl -s localhost:3001/health` shows `"aiAdapter":"stub"` before flipping env
 - [ ] You have a school/demo agreement if any learner PII could enter prompts
 - [ ] Prefer synthetic accounts only
 
