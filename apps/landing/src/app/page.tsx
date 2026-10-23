@@ -1,58 +1,47 @@
 const appOrigin = process.env.NEXT_PUBLIC_APP_ORIGIN ?? 'http://localhost:3000';
 
-/** Grounded in WHO life skills, UNICEF transferable skills, OECD Learning Compass, UNESCO literacies. See docs/pathways-v1.md */
+/** Student-facing pathway names. Research map lives in docs/pathways-v1.md (not on this page). */
 const pathways = [
   {
-    badge: 'WHO · SDG 3',
+    badge: 'Self',
     title: 'Know yourself',
     blurb: 'Notice feelings, strengths, and stress. Practise calmer choices when life gets loud.',
   },
   {
-    badge: 'WHO · SDG 4',
+    badge: 'Mind',
     title: 'Think it through',
     blurb: 'Critical thinking, creative ideas, decisions, and problem-solving on unfamiliar tasks.',
   },
   {
-    badge: 'WHO · SDG 16',
+    badge: 'People',
     title: 'Speak & listen',
-    blurb: 'Explain clearly, listen with empathy, and handle disagreement without shutting down.',
+    blurb: 'Explain clearly, listen with care, and handle disagreement without shutting down.',
   },
   {
-    badge: 'Health literacy · SDG 3',
+    badge: 'Health',
     title: 'Body & care',
     blurb: 'Food sense, everyday wellbeing, and first aid: check, call, care before panic wins.',
   },
   {
-    badge: 'Financial literacy · SDG 8',
+    badge: 'Money',
     title: 'Money sense',
-    blurb: 'Budgets, fair deals, saving, and spotting traps. Money as judgement, not greed.',
+    blurb: 'Budgets, fair deals, saving, and spotting traps. Judgement with money, not greed.',
   },
   {
-    badge: 'Citizenship · SDG 11',
+    badge: 'Civic',
     title: 'Civic life',
-    blurb: 'Clean shared spaces, neighbour care, and local voice. Citizenship practised in the street you live on.',
+    blurb: 'Clean shared spaces, neighbour care, and local voice on the street you live on.',
   },
   {
-    badge: 'Planet · SDG 15',
+    badge: 'Nature',
     title: 'Living world',
-    blurb: 'Wildlife, habitats, and climate-aware local action. Care for land you can actually walk.',
+    blurb: 'Wildlife, habitats, and climate-aware local action you can walk to.',
   },
   {
-    badge: 'OECD · SDG 8',
+    badge: 'Make',
     title: 'Make & serve',
-    blurb: 'Tiny enterprise, teach a peer, or build a useful tool. Software only when a real problem needs one.',
+    blurb: 'Tiny enterprise, teach a peer, or build a useful tool. Software only when it helps.',
   },
-] as const;
-
-const sdgs = [
-  { id: '4', name: 'Quality Education', why: 'Pathways, challenges, and evidence of real learning.' },
-  { id: '3', name: 'Good Health', why: 'Self-care, food sense, first aid, and emotional coping.' },
-  { id: '8', name: 'Decent Work & Growth', why: 'Money sense and making useful things people need.' },
-  { id: '10', name: 'Reduced Inequalities', why: 'Classroom and solo learners get the same quality of guidance.' },
-  { id: '11', name: 'Sustainable Cities', why: 'Civic life and shared spaces where students live.' },
-  { id: '12', name: 'Responsible Consumption', why: 'Waste less and understand what we use.' },
-  { id: '13', name: 'Climate Action', why: 'Local choices connected to a changing climate.' },
-  { id: '15', name: 'Life on Land', why: 'Wildlife, habitats, and living-world care.' },
 ] as const;
 
 export default function LandingPage() {
@@ -68,22 +57,22 @@ export default function LandingPage() {
           <nav aria-label="Landing">
             <a href="#product">Product</a>
             <a href="#worlds">Pathways</a>
-            <a href="#sdgs">UN SDGs</a>
-            <a href="#how">Start</a>
+            <a href="#how">How it works</a>
+            <a href="#honest">About</a>
           </nav>
         </header>
 
         <div className="hero-main">
           <div>
             <p className="brand-hero">Koode</p>
-            <h1 className="headline">Personal intelligence for human growth.</h1>
+            <h1 className="headline">Learn life skills. Keep the thinking.</h1>
             <p className="support">
-              An open learning platform where students practise life skills that research actually
-              names: knowing yourself, thinking clearly, relating to others, money sense, civic life,
-              health, and care for the living world. Pathways, challenges, and a gentle AI tutor.
-              Teachers run classrooms. Learners keep the thinking.
+              Koode is an open classroom and independent-learning app. Students follow pathways
+              (money, health, civic life, nature, and more), take challenges, build projects, and get
+              a tutor that asks good questions instead of handing over answers. Teachers run classes
+              with a join code. No email required for kids in a section.
             </p>
-            <div className="ctas" id="start">
+            <div className="ctas">
               <a className="btn btn-primary" href={`${appOrigin}/en/sign-in`}>
                 I’m a teacher
               </a>
@@ -103,14 +92,14 @@ export default function LandingPage() {
                 <div className="node done">
                   <div className="dot" />
                   <div>
-                    <strong>Anticipate</strong>
+                    <strong>Plan</strong>
                     <span>Pick a mission</span>
                   </div>
                 </div>
                 <div className="node active">
                   <div className="dot" />
                   <div>
-                    <strong>Act</strong>
+                    <strong>Practise</strong>
                     <span>Challenge + build</span>
                   </div>
                 </div>
@@ -118,7 +107,7 @@ export default function LandingPage() {
                   <div className="dot" />
                   <div>
                     <strong>Reflect</strong>
-                    <span>Grow next</span>
+                    <span>What next</span>
                   </div>
                 </div>
               </div>
@@ -131,41 +120,41 @@ export default function LandingPage() {
       </section>
 
       <section className="section" id="product">
-        <h2>What Koode is</h2>
-        <p>One product. Three clear pieces.</p>
+        <h2>What you get</h2>
+        <p>Plain product. Nothing more fancy than this.</p>
         <div className="product-grid">
           <article className="path-card">
-            <div className="badge">For students</div>
-            <h3>Practise skills that transfer</h3>
+            <div className="badge">Students</div>
+            <h3>Pathways, challenges, projects</h3>
             <p>
-              Pick a pathway, take challenges, build something you can explain, then reflect. The
-              tutor asks guiding questions. It does not do the thinking for you.
+              Choose a world that matters outside the screen. Complete challenges, make something
+              you can explain, keep a streak. The tutor scaffolds. You still do the work.
             </p>
           </article>
           <article className="path-card">
-            <div className="badge teacher">For teachers</div>
-            <h3>Run a class without email friction</h3>
+            <div className="badge teacher">Teachers</div>
+            <h3>Sections, roster, progress signals</h3>
             <p>
-              Create a section, share a join code, add students with secret words, point them at a
-              pathway, and see learning-support signals grounded in attempts and projects.
+              Create a class, share a code, add students with secret words, suggest a pathway
+              direction, and see who needs help from real attempts, not empty dashboards.
             </p>
           </article>
           <article className="path-card">
-            <div className="badge join">How learning moves</div>
-            <h3>Anticipate → Act → Reflect</h3>
+            <div className="badge join">Design rules</div>
+            <h3>Open, private, local-first</h3>
             <p>
-              Same cycle as the OECD Learning Compass: plan a mission, practise and build, then
-              reflect with evidence. Privacy and safeguarding stay built in.
+              Source is public. Learner data stays minimised. You can run the stack on your own
+              machine like production. Built for school pilots that need inspectable software.
             </p>
           </article>
         </div>
       </section>
 
       <section className="section" id="worlds">
-        <h2>Pathways students can chase</h2>
+        <h2>Pathways</h2>
         <p>
-          Drawn from WHO life skills, UNICEF transferable skills, OECD transformative competencies,
-          and UNESCO health/financial literacies. Concrete worlds, not buzzwords.
+          Eight starting worlds. Coding is optional, inside Make & serve, only when a problem needs
+          a tool.
         </p>
         <div className="worlds">
           {pathways.map((item) => (
@@ -176,64 +165,82 @@ export default function LandingPage() {
             </article>
           ))}
         </div>
-        <p className="source-note">
-          Full map and sources:{' '}
-          <a href="https://github.com/AlenJoseph/Koode/blob/main/docs/pathways-v1.md">
-            docs/pathways-v1.md
-          </a>
-        </p>
-      </section>
-
-      <section className="section section-ink" id="sdgs">
-        <h2>Connected to the UN Sustainable Development Goals</h2>
-        <p>
-          Quality education (SDG 4) sits at the centre. Pathways also practise health, work, civic
-          life, and care for land and climate through local missions.
-        </p>
-        <div className="sdg-grid">
-          {sdgs.map((goal) => (
-            <article key={goal.id} className="sdg-card">
-              <p className="sdg-id">SDG {goal.id}</p>
-              <h3>{goal.name}</h3>
-              <p>{goal.why}</p>
-            </article>
-          ))}
-        </div>
-        <p className="sdg-note">
-          Official goals:{' '}
-          <a href="https://sdgs.un.org/goals" rel="noopener noreferrer" target="_blank">
-            sdgs.un.org/goals
-          </a>
-          . Koode is not a UN programme. The goals are a shared language for what learning is for.
-        </p>
       </section>
 
       <section className="section" id="how">
-        <h2>Three ways in</h2>
-        <p>Same product. Different doors for teachers, solo learners, and class students.</p>
+        <h2>How to start</h2>
+        <p>Three doors. Same product behind them.</p>
         <div className="paths">
           <article className="path-card">
             <div className="badge teacher">Teachers</div>
             <h3>Run a section</h3>
-            <p>
-              Create a class, share a code, and watch learning-support signals across any pathway.
+            <p>Sign in, create a class, share the code, add students, point them at a pathway.</p>
+            <p className="card-link">
+              <a href={`${appOrigin}/en/sign-in`}>Teacher sign in →</a>
             </p>
           </article>
           <article className="path-card">
-            <div className="badge">Learners</div>
+            <div className="badge">Solo learners</div>
             <h3>Learn on your own</h3>
-            <p>
-              Sign up with email, start a pathway that matters outside the screen, and keep a streak
-              with a tutor that scaffolds.
+            <p>Sign up with email, pick a pathway, and practise at your pace.</p>
+            <p className="card-link">
+              <a href={`${appOrigin}/en/sign-up`}>Student sign up →</a>
             </p>
           </article>
           <article className="path-card">
-            <div className="badge join">Classmates</div>
+            <div className="badge join">In a class</div>
             <h3>Join with a code</h3>
-            <p>
-              No email needed for classroom kids. Section code plus secret words, Code.org-style.
+            <p>No email. Section code plus secret words from your teacher.</p>
+            <p className="card-link">
+              <a href={`${appOrigin}/en/join`}>Join class →</a>
             </p>
           </article>
+        </div>
+      </section>
+
+      <section className="section section-ink" id="honest">
+        <h2>Where we are (honest)</h2>
+        <p>
+          Koode is early. The product loop works locally today: auth, classrooms, pathways,
+          challenges, progress, and a stub tutor. We are building toward school pilots with strong
+          privacy defaults.
+        </p>
+        <div className="product-grid">
+          <article className="sdg-card">
+            <h3>Who it is for</h3>
+            <p>
+              Teachers, students 13–18, and partners who care about life skills and independent
+              learning, not chat toys.
+            </p>
+          </article>
+          <article className="sdg-card">
+            <h3>What we need next</h3>
+            <p>
+              Classroom pilots, curriculum partners, and sponsors who fund learning resources and
+              safe hosting, not hype.
+            </p>
+          </article>
+          <article className="sdg-card">
+            <h3>How to look closer</h3>
+            <p>
+              Try the app, read the docs, or open the code on GitHub. We would rather show the work
+              than decorate the page with logos we have not earned.
+            </p>
+          </article>
+        </div>
+        <div className="ctas invest-ctas">
+          <a className="btn btn-primary" href={`${appOrigin}/en/sign-up`}>
+            Try the app
+          </a>
+          <a
+            className="btn btn-secondary"
+            href={process.env.NEXT_PUBLIC_DOCS_ORIGIN ?? 'http://localhost:3003'}
+          >
+            Read docs
+          </a>
+          <a className="btn btn-accent" href="https://github.com/AlenJoseph/Koode">
+            View source
+          </a>
         </div>
       </section>
     </>

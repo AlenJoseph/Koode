@@ -596,14 +596,16 @@ a {
   justify-content: flex-end;
 }
 
-.source-note {
-  margin-top: 1.25rem !important;
-  font-size: 0.92rem;
-  max-width: 62ch !important;
+.card-link {
+  margin: 0.85rem 0 0 !important;
+  font-weight: 800;
 }
 
-.source-note a {
-  font-weight: 800;
+.card-link a {
   color: var(--sky-deep);
+}
+
+.invest-ctas {
+  margin-top: 1.5rem;
 }
 

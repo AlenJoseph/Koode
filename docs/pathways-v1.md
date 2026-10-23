@@ -1,6 +1,8 @@
 # Koode pathways v1 (research grounding)
 
-Working catalogue for product pathways. Landing copy should follow this map.
+Working catalogue for product pathways. Landing copy should follow the **pathway names** below.
+
+**Landing rule:** do **not** paste WHO / UNICEF / OECD / UN logos or “aligned with SDG …” wallpaper on the marketing site. That reads as borrowed credibility. Keep citations here for builders, grant notes, and due diligence. The public page sells the product in plain language.
 
 ## What a “pathway” means here
 
