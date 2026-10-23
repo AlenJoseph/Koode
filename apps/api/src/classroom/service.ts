@@ -92,10 +92,7 @@ export function createClassroomService(database: Database) {
           throw new AuthError('Display name already used in this section', 409);
         }
 
-        const [studentUser] = await tx
-          .insert(users)
-          .values({ email: null, role: 'student' })
-          .returning();
+        const [studentUser] = await tx.insert(users).values({ role: 'student' }).returning();
         if (!studentUser) {
           throw new AuthError('Failed to create student', 500);
         }

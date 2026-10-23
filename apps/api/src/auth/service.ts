@@ -10,54 +10,79 @@ import {
   magicLinkTokens,
   sectionStudents,
   sessions,
+  userEmails,
   users,
   type Database,
 } from '@koode/database';
 import { and, eq, gt, isNull } from 'drizzle-orm';
 import type { ApiConfig } from '../config.js';
 import { createOpaqueToken, hashToken } from '../crypto.js';
+import { createEmailService, normalizeEmail } from '../identity/emails.js';
+import { AuthError } from './errors.js';
 
-export class AuthError extends Error {
-  constructor(
-    message: string,
-    readonly statusCode: number,
-  ) {
-    super(message);
-    this.name = 'AuthError';
-  }
-}
+export { AuthError } from './errors.js';
 
 export function createAuthService(database: Database, config: ApiConfig) {
   const { db } = database;
+  const emails = createEmailService(database);
 
   async function ensureTeacher(email: string, preferredLocale: Locale = 'en') {
-    return db.transaction(async (tx) => {
-      const existing = await tx.query.users.findFirst({
-        where: eq(users.email, email),
+    const normalized = normalizeEmail(email);
+
+    const existingId = await emails.findUserIdByEmail(normalized);
+    if (existingId) {
+      const existing = await db.query.users.findFirst({
+        where: eq(users.id, existingId),
       });
-      if (existing) {
-        if (existing.role !== 'teacher') {
-          throw new AuthError('This email belongs to a student account', 403);
+      if (!existing) {
+        throw new AuthError('User not found for email', 500);
+      }
+      if (existing.role !== 'teacher') {
+        throw new AuthError('This email belongs to a student account', 403);
+      }
+      return existing;
+    }
+
+    try {
+      return await db.transaction(async (tx) => {
+        const [created] = await tx.insert(users).values({ role: 'teacher' }).returning();
+        if (!created) {
+          throw new AuthError('Failed to create user', 500);
         }
-        return existing;
-      }
 
-      const [created] = await tx.insert(users).values({ email, role: 'teacher' }).returning();
-      if (!created) {
-        throw new AuthError('Failed to create user', 500);
-      }
+        await tx.insert(learnerProfiles).values({
+          userId: created.id,
+          preferredLocale,
+        });
+        await tx.insert(consentRecords).values({
+          userId: created.id,
+          consentType: 'terms_of_use_stub',
+          granted: true,
+        });
+        await tx.insert(userEmails).values({
+          userId: created.id,
+          email: normalized,
+          isPrimary: true,
+          verifiedAt: new Date(),
+        });
 
-      await tx.insert(learnerProfiles).values({
-        userId: created.id,
-        preferredLocale,
+        return created;
       });
-      await tx.insert(consentRecords).values({
-        userId: created.id,
-        consentType: 'terms_of_use_stub',
-        granted: true,
-      });
-      return created;
-    });
+    } catch (error) {
+      if (error instanceof AuthError) {
+        throw error;
+      }
+      // Race: another request claimed this email — retry lookup.
+      const racedId = await emails.findUserIdByEmail(normalized);
+      if (racedId) {
+        const raced = await db.query.users.findFirst({ where: eq(users.id, racedId) });
+        if (raced?.role === 'teacher') {
+          return raced;
+        }
+        throw new AuthError('This email belongs to a student account', 403);
+      }
+      throw error;
+    }
   }
 
   async function toSessionUser(userId: string): Promise<SessionUser> {
@@ -75,9 +100,10 @@ export function createAuthService(database: Database, config: ApiConfig) {
     });
     const preferredLocale = (profile?.preferredLocale === 'ml' ? 'ml' : 'en') as Locale;
     const role = user.role === 'student' ? 'student' : 'teacher';
+    const primaryEmail = await emails.getPrimaryEmail(userId);
     return {
       id: user.id,
-      email: user.email ?? null,
+      email: primaryEmail,
       role,
       preferredLocale,
       displayName: membership?.displayName ?? profile?.displayName ?? null,
@@ -87,10 +113,11 @@ export function createAuthService(database: Database, config: ApiConfig) {
 
   return {
     toSessionUser,
+    emails,
 
     async requestMagicLink(input: unknown) {
       const { email } = magicLinkRequestSchema.parse(input);
-      const normalized = email.toLowerCase();
+      const normalized = normalizeEmail(email);
       const token = createOpaqueToken();
       const expiresAt = new Date(Date.now() + config.magicLinkTtlMs);
 

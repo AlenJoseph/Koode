@@ -7,12 +7,14 @@ import {
   sections,
   sessions,
   tutorTurns,
+  userEmails,
   users,
 } from './index.js';
 
 describe('database schema', () => {
-  it('exports learner-owned and classroom tables', () => {
+  it('exports learner-owned, classroom, and multi-email tables', () => {
     expect(users).toBeDefined();
+    expect(userEmails).toBeDefined();
     expect(learnerProfiles).toBeDefined();
     expect(consentRecords).toBeDefined();
     expect(sessions).toBeDefined();
@@ -22,3 +24,4 @@ describe('database schema', () => {
     expect(sectionStudents).toBeDefined();
   });
 });
+

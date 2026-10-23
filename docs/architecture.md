@@ -26,12 +26,18 @@ Application code depends on `ModelAdapter` / `AiGateway` only. Swap providers wi
 - `AI_PROVIDER=stub` (default, tests and offline)
 - `AI_PROVIDER=openai-compatible` + `AI_BASE_URL` + `AI_MODEL` (+ optional `AI_API_KEY`)
 
+## Identity
+
+- One **user** account; emails live in **`user_emails`** (GitHub-style, globally unique, one primary).
+- Classroom students may have zero emails until they claim/link (E1 later stories).
+
 ## Classroom auth (Code.org-inspired)
 
 - **Teachers** use email magic-link accounts (`role=teacher`).
 - **Students** join with a 6-character **section code** → pick display name → **secret words** (no email).
 - Teachers create sections, add roster names, and receive secret words once for login cards.
 - Sessions are still DB-backed cookies for both roles.
+
 
 ## Boundaries
 
