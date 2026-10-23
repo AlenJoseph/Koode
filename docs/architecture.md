@@ -29,7 +29,10 @@ Application code depends on `ModelAdapter` / `AiGateway` only. Swap providers wi
 ## Identity
 
 - One **user** account; emails live in **`user_emails`** (GitHub-style, globally unique, one primary).
+- Roles: `teacher` (classroom), `learner` (independent email), `student` (roster / section code).
+- Magic-link `intent` is `teacher` or `learner` (stored on the token).
 - Classroom students may have zero emails until they claim/link (E1 later stories).
+
 
 ## Classroom auth (Code.org-inspired)
 

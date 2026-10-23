@@ -26,6 +26,7 @@ export function ShellHeader({ locale, dictionary }: Props) {
         <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
         <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
         <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
+        <Link href={`/${locale}/sign-up`}>{dictionary['nav.signUp']}</Link>
         <Link className="button secondary" href={`/${locale}/sign-in`}>
           {dictionary['nav.signIn']}
         </Link>

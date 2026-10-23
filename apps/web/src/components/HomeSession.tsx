@@ -32,9 +32,14 @@ export function HomeSession({ locale, dictionary }: Props) {
     return (
       <div className="panel stack">
         <p>{dictionary['home.signedOutHint']}</p>
-        <Link className="button" href={`/${locale}/sign-in`}>
-          {dictionary['nav.signIn']}
-        </Link>
+        <div className="nav">
+          <Link className="button" href={`/${locale}/sign-up`}>
+            {dictionary['nav.signUp']}
+          </Link>
+          <Link className="button secondary" href={`/${locale}/sign-in`}>
+            {dictionary['nav.signIn']}
+          </Link>
+        </div>
       </div>
     );
   }

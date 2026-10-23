@@ -19,15 +19,19 @@ async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   return (await response.json()) as T;
 }
 
-export async function requestMagicLink(email: string): Promise<{
+export async function requestMagicLink(
+  email: string,
+  intent: 'teacher' | 'learner' = 'teacher',
+): Promise<{
   ok: true;
   email: string;
+  intent?: string;
   devToken?: string;
   devVerifyUrl?: string;
 }> {
   return apiFetch('/auth/magic-link/request', {
     method: 'POST',
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, intent }),
   });
 }
 
