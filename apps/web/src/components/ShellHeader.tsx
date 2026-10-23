@@ -11,29 +11,41 @@ export function ShellHeader({ locale, dictionary }: Props) {
 
   return (
     <header className="topbar">
-      <div>
+      <div className="topbar-brand">
         <Link className="wordmark" href={`/${locale}`}>
           {dictionary['app.name']}
         </Link>
-        <p className="locales">
-          <span>{dictionary['locale.switch']}</span>
-          <Link href={`/${otherLocale}`}>{dictionary[`locale.${otherLocale}`]}</Link>
-        </p>
+        <Link className="locale-pill" href={`/${otherLocale}`} hrefLang={otherLocale}>
+          {locale.toUpperCase()}
+          <span aria-hidden="true">·</span>
+          {otherLocale.toUpperCase()}
+        </Link>
       </div>
-      <nav aria-label="Primary">
-        <Link href={`/${locale}`}>{dictionary['nav.home']}</Link>
+
+      <nav className="topbar-nav" aria-label="Primary">
         <Link href={`/${locale}/pathways`}>{dictionary['nav.pathways']}</Link>
         <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
         <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
         <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
-        <Link href={`/${locale}/classroom`}>{dictionary['nav.classroom']}</Link>
-        <Link href={`/${locale}/insights`}>{dictionary['nav.insights']}</Link>
-        <Link href={`/${locale}/join`}>{dictionary['nav.join']}</Link>
-        <Link href={`/${locale}/sign-up`}>{dictionary['nav.signUp']}</Link>
-        <Link className="btn btn-secondary" href={`/${locale}/sign-in`}>
-          {dictionary['nav.signIn']}
+        <Link className="nav-quiet" href={`/${locale}/classroom`}>
+          {dictionary['nav.classroom']}
+        </Link>
+        <Link className="nav-quiet" href={`/${locale}/insights`}>
+          {dictionary['nav.insights']}
         </Link>
       </nav>
+
+      <div className="topbar-actions">
+        <Link className="nav-quiet" href={`/${locale}/join`}>
+          {dictionary['nav.join']}
+        </Link>
+        <Link className="btn btn-primary btn-sm" href={`/${locale}/sign-up`}>
+          {dictionary['nav.signUp']}
+        </Link>
+        <Link className="btn btn-secondary btn-sm" href={`/${locale}/sign-in`}>
+          {dictionary['nav.signIn']}
+        </Link>
+      </div>
     </header>
   );
 }

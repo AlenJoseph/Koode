@@ -45,55 +45,112 @@ a {
 .topbar {
   position: relative;
   z-index: 2;
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding: 1.1rem 1.5rem;
+  gap: 1rem 1.25rem;
+  padding: 0.95rem 1.25rem;
   max-width: 1100px;
   width: 100%;
   margin: 0 auto;
 }
 
+.topbar-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  align-items: flex-start;
+}
+
 .wordmark {
   font-family: var(--font-display), sans-serif;
   font-weight: 700;
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   letter-spacing: 0.02em;
+  line-height: 1;
 }
 
-.topbar nav {
+.locale-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.72);
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.18rem 0.55rem;
+  opacity: 0.9;
+}
+
+.locale-pill:hover {
+  background: #fff;
+}
+
+.topbar-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
-  font-weight: 700;
+  gap: 0.35rem 0.85rem;
+  font-weight: 800;
   font-size: 0.92rem;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
 }
 
-.topbar nav a {
-  opacity: 0.85;
+.topbar-nav a,
+.topbar-actions a.nav-quiet {
+  opacity: 0.8;
+  padding: 0.2rem 0;
 }
 
-.topbar nav a:hover {
+.topbar-nav a:hover,
+.topbar-actions a.nav-quiet:hover {
   opacity: 1;
 }
 
-.locales {
+.topbar-nav a.nav-quiet {
+  opacity: 0.55;
+  font-size: 0.85rem;
+}
+
+.topbar-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.45rem;
   align-items: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-  opacity: 0.75;
+  justify-content: flex-end;
+}
+
+.btn-sm {
+  padding: 0.55rem 0.9rem !important;
+  font-size: 0.88rem !important;
+  border-radius: 14px !important;
+  border-bottom-width: 3px !important;
+  box-shadow: 0 6px 0 rgba(31, 42, 55, 0.1) !important;
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+  }
+
+  .topbar-nav,
+  .topbar-actions {
+    justify-content: flex-start;
+  }
+
+  .topbar-nav a.nav-quiet {
+    display: none;
+  }
 }
 
 .app-main {
   width: min(1100px, calc(100% - 2rem));
   margin: 0 auto;
-  padding: 0.5rem 0 3.5rem;
+  padding: 0.35rem 0 3.5rem;
 }
 
 .hero-strip {
@@ -106,26 +163,27 @@ a {
     radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.55), transparent 42%),
     radial-gradient(circle at 82% 18%, rgba(255, 200, 0, 0.35), transparent 36%),
     linear-gradient(165deg, #9ed8f7 0%, #7ec8f2 38%, #6fd0b0 78%, #58cc02 140%);
-  padding: 1.75rem 1.5rem 2rem;
+  padding: clamp(1.5rem, 3vw, 2.25rem);
   margin-bottom: 1.75rem;
   animation: rise 0.6s ease-out both;
+  max-width: 100%;
 }
 
 .hero-strip .brand-hero {
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(2.4rem, 6vw, 3.6rem);
+  font-size: clamp(2.2rem, 5.5vw, 3.2rem);
   font-weight: 700;
   line-height: 0.95;
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.55rem;
   letter-spacing: -0.02em;
   text-shadow: 0 3px 0 rgba(255, 255, 255, 0.35);
 }
 
 .hero-strip .headline {
   font-family: var(--font-display), sans-serif;
-  font-size: clamp(1.2rem, 2.8vw, 1.55rem);
+  font-size: clamp(1.15rem, 2.6vw, 1.45rem);
   font-weight: 600;
-  margin: 0 0 0.55rem;
+  margin: 0 0 0.5rem;
   max-width: 28ch;
 }
 
@@ -134,6 +192,11 @@ a {
   font-weight: 600;
   max-width: 42ch;
   opacity: 0.92;
+  line-height: 1.45;
+}
+
+.hero-strip .ctas {
+  margin-top: 1.25rem;
 }
 
 .blob {

@@ -37,7 +37,7 @@ export function HomeSession({ locale, dictionary }: Props) {
         <p className="brand-hero">{dictionary['app.name']}</p>
         <h1 className="headline">{dictionary['app.tagline']}</h1>
         <p className="support">{dictionary['home.signedOutHint']}</p>
-        <div className="ctas" style={{ marginTop: '1.25rem' }}>
+        <div className="ctas">
           <Link className="btn btn-primary" href={`/${locale}/sign-up`}>
             {dictionary['nav.signUp']}
           </Link>
@@ -63,7 +63,7 @@ export function HomeSession({ locale, dictionary }: Props) {
           {dictionary['auth.signedInAs']}{' '}
           <strong>{user.displayName ?? user.email ?? user.role}</strong>
         </p>
-        <div className="ctas" style={{ marginTop: '1.25rem' }}>
+        <div className="ctas">
           <Link className="btn btn-primary" href={`/${locale}/pathways`}>
             {dictionary['nav.pathways']}
           </Link>
