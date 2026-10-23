@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  challengeAttempts,
   challenges,
   consentRecords,
   learnerProfiles,
@@ -28,6 +29,7 @@ describe('database schema', () => {
     expect(pathways).toBeDefined();
     expect(challenges).toBeDefined();
     expect(pathwayEnrollments).toBeDefined();
+    expect(challengeAttempts).toBeDefined();
   });
 });
 

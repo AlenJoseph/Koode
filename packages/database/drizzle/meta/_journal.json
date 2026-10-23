@@ -64,6 +64,13 @@
       "when": 1761228000000,
       "tag": "0008_pathway_enrollments",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1761231600000,
+      "tag": "0009_challenge_attempts",
+      "breakpoints": true
     }
   ]
 }

@@ -1,5 +1,6 @@
 import { isLocale, type Locale } from '@koode/contracts';
 import { notFound } from 'next/navigation';
+import { ChallengesBrowsePanel } from '@/components/ChallengesBrowsePanel';
 import { getDictionary } from '@/i18n/dictionaries';
 
 type Props = {
@@ -12,11 +13,5 @@ export default async function ChallengesPage({ params }: Props) {
     notFound();
   }
   const locale = raw as Locale;
-  const dictionary = getDictionary(locale);
-  return (
-    <div className="panel">
-      <h2>{dictionary['nav.challenges']}</h2>
-      <p className="muted">{dictionary['health.ok']}</p>
-    </div>
-  );
+  return <ChallengesBrowsePanel locale={locale} dictionary={getDictionary(locale)} />;
 }

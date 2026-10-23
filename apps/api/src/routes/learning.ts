@@ -2,6 +2,7 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import type { SessionUser } from '@koode/contracts';
 import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
+import type { LearnerChallengeService } from '../learning/challenges-learner.js';
 import type { LearnerPathwayService } from '../learning/pathways-learner.js';
 import { clearSessionCookie, readSessionToken } from '../lib/cookies.js';
 
@@ -11,9 +12,10 @@ export async function registerLearningRoutes(
     config: ApiConfig;
     auth: AuthService;
     learnerPathways: LearnerPathwayService;
+    learnerChallenges: LearnerChallengeService;
   },
 ): Promise<void> {
-  const { config, auth, learnerPathways } = deps;
+  const { config, auth, learnerPathways, learnerChallenges } = deps;
 
   async function requireUser(
     request: FastifyRequest,
@@ -63,5 +65,51 @@ export async function registerLearningRoutes(
       'pathway enrollment started',
     );
     return { enrollment };
+  });
+
+  app.get('/challenges', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const list = await learnerChallenges.listPublished();
+    return { challenges: list };
+  });
+
+  app.get('/challenges/attempts', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const attempts = await learnerChallenges.listAttempts(user.id);
+    return { attempts };
+  });
+
+  app.post('/challenges/:challengeId/attempts', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const { challengeId } = request.params as { challengeId: string };
+    const attempt = await learnerChallenges.startAttempt(user.id, challengeId);
+    request.log.info(
+      { event: 'learning.challenge_started', challengeId, attemptId: attempt.id },
+      'challenge attempt started',
+    );
+    return { attempt };
+  });
+
+  app.post('/challenges/attempts/:attemptId/complete', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const { attemptId } = request.params as { attemptId: string };
+    const attempt = await learnerChallenges.completeAttempt(user.id, attemptId);
+    request.log.info(
+      { event: 'learning.challenge_completed', attemptId, challengeId: attempt.challengeId },
+      'challenge attempt completed',
+    );
+    return { attempt };
   });
 }

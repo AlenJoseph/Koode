@@ -188,6 +188,43 @@ export async function enrollInPathway(
   return apiFetch(`/pathways/${pathwayId}/enroll`, { method: 'POST' });
 }
 
+export type LearnerChallenge = {
+  id: string;
+  title: string;
+  summary: string;
+  locale: string;
+  status: string;
+  pathwayId: string | null;
+};
+
+export type ChallengeAttempt = {
+  id: string;
+  challengeId: string;
+  status: string;
+  startedAt: string;
+  completedAt: string | null;
+};
+
+export async function listLearnerChallenges(): Promise<{ challenges: LearnerChallenge[] }> {
+  return apiFetch('/challenges');
+}
+
+export async function listMyChallengeAttempts(): Promise<{ attempts: ChallengeAttempt[] }> {
+  return apiFetch('/challenges/attempts');
+}
+
+export async function startChallengeAttempt(
+  challengeId: string,
+): Promise<{ attempt: ChallengeAttempt }> {
+  return apiFetch(`/challenges/${challengeId}/attempts`, { method: 'POST' });
+}
+
+export async function completeChallengeAttempt(
+  attemptId: string,
+): Promise<{ attempt: ChallengeAttempt }> {
+  return apiFetch(`/challenges/attempts/${attemptId}/complete`, { method: 'POST' });
+}
+
 /** null = signed out; 'forbidden' = signed in but not admin. */
 export async function fetchAdminMe(): Promise<
   { user: SessionUser } | null | 'forbidden'

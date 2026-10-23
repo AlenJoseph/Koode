@@ -8,3 +8,4 @@ export { sections, sectionStudents } from './sections.js';
 export { pathways } from './pathways.js';
 export { challenges } from './challenges.js';
 export { pathwayEnrollments } from './enrollments.js';
+export { challengeAttempts } from './challenge-attempts.js';

@@ -75,6 +75,14 @@ export const messageKeys = [
   'pathways.empty',
   'pathways.needSignIn',
   'pathways.error',
+  'challenges.title',
+  'challenges.hint',
+  'challenges.start',
+  'challenges.complete',
+  'challenges.completed',
+  'challenges.empty',
+  'challenges.needSignIn',
+  'challenges.error',
 
 
 
