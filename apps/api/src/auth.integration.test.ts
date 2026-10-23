@@ -1,5 +1,5 @@
 import { createDatabase } from '@koode/database';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from './app.js';
 import type { ApiConfig } from './config.js';
 
@@ -12,17 +12,13 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
     sessionSecret: 'ci-session-secret-at-least-32-chars-long',
     appOrigin: 'http://localhost:3000',
     magicLinkDevMode: true,
+    cookieSecure: false,
     sessionTtlMs: 1000 * 60 * 60,
     magicLinkTtlMs: 1000 * 60 * 15,
     cookieName: 'koode_session',
   };
 
   const database = createDatabase(config.databaseUrl);
-  let cookieHeader = '';
-
-  beforeAll(async () => {
-    // Schema is applied by `pnpm db:migrate` before CI tests.
-  });
 
   afterAll(async () => {
     await database.client.end({ timeout: 5 });
@@ -61,7 +57,8 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
     const setCookie = verify.headers['set-cookie'];
     const cookie = Array.isArray(setCookie) ? setCookie[0] : setCookie;
     expect(cookie).toBeTruthy();
-    cookieHeader = String(cookie).split(';')[0]!;
+    expect(String(cookie).toLowerCase()).not.toContain('secure');
+    const cookieHeader = String(cookie).split(';')[0]!;
 
     const me = await app.inject({
       method: 'GET',
@@ -85,6 +82,51 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
     });
     expect(meAfter.statusCode).toBe(401);
 
+    await app.close();
+  });
+
+  it('rejects reused magic-link tokens', async () => {
+    const app = await buildApp({ config, database });
+    const email = `reuse-${Date.now()}@example.com`;
+
+    const requestLink = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/request',
+      payload: { email },
+    });
+    const { devToken } = requestLink.json() as { devToken: string };
+
+    const first = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/verify',
+      payload: { token: devToken },
+    });
+    expect(first.statusCode).toBe(200);
+
+    const second = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/verify',
+      payload: { token: devToken },
+    });
+    expect(second.statusCode).toBe(401);
+
+    await app.close();
+  });
+
+  it('hides magic-link tokens when dev mode is off', async () => {
+    const app = await buildApp({
+      config: { ...config, magicLinkDevMode: false },
+      database,
+    });
+    const response = await app.inject({
+      method: 'POST',
+      url: '/auth/magic-link/request',
+      payload: { email: `nodev-${Date.now()}@example.com` },
+    });
+    expect(response.statusCode).toBe(200);
+    const body = response.json() as Record<string, unknown>;
+    expect(body.devToken).toBeUndefined();
+    expect(body.devVerifyUrl).toBeUndefined();
     await app.close();
   });
 });

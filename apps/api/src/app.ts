@@ -28,6 +28,15 @@ function readSessionToken(request: FastifyRequest, config: ApiConfig): string | 
   return verifyCookieValue(raw, config.sessionSecret);
 }
 
+function sessionCookieOptions(config: ApiConfig) {
+  return {
+    path: '/',
+    httpOnly: true,
+    sameSite: 'lax' as const,
+    secure: config.cookieSecure,
+  };
+}
+
 function setSessionCookie(
   reply: FastifyReply,
   config: ApiConfig,
@@ -35,16 +44,13 @@ function setSessionCookie(
   expiresAt: Date,
 ): void {
   reply.setCookie(config.cookieName, signCookieValue(sessionToken, config.sessionSecret), {
-    path: '/',
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
+    ...sessionCookieOptions(config),
     expires: expiresAt,
   });
 }
 
 function clearSessionCookie(reply: FastifyReply, config: ApiConfig): void {
-  reply.clearCookie(config.cookieName, { path: '/' });
+  reply.clearCookie(config.cookieName, sessionCookieOptions(config));
 }
 
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {

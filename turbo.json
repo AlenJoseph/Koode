@@ -21,8 +21,10 @@
         "DATABASE_URL",
         "SESSION_SECRET",
         "MAGIC_LINK_DEV_MODE",
+        "COOKIE_SECURE",
         "APP_ORIGIN",
-        "API_ORIGIN"
+        "API_ORIGIN",
+        "NODE_ENV"
       ]
     }
   }

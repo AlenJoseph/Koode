@@ -34,6 +34,7 @@ jobs:
       DATABASE_URL: postgres://koode:koode@localhost:5432/koode
       SESSION_SECRET: ci-session-secret-at-least-32-chars-long
       MAGIC_LINK_DEV_MODE: 'true'
+      COOKIE_SECURE: 'false'
       APP_ORIGIN: http://localhost:3000
       API_ORIGIN: http://localhost:3001
 

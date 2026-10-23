@@ -103,22 +103,22 @@ export function createAuthService(database: Database, config: ApiConfig) {
       const tokenHash = hashToken(token);
       const now = new Date();
 
-      const record = await db.query.magicLinkTokens.findFirst({
-        where: and(
-          eq(magicLinkTokens.tokenHash, tokenHash),
-          isNull(magicLinkTokens.usedAt),
-          gt(magicLinkTokens.expiresAt, now),
-        ),
-      });
+      // Atomic consume: only one concurrent verify can mark the token used.
+      const [record] = await db
+        .update(magicLinkTokens)
+        .set({ usedAt: now })
+        .where(
+          and(
+            eq(magicLinkTokens.tokenHash, tokenHash),
+            isNull(magicLinkTokens.usedAt),
+            gt(magicLinkTokens.expiresAt, now),
+          ),
+        )
+        .returning();
 
       if (!record) {
         throw new AuthError('Invalid or expired magic link', 401);
       }
-
-      await db
-        .update(magicLinkTokens)
-        .set({ usedAt: now })
-        .where(eq(magicLinkTokens.id, record.id));
 
       const user = await ensureUser(record.email);
       const sessionToken = createOpaqueToken();
