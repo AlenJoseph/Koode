@@ -4,6 +4,7 @@ import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
 import type { LearnerChallengeService } from '../learning/challenges-learner.js';
 import type { LearnerPathwayService } from '../learning/pathways-learner.js';
+import type { ProjectService } from '../learning/projects.js';
 import { clearSessionCookie, readSessionToken } from '../lib/cookies.js';
 
 export async function registerLearningRoutes(
@@ -13,9 +14,10 @@ export async function registerLearningRoutes(
     auth: AuthService;
     learnerPathways: LearnerPathwayService;
     learnerChallenges: LearnerChallengeService;
+    projects: ProjectService;
   },
 ): Promise<void> {
-  const { config, auth, learnerPathways, learnerChallenges } = deps;
+  const { config, auth, learnerPathways, learnerChallenges, projects } = deps;
 
   async function requireUser(
     request: FastifyRequest,
@@ -111,5 +113,35 @@ export async function registerLearningRoutes(
       'challenge attempt completed',
     );
     return { attempt };
+  });
+
+  app.get('/projects', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const list = await projects.listForUser(user.id);
+    return { projects: list };
+  });
+
+  app.post('/projects', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const project = await projects.create(user.id, request.body);
+    request.log.info({ event: 'learning.project_created', projectId: project.id }, 'project created');
+    return { project };
+  });
+
+  app.patch('/projects/:projectId', async (request, reply) => {
+    const user = await requireUser(request, reply);
+    if (!user) {
+      return;
+    }
+    const { projectId } = request.params as { projectId: string };
+    const project = await projects.update(user.id, projectId, request.body);
+    request.log.info({ event: 'learning.project_updated', projectId }, 'project updated');
+    return { project };
   });
 }

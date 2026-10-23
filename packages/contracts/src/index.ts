@@ -4,5 +4,6 @@ export * from './tutor.js';
 export * from './classroom.js';
 export * from './pathways.js';
 export * from './challenges.js';
+export * from './projects.js';
 
 

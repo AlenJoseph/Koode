@@ -225,6 +225,47 @@ export async function completeChallengeAttempt(
   return apiFetch(`/challenges/attempts/${attemptId}/complete`, { method: 'POST' });
 }
 
+export type LearnerProject = {
+  id: string;
+  title: string;
+  summary: string;
+  pathwayId: string | null;
+  challengeId: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function listMyProjects(): Promise<{ projects: LearnerProject[] }> {
+  return apiFetch('/projects');
+}
+
+export async function createProject(input: {
+  title: string;
+  summary?: string;
+  pathwayId?: string | null;
+  challengeId?: string | null;
+}): Promise<{ project: LearnerProject }> {
+  return apiFetch('/projects', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function updateProject(
+  projectId: string,
+  input: {
+    title?: string;
+    summary?: string;
+    pathwayId?: string | null;
+    challengeId?: string | null;
+  },
+): Promise<{ project: LearnerProject }> {
+  return apiFetch(`/projects/${projectId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
 /** null = signed out; 'forbidden' = signed in but not admin. */
 export async function fetchAdminMe(): Promise<
   { user: SessionUser } | null | 'forbidden'

@@ -1,5 +1,6 @@
 import { isLocale, type Locale } from '@koode/contracts';
 import { notFound } from 'next/navigation';
+import { ProjectsPanel } from '@/components/ProjectsPanel';
 import { getDictionary } from '@/i18n/dictionaries';
 
 type Props = {
@@ -12,11 +13,5 @@ export default async function ProgressPage({ params }: Props) {
     notFound();
   }
   const locale = raw as Locale;
-  const dictionary = getDictionary(locale);
-  return (
-    <div className="panel">
-      <h2>{dictionary['nav.progress']}</h2>
-      <p className="muted">{dictionary['home.welcome']}</p>
-    </div>
-  );
+  return <ProjectsPanel locale={locale} dictionary={getDictionary(locale)} />;
 }

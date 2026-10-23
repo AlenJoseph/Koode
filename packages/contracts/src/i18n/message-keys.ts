@@ -83,6 +83,17 @@ export const messageKeys = [
   'challenges.empty',
   'challenges.needSignIn',
   'challenges.error',
+  'projects.title',
+  'projects.hint',
+  'projects.nameLabel',
+  'projects.summaryLabel',
+  'projects.pathwayLabel',
+  'projects.challengeLabel',
+  'projects.linkNone',
+  'projects.create',
+  'projects.empty',
+  'projects.needSignIn',
+  'projects.error',
 
 
 

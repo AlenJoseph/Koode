@@ -71,6 +71,13 @@
       "when": 1761231600000,
       "tag": "0009_challenge_attempts",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1761235200000,
+      "tag": "0010_projects",
+      "breakpoints": true
     }
   ]
 }

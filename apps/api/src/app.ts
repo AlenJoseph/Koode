@@ -12,6 +12,7 @@ import type { ApiConfig } from './config.js';
 import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
 import { createLearnerChallengeService } from './learning/challenges-learner.js';
 import { createLearnerPathwayService } from './learning/pathways-learner.js';
+import { createProjectService } from './learning/projects.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerAuthRoutes } from './routes/auth.js';
 import { registerClassroomRoutes } from './routes/classroom.js';
@@ -124,6 +125,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     auth,
     learnerPathways: createLearnerPathwayService(database),
     learnerChallenges: createLearnerChallengeService(database),
+    projects: createProjectService(database),
   });
   await registerClassroomRoutes(app, {
     config: deps.config,

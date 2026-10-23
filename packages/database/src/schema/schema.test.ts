@@ -7,6 +7,7 @@ import {
   magicLinkTokens,
   pathwayEnrollments,
   pathways,
+  projects,
   sectionStudents,
   sections,
   sessions,
@@ -30,6 +31,7 @@ describe('database schema', () => {
     expect(challenges).toBeDefined();
     expect(pathwayEnrollments).toBeDefined();
     expect(challengeAttempts).toBeDefined();
+    expect(projects).toBeDefined();
   });
 });
 
