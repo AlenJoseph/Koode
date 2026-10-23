@@ -201,9 +201,9 @@ export default function LandingPage() {
       <section className="section section-ink" id="honest">
         <h2>Where we are (honest)</h2>
         <p>
-          Koode is early. The product loop works locally today: auth, classrooms, pathways,
-          challenges, progress, and a stub tutor. We are building toward school pilots with strong
-          privacy defaults.
+          Koode is early, but you can run it today. Teachers create classes, students join and
+          practise real pathways, and a tutor guides without giving away the answers. We are
+          preparing school pilots with privacy first.
         </p>
         <div className="product-grid">
           <article className="sdg-card">
