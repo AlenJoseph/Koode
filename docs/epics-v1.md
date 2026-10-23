@@ -76,7 +76,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | **E3-S1** | Browse & start pathway | Learner lists published pathways; starts enrollment | API + `e2e/E3-S1-start-pathway.spec.ts` | `done` |
 | **E3-S2** | Attempt challenge | Start/complete challenge attempt (stub success criteria); negative: unauthenticated 401 | API + `e2e/E3-S2-challenge.spec.ts` | `done` |
 | **E3-S3** | Project stub | Create project linked to pathway/challenge; save title/summary | API + `e2e/E3-S3-project-stub.spec.ts` | `done` |
-| **E3-S4** | Learner progress page | Shows enrollments, challenge attempts, projects (en UI) | `e2e/E3-S4-progress.spec.ts` | `todo` |
+| **E3-S4** | Learner progress page | Shows enrollments, challenge attempts, projects (en UI) | `e2e/E3-S4-progress.spec.ts` | `done` |
 | **E3-S5** | Tutor context hook | Tutor turn can accept optional pathway/challenge id (stub still); no chat leak to teachers | API integration | `todo` |
 
 ---

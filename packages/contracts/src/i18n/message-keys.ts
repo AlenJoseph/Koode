@@ -94,6 +94,15 @@ export const messageKeys = [
   'projects.empty',
   'projects.needSignIn',
   'projects.error',
+  'progress.title',
+  'progress.hint',
+  'progress.enrollments',
+  'progress.enrollmentsEmpty',
+  'progress.attempts',
+  'progress.attemptsEmpty',
+  'progress.projects',
+  'progress.projectsEmpty',
+  'progress.needSignIn',
 
 
 

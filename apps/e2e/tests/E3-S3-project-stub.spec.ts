@@ -49,6 +49,6 @@ test.describe('E3-S3 project stub', () => {
 
   test('negative: signed-out visitor is prompted to sign in', async ({ page }) => {
     await page.goto('/en/progress');
-    await expect(page.getByText(/Sign in to save projects/i)).toBeVisible();
+    await expect(page.getByText(/Sign in to see your progress|Sign in to save projects/i)).toBeVisible();
   });
 });
