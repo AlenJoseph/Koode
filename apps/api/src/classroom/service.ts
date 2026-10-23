@@ -18,6 +18,9 @@ import { hashToken } from '../crypto.js';
 import { generateSecretWords, normalizeSecretWords } from '../lib/secret-words.js';
 import { generateSectionCode } from '../lib/section-code.js';
 
+/** Soft cap for classroom sections (Code.org-style scale). */
+export const MAX_SECTION_STUDENTS = 50;
+
 export function createClassroomService(database: Database) {
   const { db } = database;
 
@@ -82,6 +85,17 @@ export function createClassroomService(database: Database) {
       const normalizedName = displayName.trim();
 
       const created = await db.transaction(async (tx) => {
+        const rosterCount = await tx.$count(
+          sectionStudents,
+          eq(sectionStudents.sectionId, sectionId),
+        );
+        if (rosterCount >= MAX_SECTION_STUDENTS) {
+          throw new AuthError(
+            `Section is full (max ${MAX_SECTION_STUDENTS} students)`,
+            409,
+          );
+        }
+
         const clash = await tx.query.sectionStudents.findFirst({
           where: and(
             eq(sectionStudents.sectionId, sectionId),
