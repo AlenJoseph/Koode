@@ -3,6 +3,7 @@
 import type { Locale, MessageKey, SessionUser } from '@koode/contracts';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AdminChallengesPanel } from '@/components/AdminChallengesPanel';
 import { AdminPathwaysPanel } from '@/components/AdminPathwaysPanel';
 import { fetchAdminMe } from '@/lib/api';
 
@@ -72,6 +73,7 @@ export function AdminGate({ locale, dictionary }: Props) {
         </p>
       </div>
       <AdminPathwaysPanel dictionary={dictionary} />
+      <AdminChallengesPanel dictionary={dictionary} />
     </div>
   );
 }

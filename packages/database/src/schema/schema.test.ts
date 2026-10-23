@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  challenges,
   consentRecords,
   learnerProfiles,
   magicLinkTokens,
@@ -24,6 +25,7 @@ describe('database schema', () => {
     expect(sections).toBeDefined();
     expect(sectionStudents).toBeDefined();
     expect(pathways).toBeDefined();
+    expect(challenges).toBeDefined();
   });
 });
 

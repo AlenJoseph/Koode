@@ -50,6 +50,17 @@
   "admin.pathwayArchive": "Archive",
   "admin.pathwaysEmpty": "No pathways yet.",
   "admin.pathwayError": "Could not save the pathway. Try again.",
+  "admin.challengesTitle": "Challenges",
+  "admin.challengesHint": "Create challenges; optionally link to a pathway.",
+  "admin.challengeTitle": "Challenge title",
+  "admin.challengeSummary": "Challenge summary",
+  "admin.challengePathway": "Linked pathway",
+  "admin.challengePathwayNone": "None",
+  "admin.challengeCreate": "Create challenge",
+  "admin.challengePublish": "Publish challenge",
+  "admin.challengeArchive": "Archive challenge",
+  "admin.challengesEmpty": "No challenges yet.",
+  "admin.challengeError": "Could not save the challenge. Try again.",
   "home.welcome": "Welcome back. Your learning progress will live here.",
 
 

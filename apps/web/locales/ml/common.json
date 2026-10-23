@@ -50,6 +50,17 @@
   "admin.pathwayArchive": "ആർക്കൈവ്",
   "admin.pathwaysEmpty": "സജീവ പാതകളൊന്നുമില്ല.",
   "admin.pathwayError": "പാത സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "admin.challengesTitle": "ചലഞ്ചുകൾ",
+  "admin.challengesHint": "ചലഞ്ചുകൾ ഉണ്ടാക്കുക; ഓപ്ഷണലായി ഒരു പാതയുമായി ലിങ്ക് ചെയ്യുക.",
+  "admin.challengeTitle": "ചലഞ്ച് തലക്കെട്ട്",
+  "admin.challengeSummary": "ചലഞ്ച് സംഗ്രഹം",
+  "admin.challengePathway": "ലിങ്ക് ചെയ്ത പാത",
+  "admin.challengePathwayNone": "ഒന്നുമില്ല",
+  "admin.challengeCreate": "ചലഞ്ച് ഉണ്ടാക്കുക",
+  "admin.challengePublish": "ചലഞ്ച് പ്രസിദ്ധീകരിക്കുക",
+  "admin.challengeArchive": "ചലഞ്ച് ആർക്കൈവ്",
+  "admin.challengesEmpty": "ചലഞ്ചുകളൊന്നുമില്ല.",
+  "admin.challengeError": "ചലഞ്ച് സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.",
   "home.welcome": "സ്വാഗതം. നിങ്ങളുടെ പഠന പുരോഗതി ഇവിടെ ഉണ്ടാകും.",
 
 

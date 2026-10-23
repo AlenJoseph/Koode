@@ -6,6 +6,10 @@ import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
 import { AuthError } from '../auth/errors.js';
 import {
+  createChallengeService,
+  type ChallengeService,
+} from '../content/challenges.js';
+import {
   createPathwayService,
   type PathwayService,
 } from '../content/pathways.js';
@@ -18,10 +22,12 @@ export async function registerAdminRoutes(
     auth: AuthService;
     database: Database;
     pathways?: PathwayService;
+    challenges?: ChallengeService;
   },
 ): Promise<void> {
   const { config, auth, database } = deps;
   const pathways = deps.pathways ?? createPathwayService(database);
+  const challenges = deps.challenges ?? createChallengeService(database);
 
   async function requireAdmin(
     request: FastifyRequest,
@@ -119,5 +125,51 @@ export async function registerAdminRoutes(
     const pathway = await pathways.archive(pathwayId);
     request.log.info({ event: 'admin.pathway_archived', pathwayId }, 'pathway archived');
     return { pathway };
+  });
+
+  app.get('/admin/challenges', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const includeArchived =
+      (request.query as { includeArchived?: string }).includeArchived === '1';
+    const list = await challenges.list({ includeArchived });
+    return { challenges: list };
+  });
+
+  app.post('/admin/challenges', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const challenge = await challenges.create(user.id, request.body);
+    request.log.info(
+      { event: 'admin.challenge_created', challengeId: challenge.id },
+      'challenge created',
+    );
+    return { challenge };
+  });
+
+  app.patch('/admin/challenges/:challengeId', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { challengeId } = request.params as { challengeId: string };
+    const challenge = await challenges.update(challengeId, request.body);
+    request.log.info({ event: 'admin.challenge_updated', challengeId }, 'challenge updated');
+    return { challenge };
+  });
+
+  app.post('/admin/challenges/:challengeId/archive', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { challengeId } = request.params as { challengeId: string };
+    const challenge = await challenges.archive(challengeId);
+    request.log.info({ event: 'admin.challenge_archived', challengeId }, 'challenge archived');
+    return { challenge };
   });
 }

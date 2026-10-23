@@ -1,4 +1,5 @@
 import type {
+  Challenge,
   Pathway,
   SessionUser,
   TutorTurnRequest,
@@ -114,6 +115,46 @@ export async function archiveAdminPathway(
   pathwayId: string,
 ): Promise<{ pathway: AdminPathway }> {
   return apiFetch(`/admin/pathways/${pathwayId}/archive`, {
+    method: 'POST',
+  });
+}
+
+export type AdminChallenge = Challenge;
+
+export async function listAdminChallenges(): Promise<{ challenges: AdminChallenge[] }> {
+  return apiFetch('/admin/challenges');
+}
+
+export async function createAdminChallenge(input: {
+  title: string;
+  summary: string;
+  pathwayId?: string | null;
+}): Promise<{ challenge: AdminChallenge }> {
+  return apiFetch('/admin/challenges', {
+    method: 'POST',
+    body: JSON.stringify({ ...input, locale: 'en' }),
+  });
+}
+
+export async function updateAdminChallenge(
+  challengeId: string,
+  input: {
+    title?: string;
+    summary?: string;
+    status?: 'draft' | 'published';
+    pathwayId?: string | null;
+  },
+): Promise<{ challenge: AdminChallenge }> {
+  return apiFetch(`/admin/challenges/${challengeId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function archiveAdminChallenge(
+  challengeId: string,
+): Promise<{ challenge: AdminChallenge }> {
+  return apiFetch(`/admin/challenges/${challengeId}/archive`, {
     method: 'POST',
   });
 }
