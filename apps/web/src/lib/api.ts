@@ -78,6 +78,24 @@ export async function bootstrapAdmin(
   });
 }
 
+/** null = signed out; 'forbidden' = signed in but not admin. */
+export async function fetchAdminMe(): Promise<
+  { user: SessionUser } | null | 'forbidden'
+> {
+  const response = await fetch(`${apiBase}/admin/me`, {
+    credentials: 'include',
+  });
+  if (response.status === 401) {
+    return null;
+  }
+  if (response.status === 403) {
+    return 'forbidden';
+  }
+  if (!response.ok) {
+    throw new Error(`API /admin/me failed with ${response.status}`);
+  }
+  return (await response.json()) as { user: SessionUser };
+}
 
 export async function fetchMe(): Promise<{ user: SessionUser } | null> {
   const response = await fetch(`${apiBase}/auth/me`, {

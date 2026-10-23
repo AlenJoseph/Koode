@@ -37,6 +37,10 @@
   "admin.bootstrapAlready": "A platform admin already exists.",
   "admin.bootstrapDisabled": "Bootstrap is disabled on this server.",
   "admin.bootstrapError": "Bootstrap failed. Check the secret and try again.",
+  "admin.title": "Platform admin",
+  "admin.welcome": "Signed in as platform admin.",
+  "admin.forbidden": "Admins only. Platform admins can manage pathways and challenges here.",
+  "admin.needSignIn": "Sign in as a platform admin to continue.",
   "home.welcome": "Welcome back. Your learning progress will live here.",
 
 

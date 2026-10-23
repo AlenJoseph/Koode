@@ -44,6 +44,7 @@ jobs:
       API_ORIGIN: http://localhost:3001
       BOOTSTRAP_SECRET: ci-bootstrap-secret-16
       NEXT_PUBLIC_API_URL: http://localhost:3001
+      RATE_LIMIT_MAGIC_LINK_MAX: '100'
 
 
     steps:

@@ -41,6 +41,10 @@ export const messageKeys = [
   'admin.bootstrapAlready',
   'admin.bootstrapDisabled',
   'admin.bootstrapError',
+  'admin.title',
+  'admin.welcome',
+  'admin.forbidden',
+  'admin.needSignIn',
   'home.welcome',
   'home.signedOutHint',
 

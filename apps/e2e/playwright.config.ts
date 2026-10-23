@@ -17,6 +17,8 @@ const sharedEnv = {
   MAGIC_LINK_DEV_MODE: process.env.MAGIC_LINK_DEV_MODE ?? 'true',
   COOKIE_SECURE: process.env.COOKIE_SECURE ?? 'false',
   AI_PROVIDER: process.env.AI_PROVIDER ?? 'stub',
+  // Full e2e suite issues many magic-link verifies from one IP; keep abuse protection high enough for CI.
+  RATE_LIMIT_MAGIC_LINK_MAX: process.env.RATE_LIMIT_MAGIC_LINK_MAX ?? '100',
 };
 
 export default defineConfig({
