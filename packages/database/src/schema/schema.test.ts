@@ -3,6 +3,7 @@ import {
   consentRecords,
   learnerProfiles,
   magicLinkTokens,
+  pathways,
   sectionStudents,
   sections,
   sessions,
@@ -22,6 +23,7 @@ describe('database schema', () => {
     expect(tutorTurns).toBeDefined();
     expect(sections).toBeDefined();
     expect(sectionStudents).toBeDefined();
+    expect(pathways).toBeDefined();
   });
 });
 

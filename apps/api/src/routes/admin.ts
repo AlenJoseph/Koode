@@ -5,6 +5,10 @@ import type { SessionUser } from '@koode/contracts';
 import type { AuthService } from '../auth/service.js';
 import type { ApiConfig } from '../config.js';
 import { AuthError } from '../auth/errors.js';
+import {
+  createPathwayService,
+  type PathwayService,
+} from '../content/pathways.js';
 import { clearSessionCookie, readSessionToken } from '../lib/cookies.js';
 
 export async function registerAdminRoutes(
@@ -13,9 +17,11 @@ export async function registerAdminRoutes(
     config: ApiConfig;
     auth: AuthService;
     database: Database;
+    pathways?: PathwayService;
   },
 ): Promise<void> {
   const { config, auth, database } = deps;
+  const pathways = deps.pathways ?? createPathwayService(database);
 
   async function requireAdmin(
     request: FastifyRequest,
@@ -70,5 +76,48 @@ export async function registerAdminRoutes(
       return;
     }
     return { user };
+  });
+
+  app.get('/admin/pathways', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const includeArchived =
+      (request.query as { includeArchived?: string }).includeArchived === '1';
+    const list = await pathways.list({ includeArchived });
+    return { pathways: list };
+  });
+
+  app.post('/admin/pathways', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const pathway = await pathways.create(user.id, request.body);
+    request.log.info({ event: 'admin.pathway_created', pathwayId: pathway.id }, 'pathway created');
+    return { pathway };
+  });
+
+  app.patch('/admin/pathways/:pathwayId', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { pathwayId } = request.params as { pathwayId: string };
+    const pathway = await pathways.update(pathwayId, request.body);
+    request.log.info({ event: 'admin.pathway_updated', pathwayId }, 'pathway updated');
+    return { pathway };
+  });
+
+  app.post('/admin/pathways/:pathwayId/archive', async (request, reply) => {
+    const user = await requireAdmin(request, reply);
+    if (!user) {
+      return;
+    }
+    const { pathwayId } = request.params as { pathwayId: string };
+    const pathway = await pathways.archive(pathwayId);
+    request.log.info({ event: 'admin.pathway_archived', pathwayId }, 'pathway archived');
+    return { pathway };
   });
 }

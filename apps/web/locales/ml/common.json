@@ -41,6 +41,15 @@
   "admin.welcome": "പ്ലാറ്റ്‌ഫോം അഡ്മിൻ ആയി സൈൻ ഇൻ ചെയ്തിരിക്കുന്നു.",
   "admin.forbidden": "അഡ്മിൻമാർക്ക് മാത്രം. പാതകളും ചലഞ്ചുകളും ഇവിടെ നിയന്ത്രിക്കാം.",
   "admin.needSignIn": "തുടരാൻ പ്ലാറ്റ്‌ഫോം അഡ്മിൻ ആയി സൈൻ ഇൻ ചെയ്യുക.",
+  "admin.pathwaysTitle": "പാതകൾ",
+  "admin.pathwaysHint": "പഠന പാതകൾ ഉണ്ടാക്കുക (v1-ൽ ഇംഗ്ലീഷ്).",
+  "admin.pathwayTitle": "തലക്കെട്ട്",
+  "admin.pathwaySummary": "സംഗ്രഹം",
+  "admin.pathwayCreate": "പാത ഉണ്ടാക്കുക",
+  "admin.pathwayPublish": "പ്രസിദ്ധീകരിക്കുക",
+  "admin.pathwayArchive": "ആർക്കൈവ്",
+  "admin.pathwaysEmpty": "സജീവ പാതകളൊന്നുമില്ല.",
+  "admin.pathwayError": "പാത സേവ് ചെയ്യാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.",
   "home.welcome": "സ്വാഗതം. നിങ്ങളുടെ പഠന പുരോഗതി ഇവിടെ ഉണ്ടാകും.",
 
 

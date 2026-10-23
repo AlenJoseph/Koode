@@ -62,7 +62,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | --- | --- | --- | --- | --- |
 | **E2-S1** | First-run admin bootstrap | Empty DB / flag: bootstrap creates one platform admin; second bootstrap refused; credentials not logged in plaintext | `E2-S1-admin-bootstrap.integration.test.ts` + `e2e/E2-S1-admin-bootstrap.spec.ts` | `done` |
 | **E2-S2** | Admin authz | Only `role=admin` hits `/admin/*`; teacher/learner get 403 | API + `e2e/E2-S2-admin-authz.spec.ts` | `done` |
-| **E2-S3** | Pathways CRUD | Admin create/list/update/archive pathway (title, summary, locale=en) | API + `e2e/E2-S3-admin-pathways.spec.ts` | `todo` |
+| **E2-S3** | Pathways CRUD | Admin create/list/update/archive pathway (title, summary, locale=en) | API + `e2e/E2-S3-admin-pathways.spec.ts` | `done` |
 | **E2-S4** | Challenges CRUD | Admin create/list/update/archive challenge; optional link to pathway | API + `e2e/E2-S4-admin-challenges.spec.ts` | `todo` |
 
 ---

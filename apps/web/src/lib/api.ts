@@ -1,13 +1,19 @@
-import type { SessionUser, TutorTurnRequest, TutorTurnResponse } from '@koode/contracts';
+import type {
+  Pathway,
+  SessionUser,
+  TutorTurnRequest,
+  TutorTurnResponse,
+} from '@koode/contracts';
 
 const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const hasBody = init?.body !== undefined && init.body !== null;
   const response = await fetch(`${apiBase}${path}`, {
     ...init,
     credentials: 'include',
     headers: {
-      'content-type': 'application/json',
+      ...(hasBody ? { 'content-type': 'application/json' } : {}),
       ...(init?.headers ?? {}),
     },
   });
@@ -75,6 +81,40 @@ export async function bootstrapAdmin(
   return apiFetch('/admin/bootstrap', {
     method: 'POST',
     body: JSON.stringify({ email, bootstrapSecret }),
+  });
+}
+
+export type AdminPathway = Pathway;
+
+export async function listAdminPathways(): Promise<{ pathways: AdminPathway[] }> {
+  return apiFetch('/admin/pathways');
+}
+
+export async function createAdminPathway(input: {
+  title: string;
+  summary: string;
+}): Promise<{ pathway: AdminPathway }> {
+  return apiFetch('/admin/pathways', {
+    method: 'POST',
+    body: JSON.stringify({ ...input, locale: 'en' }),
+  });
+}
+
+export async function updateAdminPathway(
+  pathwayId: string,
+  input: { title?: string; summary?: string; status?: 'draft' | 'published' },
+): Promise<{ pathway: AdminPathway }> {
+  return apiFetch(`/admin/pathways/${pathwayId}`, {
+    method: 'PATCH',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function archiveAdminPathway(
+  pathwayId: string,
+): Promise<{ pathway: AdminPathway }> {
+  return apiFetch(`/admin/pathways/${pathwayId}/archive`, {
+    method: 'POST',
   });
 }
 

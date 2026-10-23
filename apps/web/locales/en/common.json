@@ -41,6 +41,15 @@
   "admin.welcome": "Signed in as platform admin.",
   "admin.forbidden": "Admins only. Platform admins can manage pathways and challenges here.",
   "admin.needSignIn": "Sign in as a platform admin to continue.",
+  "admin.pathwaysTitle": "Pathways",
+  "admin.pathwaysHint": "Create learning pathways (English for v1).",
+  "admin.pathwayTitle": "Title",
+  "admin.pathwaySummary": "Summary",
+  "admin.pathwayCreate": "Create pathway",
+  "admin.pathwayPublish": "Publish",
+  "admin.pathwayArchive": "Archive",
+  "admin.pathwaysEmpty": "No pathways yet.",
+  "admin.pathwayError": "Could not save the pathway. Try again.",
   "home.welcome": "Welcome back. Your learning progress will live here.",
 
 

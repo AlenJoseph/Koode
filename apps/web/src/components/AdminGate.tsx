@@ -3,6 +3,7 @@
 import type { Locale, MessageKey, SessionUser } from '@koode/contracts';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AdminPathwaysPanel } from '@/components/AdminPathwaysPanel';
 import { fetchAdminMe } from '@/lib/api';
 
 type Props = {
@@ -62,12 +63,15 @@ export function AdminGate({ locale, dictionary }: Props) {
   }
 
   return (
-    <div className="panel stack">
-      <h2>{dictionary['admin.title']}</h2>
-      <p>
-        {dictionary['admin.welcome']}{' '}
-        <strong>{state.user.email ?? state.user.displayName ?? 'admin'}</strong>
-      </p>
+    <div className="stack">
+      <div className="panel stack">
+        <h2>{dictionary['admin.title']}</h2>
+        <p>
+          {dictionary['admin.welcome']}{' '}
+          <strong>{state.user.email ?? state.user.displayName ?? 'admin'}</strong>
+        </p>
+      </div>
+      <AdminPathwaysPanel dictionary={dictionary} />
     </div>
   );
 }
