@@ -44,7 +44,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | --- | --- | --- | --- | --- |
 | **E1-S1** | Multi-email user model | `user_emails` (or equivalent): primary + verified secondary emails; unique email globally; migrate off single `users.email` | `packages/database` schema test + `apps/api/src/E1-S1-user-emails.integration.test.ts` | `done` |
 | **E1-S2** | Independent learner magic-link sign-up | New flow `/sign-up` (or role choice): creates `role=learner` (not teacher); cannot use teacher-only classroom APIs; session works for tutor | `apps/api` integration + `e2e/E1-S2-independent-signup.spec.ts` (happy + wrong/expired token) | `done` |
-| **E1-S3** | Enforce teacher ≠ learner | Existing email on learner cannot become teacher via magic-link; teacher email cannot sign up as learner; clear errors | API integration negative cases in `E1-S3-role-isolation.test.ts` | `todo` |
+| **E1-S3** | Enforce teacher ≠ learner | Existing email on learner cannot become teacher via magic-link; teacher email cannot sign up as learner; clear errors | API integration negative cases in `E1-S3-role-isolation.integration.test.ts` | `done` |
 | **E1-S4** | Claim/link classroom → personal | Signed-in classroom student (or after join) can add+verify email; later magic-link to that email lands on **same** user id; progress/membership preserved | `e2e/E1-S4-claim-email.spec.ts` + API integration | `todo` |
 | **E1-S5** | Manage emails (GitHub-style minimal) | List emails; add email (verify magic-link); set primary; cannot remove last verified email | API integration + light e2e | `todo` |
 
