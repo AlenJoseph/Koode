@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState, type FormEvent } from 'react';
 import {
   addStudent,
   createSection,
+  exportRosterCsv,
   fetchMe,
   listRoster,
   listSections,
@@ -103,6 +104,22 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     }
   }
 
+  async function onExportRoster() {
+    if (!activeId || !active) return;
+    setError(false);
+    try {
+      const blob = await exportRosterCsv(activeId);
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `roster-${active.code}.csv`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      setError(true);
+    }
+  }
+
   if (isTeacher === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
   }
@@ -155,6 +172,9 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
           <p>
             <strong>{dictionary['classroom.codeLabel']}:</strong> {active.code}
           </p>
+          <button type="button" className="secondary" onClick={() => void onExportRoster()}>
+            {dictionary['classroom.exportRoster']}
+          </button>
           <h3>{dictionary['classroom.roster']}</h3>
           <ul className="stack">
             {roster.map((row) => (

@@ -94,6 +94,25 @@ export function createClassroomService(database: Database) {
       }));
     },
 
+    /** Export roster metadata only — never include secret hashes. */
+    async exportRoster(teacherId: string, sectionId: string) {
+      const section = await this.getSectionForTeacher(teacherId, sectionId);
+      const roster = await this.listRoster(teacherId, sectionId);
+      return {
+        section: {
+          id: section.id,
+          name: section.name,
+          code: section.code,
+          archivedAt: section.archivedAt ? section.archivedAt.toISOString() : null,
+        },
+        roster: roster.map((row) => ({
+          displayName: row.displayName,
+          membershipId: row.id,
+          createdAt: row.createdAt.toISOString(),
+        })),
+      };
+    },
+
     async addStudent(teacherId: string, sectionId: string, input: unknown) {
       const { displayName } = addSectionStudentSchema.parse(input);
       const section = await this.getSectionForTeacher(teacherId, sectionId);

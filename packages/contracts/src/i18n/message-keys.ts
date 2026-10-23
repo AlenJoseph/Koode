@@ -120,6 +120,7 @@ export const messageKeys = [
   'classroom.addStudent',
   'classroom.removeStudent',
   'classroom.resetSecret',
+  'classroom.exportRoster',
   'classroom.studentName',
   'classroom.secretWords',
   'classroom.roster',

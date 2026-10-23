@@ -311,7 +311,23 @@ export async function runTutorTurn(
   });
 }
 
-export type ClassroomSection = { id: string; name: string; code: string };
+export type ClassroomSection = {
+  id: string;
+  name: string;
+  code: string;
+  archivedAt?: string | null;
+};
+
+export async function exportRosterCsv(sectionId: string): Promise<Blob> {
+  const response = await fetch(
+    `${apiBase}/classroom/sections/${sectionId}/export?format=csv`,
+    { credentials: 'include' },
+  );
+  if (!response.ok) {
+    throw new Error(`API export failed with ${response.status}`);
+  }
+  return response.blob();
+}
 
 export async function listSections(): Promise<{ sections: ClassroomSection[] }> {
   return apiFetch('/classroom/sections');

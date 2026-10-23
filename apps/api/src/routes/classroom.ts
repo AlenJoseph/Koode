@@ -85,6 +85,39 @@ export async function registerClassroomRoutes(
     return { roster };
   });
 
+  app.get('/classroom/sections/:sectionId/export', async (request, reply) => {
+    const user = await currentUser(request);
+    if (!user) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    auth.requireTeacher(user);
+    const { sectionId } = request.params as { sectionId: string };
+    const format = ((request.query as { format?: string }).format ?? 'json').toLowerCase();
+    const payload = await classroom.exportRoster(user.id, sectionId);
+
+    if (format === 'csv') {
+      const header = 'section_code,section_name,display_name,membership_id,created_at';
+      const lines = payload.roster.map((row) =>
+        [
+          payload.section.code,
+          JSON.stringify(payload.section.name),
+          JSON.stringify(row.displayName),
+          row.membershipId,
+          row.createdAt,
+        ].join(','),
+      );
+      const csv = [header, ...lines].join('\n');
+      reply.header('content-type', 'text/csv; charset=utf-8');
+      reply.header(
+        'content-disposition',
+        `attachment; filename="roster-${payload.section.code}.csv"`,
+      );
+      return reply.send(csv);
+    }
+
+    return payload;
+  });
+
   app.post('/classroom/sections/:sectionId/students', async (request, reply) => {
     const user = await currentUser(request);
     if (!user) {

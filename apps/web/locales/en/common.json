@@ -116,6 +116,7 @@
   "classroom.addStudent": "Add student",
   "classroom.removeStudent": "Remove",
   "classroom.resetSecret": "Reset secret words",
+  "classroom.exportRoster": "Download roster CSV",
   "classroom.studentName": "Student display name",
   "classroom.secretWords": "Secret words (save for login card)",
   "classroom.roster": "Roster",
