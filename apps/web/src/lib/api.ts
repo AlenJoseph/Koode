@@ -362,6 +362,41 @@ export async function listRoster(
   return apiFetch(`/classroom/sections/${sectionId}/roster`);
 }
 
+export type SupportIndicator = 'green' | 'orange' | 'red';
+
+export type SectionInsights = {
+  sectionId: string;
+  aggregates: {
+    strength: number;
+    weakness: number;
+    growth: number;
+    helpNeeded: number;
+  };
+  learners: Array<{
+    userId: string;
+    displayName: string;
+    bucket: string;
+    supportIndicator: SupportIndicator;
+    attemptCount: number;
+    completedCount: number;
+    completionRate: number;
+  }>;
+  byChallenge: Array<{
+    challengeId: string;
+    title: string;
+    started: number;
+    completed: number;
+    completionRate: number;
+  }>;
+  supportLegend: string;
+};
+
+export async function fetchSectionInsights(
+  sectionId: string,
+): Promise<{ insights: SectionInsights }> {
+  return apiFetch(`/classroom/sections/${sectionId}/insights`);
+}
+
 export async function addStudent(
   sectionId: string,
   displayName: string,

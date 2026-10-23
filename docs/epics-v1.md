@@ -103,7 +103,7 @@ Reference only — not re-opened unless a later story requires a fix.
 | ID | Story | Acceptance criteria | Independent test suite | Status |
 | --- | --- | --- | --- | --- |
 | **E5-S1** | Learning-support aggregates | Per-section: strength/weakness/growth/help-needed derived from attempts (deterministic rules, stub data ok) | Unit tests for aggregator + API | `done` |
-| **E5-S2** | R/O/G support indicator | Per learner colour + **legend copy** stating non-clinical / indicative only | Unit + UI e2e asserts legend text | `todo` |
+| **E5-S2** | R/O/G support indicator | Per learner colour + **legend copy** stating non-clinical / indicative only | Unit + UI e2e asserts legend text | `done` |
 | **E5-S3** | Teacher insights page | Graphs render for a section; no raw chat content | `e2e/E5-S3-insights.spec.ts` | `todo` |
 
 ---

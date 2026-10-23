@@ -2,6 +2,7 @@ import { challengeAttempts, challenges, type Database } from '@koode/database';
 import { eq, inArray } from 'drizzle-orm';
 import type { ClassroomService } from '../classroom/service.js';
 import {
+  SUPPORT_INDICATOR_LEGEND,
   aggregateLearningSupport,
   buildLearnerSignals,
   challengeStatsFromAttempts,
@@ -15,6 +16,7 @@ export type SectionInsights = {
   aggregates: SectionLearningAggregates;
   learners: LearnerLearningSignal[];
   byChallenge: ChallengeLearningStat[];
+  supportLegend: string;
 };
 
 export function createInsightsService(database: Database, classroom: ClassroomService) {
@@ -75,7 +77,13 @@ export function createInsightsService(database: Database, classroom: ClassroomSe
         })),
       );
 
-      return { sectionId, aggregates, learners, byChallenge };
+      return {
+        sectionId,
+        aggregates,
+        learners,
+        byChallenge,
+        supportLegend: SUPPORT_INDICATOR_LEGEND,
+      };
     },
   };
 }

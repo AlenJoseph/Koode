@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  SUPPORT_INDICATOR_LEGEND,
   aggregateLearningSupport,
   buildLearnerSignals,
   challengeStatsFromAttempts,
   classifyLearner,
+  supportIndicatorForBucket,
 } from './aggregator.js';
 
 describe('E5-S1 learning-support aggregator', () => {
@@ -74,5 +76,26 @@ describe('E5-S1 learning-support aggregator', () => {
         completionRate: 1,
       },
     ]);
+  });
+});
+
+describe('E5-S2 support indicator', () => {
+  it('maps buckets to green / orange / red', () => {
+    expect(supportIndicatorForBucket('strength')).toBe('green');
+    expect(supportIndicatorForBucket('growth')).toBe('orange');
+    expect(supportIndicatorForBucket('weakness')).toBe('orange');
+    expect(supportIndicatorForBucket('help_needed')).toBe('red');
+  });
+
+  it('attaches supportIndicator on learner signals', () => {
+    const [signal] = buildLearnerSignals([
+      { userId: '1', displayName: 'A', attemptCount: 0, completedCount: 0 },
+    ]);
+    expect(signal?.supportIndicator).toBe('red');
+  });
+
+  it('legend states non-clinical / indicative only', () => {
+    expect(SUPPORT_INDICATOR_LEGEND.toLowerCase()).toContain('indicative');
+    expect(SUPPORT_INDICATOR_LEGEND.toLowerCase()).toContain('not a clinical diagnosis');
   });
 });

@@ -8,6 +8,7 @@ import {
   createSection,
   exportRosterCsv,
   fetchMe,
+  fetchSectionInsights,
   listLearnerPathways,
   listRoster,
   listSectionPathways,
@@ -17,6 +18,7 @@ import {
   setSectionPathways,
   type ClassroomSection,
   type LearnerPathway,
+  type SectionInsights,
 } from '@/lib/api';
 
 type Props = {
@@ -29,6 +31,7 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
   const [sections, setSections] = useState<ClassroomSection[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [roster, setRoster] = useState<Array<{ id: string; displayName: string }>>([]);
+  const [insights, setInsights] = useState<SectionInsights | null>(null);
   const [sectionName, setSectionName] = useState('Class 7A');
   const [studentName, setStudentName] = useState('');
   const [lastSecretWords, setLastSecretWords] = useState<string | null>(null);
@@ -59,6 +62,9 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     if (!activeId || !isTeacher) return;
     void listRoster(activeId)
       .then((result) => setRoster(result.roster))
+      .catch(() => setError(true));
+    void fetchSectionInsights(activeId)
+      .then((result) => setInsights(result.insights))
       .catch(() => setError(true));
     void Promise.all([listLearnerPathways(), listSectionPathways(activeId)])
       .then(([published, linked]) => {
@@ -237,6 +243,30 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
               <p className="muted">{dictionary['classroom.pathwayDirectionSaved']}</p>
             ) : null}
           </form>
+
+          <h3>{dictionary['classroom.insights']}</h3>
+          {insights ? (
+            <div className="stack" data-testid="support-insights">
+              <p data-testid="support-legend">{dictionary['classroom.supportLegend']}</p>
+              <ul className="stack muted">
+                <li>{dictionary['classroom.supportGreen']}</li>
+                <li>{dictionary['classroom.supportOrange']}</li>
+                <li>{dictionary['classroom.supportRed']}</li>
+              </ul>
+              <ul className="stack">
+                {insights.learners.map((learner) => (
+                  <li key={learner.userId} className="nav">
+                    <span
+                      className={`support-dot support-${learner.supportIndicator}`}
+                      title={learner.supportIndicator}
+                      aria-label={`${learner.displayName}: ${learner.supportIndicator}`}
+                    />
+                    <span>{learner.displayName}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
 
           <h3>{dictionary['classroom.roster']}</h3>
           <ul className="stack">

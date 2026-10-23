@@ -2,6 +2,12 @@
 
 export type LearningSupportBucket = 'strength' | 'weakness' | 'growth' | 'help_needed';
 
+/** Wellbeing-style R/O/G support colour (E5-S2) — indicative only. */
+export type SupportIndicator = 'green' | 'orange' | 'red';
+
+export const SUPPORT_INDICATOR_LEGEND =
+  'These colours are an indicative support signal from learning activity only. They are not a clinical diagnosis or medical advice.';
+
 export type LearnerAttemptStats = {
   userId: string;
   displayName: string;
@@ -11,6 +17,7 @@ export type LearnerAttemptStats = {
 
 export type LearnerLearningSignal = LearnerAttemptStats & {
   bucket: LearningSupportBucket;
+  supportIndicator: SupportIndicator;
   completionRate: number;
 };
 
@@ -53,13 +60,22 @@ export function classifyLearner(stats: LearnerAttemptStats): LearningSupportBuck
   return 'growth';
 }
 
+/** Map learning bucket → R/O/G support colour for teachers. */
+export function supportIndicatorForBucket(bucket: LearningSupportBucket): SupportIndicator {
+  if (bucket === 'strength') return 'green';
+  if (bucket === 'help_needed') return 'red';
+  return 'orange';
+}
+
 export function buildLearnerSignals(roster: LearnerAttemptStats[]): LearnerLearningSignal[] {
   return roster.map((row) => {
     const completionRate =
       row.attemptCount === 0 ? 0 : row.completedCount / row.attemptCount;
+    const bucket = classifyLearner(row);
     return {
       ...row,
-      bucket: classifyLearner(row),
+      bucket,
+      supportIndicator: supportIndicatorForBucket(bucket),
       completionRate,
     };
   });
