@@ -1,7 +1,13 @@
 import type {
+  AutoHelpNudge,
   Challenge,
+  Certificate,
+  CoinLedgerEntry,
+  LearningEventEnvelope,
+  LearningEventsIngestResponse,
   Pathway,
   SessionUser,
+  ShopItem,
   TutorTurnRequest,
   TutorTurnResponse,
 } from '@koode/contracts';
@@ -231,13 +237,17 @@ export type LearnerQuiz = {
 export type QuizSubmitResult = {
   attempt: ChallengeAttempt;
   score: { correct: number; total: number };
+  passed?: boolean;
   items: Array<{
     quizItemId: string;
     selectedOptionId: string;
-    correctOptionId: string;
+    correctOptionId?: string;
     isCorrect: boolean;
     teachBack: string;
   }>;
+  coins?: { awarded: boolean; balance: number } | null;
+  certificate?: { id: string; title: string } | null;
+  nudge?: AutoHelpNudge | null;
 };
 
 export async function listLearnerChallenges(): Promise<{ challenges: LearnerChallenge[] }> {
@@ -267,10 +277,14 @@ export async function fetchChallengeQuiz(challengeId: string): Promise<{ quiz: L
 export async function submitChallengeQuiz(
   attemptId: string,
   answers: Array<{ quizItemId: string; optionId: string }>,
+  options?: { stepId?: string | null },
 ): Promise<QuizSubmitResult> {
   return apiFetch(`/challenges/attempts/${attemptId}/quiz`, {
     method: 'POST',
-    body: JSON.stringify({ answers }),
+    body: JSON.stringify({
+      answers,
+      ...(options?.stepId ? { stepId: options.stepId } : {}),
+    }),
   });
 }
 
@@ -486,4 +500,126 @@ export async function studentSignIn(input: {
     method: 'POST',
     body: JSON.stringify(input),
   });
+}
+
+export type LearnerLesson = {
+  challengeId: string;
+  slug: string;
+  pathwaySlug: string;
+  title: string;
+  summary: string;
+  objectives: string[];
+  successCriteria: string[];
+  coinReward: number;
+  steps: Array<{
+    id: string;
+    kind: string;
+    title: string;
+    bodyMarkdown?: string;
+    mediaUrl?: string;
+    mediaDurationSeconds?: number;
+    quizItemIds?: string[];
+    conceptId?: string;
+  }>;
+  quiz?: Array<{
+    id: string;
+    prompt: string;
+    options: Array<{ id: string; label: string }>;
+  }>;
+  progress: { currentStepId: string; completedStepIds: string[] } | null;
+};
+
+export async function fetchChallengeLesson(
+  challengeId: string,
+): Promise<{ lesson: LearnerLesson } | null> {
+  const response = await fetch(`${apiBase}/challenges/${challengeId}/lesson`, {
+    credentials: 'include',
+  });
+  if (response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(`API /challenges/${challengeId}/lesson failed with ${response.status}`);
+  }
+  return (await response.json()) as { lesson: LearnerLesson };
+}
+
+export async function saveLessonProgress(
+  challengeId: string,
+  input: { currentStepId: string; completedStepIds: string[] },
+): Promise<{ progress: { currentStepId: string; completedStepIds: string[] } }> {
+  return apiFetch(`/challenges/${challengeId}/lesson/progress`, {
+    method: 'PUT',
+    body: JSON.stringify(input),
+  });
+}
+
+export async function ingestLearningEvents(
+  events: Array<Omit<LearningEventEnvelope, 'learnerId'>>,
+): Promise<LearningEventsIngestResponse> {
+  return apiFetch('/learning/events', {
+    method: 'POST',
+    body: JSON.stringify({ events }),
+  });
+}
+
+export async function fetchAutoHelp(query: {
+  contentId?: string;
+  stepId?: string;
+}): Promise<{ nudge: AutoHelpNudge | null }> {
+  const params = new URLSearchParams();
+  if (query.contentId) params.set('contentId', query.contentId);
+  if (query.stepId) params.set('stepId', query.stepId);
+  const qs = params.toString();
+  return apiFetch(`/learning/auto-help${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchRecentLearningEvents(query?: {
+  contentId?: string;
+  stepId?: string;
+  limit?: number;
+}): Promise<{ events: LearningEventEnvelope[] }> {
+  const params = new URLSearchParams();
+  if (query?.contentId) params.set('contentId', query.contentId);
+  if (query?.stepId) params.set('stepId', query.stepId);
+  if (query?.limit) params.set('limit', String(query.limit));
+  const qs = params.toString();
+  return apiFetch(`/learning/events${qs ? `?${qs}` : ''}`);
+}
+
+export async function fetchCoinBalance(): Promise<{
+  balance: number;
+  ledger: CoinLedgerEntry[];
+}> {
+  return apiFetch('/economy/balance');
+}
+
+export async function fetchShop(): Promise<{
+  items: ShopItem[];
+  redeemedItemIds: string[];
+}> {
+  return apiFetch('/economy/shop');
+}
+
+export async function redeemShopItem(itemId: string): Promise<{
+  ok: true;
+  balance: number;
+  itemId: string;
+}> {
+  return apiFetch('/economy/shop/redeem', {
+    method: 'POST',
+    body: JSON.stringify({ itemId }),
+  });
+}
+
+export async function fetchCertificates(): Promise<{ certificates: Certificate[] }> {
+  return apiFetch('/economy/certificates');
+}
+
+export async function fetchLearningConfig(): Promise<{
+  autoHelpEnabled: boolean;
+  autoHelpIdleMs: number;
+  autoHelpFailStreak: number;
+}> {
+  return apiFetch('/learning/config');
 }

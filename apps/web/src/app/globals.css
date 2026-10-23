@@ -684,3 +684,72 @@ textarea {
   margin: 0.25rem 0 0;
   font-weight: 800;
 }
+
+.auto-help-nudge {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  margin: 0.75rem 0;
+  border: 2px solid var(--ink);
+  background: color-mix(in srgb, var(--mint) 35%, white);
+}
+
+.lesson-player video {
+  width: min(100%, 40rem);
+  max-height: 16rem;
+  border: 2px solid var(--ink);
+  background: #111;
+}
+
+.lesson-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.copilot-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 28, 0.45);
+  display: grid;
+  place-items: end center;
+  padding: 1rem;
+  z-index: 40;
+}
+
+.copilot-panel {
+  width: min(100%, 28rem);
+  max-height: min(80vh, 36rem);
+  overflow: auto;
+  background: var(--paper, #fff);
+  border: 3px solid var(--ink);
+  border-radius: 1rem;
+  padding: 1rem 1.1rem 1.25rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.copilot-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.copilot-header h2 {
+  margin: 0;
+  font-size: 1.15rem;
+}
+
+.copilot-reply {
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 2px dashed var(--ink);
+  background: color-mix(in srgb, var(--sky, #9ad) 20%, white);
+}
+
+.copilot-actions {
+  margin-top: 0.75rem;
+}

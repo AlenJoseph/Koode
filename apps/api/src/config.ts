@@ -17,6 +17,12 @@ export type ApiConfig = {
   bootstrapSecret: string;
   /** How long tutor evidence rows should be kept (purge job later). See docs/privacy.md. */
   tutorTurnRetentionDays: number;
+  /** Phase A auto-help from learning events. */
+  autoHelpEnabled: boolean;
+  autoHelpFailStreak: number;
+  autoHelpIdleMs: number;
+  rateLimitEventsMax: number;
+  rateLimitEventsWindowMs: number;
 };
 
 function parseBool(value: string | undefined, fallback: boolean): boolean {
@@ -68,5 +74,11 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): ApiConfig {
     rateLimitTutorWindowMs: parsePositiveInt(env.RATE_LIMIT_TUTOR_WINDOW_MS, 60_000),
     bootstrapSecret: env.BOOTSTRAP_SECRET ?? '',
     tutorTurnRetentionDays: parsePositiveInt(env.TUTOR_TURN_RETENTION_DAYS, 365),
+    autoHelpEnabled: parseBool(env.AUTO_HELP_ENABLED, true),
+    autoHelpFailStreak: parsePositiveInt(env.AUTO_HELP_FAIL_STREAK, 2),
+    /** Default 15s so demos see idle nudges; raise in prod via env. */
+    autoHelpIdleMs: parsePositiveInt(env.AUTO_HELP_IDLE_MS, 15_000),
+    rateLimitEventsMax: parsePositiveInt(env.RATE_LIMIT_EVENTS_MAX, 120),
+    rateLimitEventsWindowMs: parsePositiveInt(env.RATE_LIMIT_EVENTS_WINDOW_MS, 60_000),
   };
 }

@@ -30,10 +30,18 @@ export function buildTutorUserPrompt(input: {
   topic: string;
   learnerMessage: string;
   phase: TutorPhase;
+  recentLearningFacts?: string;
+  stepId?: string | null;
 }): string {
   return [
     `Topic: ${input.topic}`,
     `Current phase: ${input.phase}`,
+    input.stepId ? `Lesson step: ${input.stepId}` : null,
+    input.recentLearningFacts
+      ? `Recent learning facts (use to personalize questions; never reveal quiz answers):\n${input.recentLearningFacts}`
+      : null,
     `Learner message: ${input.learnerMessage}`,
-  ].join('\n');
+  ]
+    .filter(Boolean)
+    .join('\n');
 }

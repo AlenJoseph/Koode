@@ -113,6 +113,13 @@
       "when": 1761253200000,
       "tag": "0015_section_students_removed",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1761256800000,
+      "tag": "0016_learning_events_economy",
+      "breakpoints": true
     }
   ]
 }

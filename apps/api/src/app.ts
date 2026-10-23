@@ -22,8 +22,12 @@ import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limi
 import { createInsightsService } from './insights/service.js';
 import { createChallengeQuizService } from './learning/challenge-quiz.js';
 import { createLearnerChallengeService } from './learning/challenges-learner.js';
+import { createEconomyService } from './learning/economy.js';
 import { createLearnerPathwayService } from './learning/pathways-learner.js';
+import { createLearningEventsService } from './learning/learning-events.js';
+import { createLessonService } from './learning/lesson.js';
 import { createProjectService } from './learning/projects.js';
+import { DEFAULT_AUTO_HELP_CONFIG } from './learning/auto-help-rules.js';
 import { LOG_REDACT_PATHS } from './privacy/redaction.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerAuthRoutes } from './routes/auth.js';
@@ -74,6 +78,10 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       windowMs: deps.config.rateLimitTutorWindowMs,
       max: deps.config.rateLimitTutorMax,
     });
+  const eventsLimiter = createMemoryRateLimiter({
+    windowMs: deps.config.rateLimitEventsWindowMs,
+    max: deps.config.rateLimitEventsMax,
+  });
 
   const app = Fastify({
     logger: deps.disableLogger
@@ -156,16 +164,23 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   await registerHealthRoutes(app, gateway);
   await registerAuthRoutes(app, { config: deps.config, auth });
   await registerAdminRoutes(app, { config: deps.config, auth, database });
+  const contentLoader = contentRoot ? createContentLoader({ contentRoot }) : null;
   await registerLearningRoutes(app, {
     config: deps.config,
     auth,
     learnerPathways: createLearnerPathwayService(database),
     learnerChallenges: createLearnerChallengeService(database),
-    challengeQuiz: createChallengeQuizService(
-      database,
-      contentRoot ? createContentLoader({ contentRoot }) : null,
-    ),
+    challengeQuiz: createChallengeQuizService(database, contentLoader),
     projects: createProjectService(database),
+    learningEvents: createLearningEventsService(database, {
+      ...DEFAULT_AUTO_HELP_CONFIG,
+      enabled: deps.config.autoHelpEnabled,
+      failStreakThreshold: deps.config.autoHelpFailStreak,
+      idleMs: deps.config.autoHelpIdleMs,
+    }),
+    economy: createEconomyService(database),
+    lessons: createLessonService(database, contentLoader),
+    eventsLimiter,
   });
   await registerClassroomRoutes(app, {
     config: deps.config,

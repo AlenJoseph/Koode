@@ -18,6 +18,8 @@ const submitQuizSchema = z.object({
     )
     .min(1)
     .max(12),
+  /** Lesson step id when submitted from the step player. */
+  stepId: z.string().regex(/^[a-z0-9_-]+$/).nullable().optional(),
 });
 
 export type LearnerQuizView = {
@@ -45,10 +47,16 @@ export type QuizSubmitResult = {
     completedAt: string | null;
   };
   score: { correct: number; total: number };
+  /** True when every item is correct — attempt is completed only then. */
+  passed: boolean;
+  pathwaySlug: string;
+  contentSlug: string;
+  stepId: string | null;
   items: Array<{
     quizItemId: string;
     selectedOptionId: string;
-    correctOptionId: string;
+    /** Omitted unless passed — reduces answer-key leakage on failed attempts. */
+    correctOptionId?: string;
     isCorrect: boolean;
     teachBack: string;
   }>;
@@ -125,7 +133,7 @@ export function createChallengeQuizService(
         throw new AuthError('Attempt already completed', 409);
       }
 
-      const { manual } = await loadManual(attempt.challengeId);
+      const { challenge, pathwaySlug, manual } = await loadManual(attempt.challengeId);
       const quiz = manual.quiz ?? [];
       if (quiz.length === 0) {
         throw new AuthError('Challenge has no quiz', 400);
@@ -145,7 +153,7 @@ export function createChallengeQuizService(
         }
       }
 
-      const items = quiz.map((item) => {
+      const graded = quiz.map((item) => {
         const selectedOptionId = answerMap.get(item.id)!;
         const isCorrect = selectedOptionId === item.correctOptionId;
         return {
@@ -156,16 +164,26 @@ export function createChallengeQuizService(
           teachBack: item.teachBack,
         };
       });
-      const correct = items.filter((row) => row.isCorrect).length;
-
+      const correct = graded.filter((row) => row.isCorrect).length;
+      const passed = correct === graded.length && graded.length > 0;
       const now = new Date();
-      const [row] = await db
-        .update(challengeAttempts)
-        .set({ status: 'completed', completedAt: now, updatedAt: now })
-        .where(eq(challengeAttempts.id, attempt.id))
-        .returning();
-      if (!row) {
-        throw new AuthError('Attempt not found', 404);
+
+      let row = attempt;
+      if (passed) {
+        const [updated] = await db
+          .update(challengeAttempts)
+          .set({ status: 'completed', completedAt: now, updatedAt: now })
+          .where(eq(challengeAttempts.id, attempt.id))
+          .returning();
+        if (!updated) {
+          throw new AuthError('Attempt not found', 404);
+        }
+        row = updated;
+      } else {
+        await db
+          .update(challengeAttempts)
+          .set({ updatedAt: now })
+          .where(eq(challengeAttempts.id, attempt.id));
       }
 
       return {
@@ -176,8 +194,18 @@ export function createChallengeQuizService(
           startedAt: row.startedAt.toISOString(),
           completedAt: row.completedAt ? row.completedAt.toISOString() : null,
         },
-        score: { correct, total: items.length },
-        items,
+        score: { correct, total: graded.length },
+        passed,
+        pathwaySlug,
+        contentSlug: challenge.slug!,
+        stepId: data.stepId ?? null,
+        items: graded.map((item) => ({
+          quizItemId: item.quizItemId,
+          selectedOptionId: item.selectedOptionId,
+          isCorrect: item.isCorrect,
+          teachBack: item.teachBack,
+          ...(passed ? { correctOptionId: item.correctOptionId } : {}),
+        })),
       };
     },
   };

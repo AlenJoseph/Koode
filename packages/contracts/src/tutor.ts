@@ -30,6 +30,9 @@ export const tutorTurnRequestSchema = z.object({
   paceBand: paceBandSchema.optional(),
   localContext: z.string().trim().max(500).optional(),
   interests: z.string().trim().max(500).optional(),
+  /** Compact recent learning facts for Copilot context (from learning_events). */
+  recentLearningFacts: z.string().trim().max(4000).optional(),
+  stepId: z.string().regex(/^[a-z0-9_-]+$/).nullable().optional(),
 });
 
 export const tutorTurnResponseSchema = z.object({

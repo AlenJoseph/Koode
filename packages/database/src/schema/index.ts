@@ -11,3 +11,5 @@ export { challenges } from './challenges.js';
 export { pathwayEnrollments } from './enrollments.js';
 export { challengeAttempts } from './challenge-attempts.js';
 export { projects } from './projects.js';
+export { learningEvents, autoHelpState } from './learning-events.js';
+export { coinLedger, shopRedemptions, certificates, lessonProgress } from './economy.js';

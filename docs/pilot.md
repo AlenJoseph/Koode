@@ -53,6 +53,13 @@ Health check: `GET http://localhost:3001/health` → `aiAdapter` should be `stub
 - [ ] Teachers briefed: insights legend is **not** clinical  
 - [ ] Legal ToS / consent copy reviewed for your jurisdiction  
 
+## Learning events + auto-help (Phase A)
+
+- Event catalog + Postgres ingest: [`learning-events.md`](./learning-events.md)
+- Showcase multi-step lesson: **Pause before you react** (slide → video → quiz → reflection)
+- Soft **Need help?** Copilot popup; coins/shop/certificates at `/en/shop`
+- Extra e2e: `pnpm --filter @koode/e2e exec playwright test learning-events-auto-help.spec.ts`
+
 ## Out of scope for this pilot build
 
-Google sign-in, full Malayalam UI + voice, parents, multi-school admin, scheduled tutor purge cron.
+Google sign-in, full Malayalam UI + voice, parents, multi-school admin, Kafka/Flink, scheduled tutor purge cron.

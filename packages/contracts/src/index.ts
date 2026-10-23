@@ -7,5 +7,7 @@ export * from './challenges.js';
 export * from './projects.js';
 export * from './section-pathways.js';
 export * from './content.js';
+export * from './learning-events.js';
+export * from './economy.js';
 
 

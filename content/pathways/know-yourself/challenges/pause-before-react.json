@@ -1,6 +1,6 @@
 {
   "id": "pause-before-react",
-  "kind": "scenario",
+  "kind": "lesson",
   "title": "Pause before you react",
   "summary": "Practise a 10-second pause when something annoys you.",
   "locale": "en",
@@ -10,6 +10,39 @@
     "Apply it to a realistic school or home scenario"
   ],
   "briefMarkdown": "## Mission\n\nWhen we feel heat rising, we often react first and think later.\n\nChoose one pause tool:\n1. Three slow breaths\n2. Count 1–10\n3. Step away for one minute\n\nRead the scenario, pick a response, then reflect.",
+  "coinReward": 25,
+  "steps": [
+    {
+      "id": "slide-tools",
+      "kind": "slide",
+      "title": "Three pause tools",
+      "bodyMarkdown": "## Pick a tool\n\n1. **Three slow breaths** — in through the nose, out through the mouth.\n2. **Count 1–10** — silently, before you speak.\n3. **Step away** — one minute of space, then return.\n\nA pause is not giving up. It is choosing your next step.",
+      "conceptId": "pause-tools"
+    },
+    {
+      "id": "video-demo",
+      "kind": "video",
+      "title": "Watch a calm pause",
+      "bodyMarkdown": "Watch this short clip. Notice where you might pause in a real moment.",
+      "mediaUrl": "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+      "mediaDurationSeconds": 5,
+      "conceptId": "pause-demo"
+    },
+    {
+      "id": "quiz-1",
+      "kind": "quiz",
+      "title": "Choose a pause",
+      "bodyMarkdown": "Apply a pause tool to the scenario.",
+      "quizItemIds": ["q1"],
+      "conceptId": "pause-apply"
+    },
+    {
+      "id": "reflect-1",
+      "kind": "reflection",
+      "title": "Your pause this week",
+      "bodyMarkdown": "Name your pause tool. When will you try it this week? Write one concrete time and place."
+    }
+  ],
   "quiz": [
     {
       "id": "q1",

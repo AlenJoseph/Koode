@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { fetchMe, logout } from '@/lib/api';
+import { emitLearningEvent } from '@/lib/learning-events';
 
 type Props = {
   locale: Locale;
@@ -20,7 +21,20 @@ export function ShellHeader({ locale, dictionary }: Props) {
   useEffect(() => {
     setUser(undefined);
     void fetchMe()
-      .then((result) => setUser(result?.user ?? null))
+      .then((result) => {
+        const next = result?.user ?? null;
+        setUser(next);
+        if (next && (next.role === 'learner' || next.role === 'student')) {
+          const key = 'koode_session_event';
+          if (typeof sessionStorage !== 'undefined' && !sessionStorage.getItem(key)) {
+            sessionStorage.setItem(key, '1');
+            void emitLearningEvent({
+              eventType: 'SESSION_STARTED',
+              payload: { session_id: key },
+            }).catch(() => undefined);
+          }
+        }
+      })
       .catch(() => setUser(null));
   }, [pathname]);
 
@@ -58,6 +72,7 @@ export function ShellHeader({ locale, dictionary }: Props) {
             <Link href={`/${locale}/pathways`}>{dictionary['nav.pathways']}</Link>
             <Link href={`/${locale}/challenges`}>{dictionary['nav.challenges']}</Link>
             <Link href={`/${locale}/tutor`}>{dictionary['nav.tutor']}</Link>
+            <Link href={`/${locale}/shop`}>{dictionary['nav.shop']}</Link>
             <Link href={`/${locale}/progress`}>{dictionary['nav.progress']}</Link>
           </>
         ) : null}

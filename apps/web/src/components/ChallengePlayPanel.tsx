@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import {
   completeChallengeAttempt,
+  fetchChallengeLesson,
   fetchChallengeQuiz,
   fetchMe,
   listLearnerChallenges,
@@ -16,6 +17,8 @@ import {
   type LearnerQuiz,
   type QuizSubmitResult,
 } from '@/lib/api';
+import { emitLearningEvent } from '@/lib/learning-events';
+import { LessonPlayer } from '@/components/LessonPlayer';
 
 type Props = {
   locale: Locale;
@@ -26,6 +29,7 @@ type Props = {
 export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
   const [signedIn, setSignedIn] = useState<boolean | null>(null);
   const [challenge, setChallenge] = useState<LearnerChallenge | null>(null);
+  const [hasLesson, setHasLesson] = useState<boolean | null>(null);
   const [attempt, setAttempt] = useState<ChallengeAttempt | null>(null);
   const [quiz, setQuiz] = useState<LearnerQuiz | null>(null);
   const [quizMissing, setQuizMissing] = useState(false);
@@ -41,12 +45,14 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
       return;
     }
     setSignedIn(true);
-    const [challengeResult, attemptResult] = await Promise.all([
+    const [challengeResult, attemptResult, lesson] = await Promise.all([
       listLearnerChallenges(),
       listMyChallengeAttempts(),
+      fetchChallengeLesson(challengeId).catch(() => null),
     ]);
     const found = challengeResult.challenges.find((row) => row.id === challengeId) ?? null;
     setChallenge(found);
+    setHasLesson(Boolean(lesson?.lesson?.steps?.length));
     const open =
       attemptResult.attempts.find(
         (row) => row.challengeId === challengeId && row.status === 'in_progress',
@@ -70,10 +76,19 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
     try {
       const { attempt: started } = await startChallengeAttempt(challengeId);
       setAttempt(started);
+      await emitLearningEvent({
+        eventType: 'CHALLENGE_STARTED',
+        contentId: challenge?.slug,
+      });
       try {
         const { quiz: loaded } = await fetchChallengeQuiz(challengeId);
         setQuiz(loaded);
         setAnswers({});
+        await emitLearningEvent({
+          eventType: 'QUIZ_STARTED',
+          pathwayId: loaded.pathwaySlug,
+          contentId: loaded.slug,
+        });
       } catch {
         setQuiz(null);
         setQuizMissing(true);
@@ -103,6 +118,26 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
       const submitted = await submitChallengeQuiz(attempt.id, payload);
       setResult(submitted);
       setAttempt(submitted.attempt);
+      // Graded QUIZ_ANSWERED is emitted server-side (trusted). Client only logs completion.
+      if (submitted.passed) {
+        await emitLearningEvent({
+          eventType: 'QUIZ_COMPLETED',
+          pathwayId: quiz.pathwaySlug,
+          contentId: quiz.slug,
+          payload: {
+            score_percent: Math.round((submitted.score.correct / submitted.score.total) * 100),
+          },
+        });
+      } else {
+        await emitLearningEvent({
+          eventType: 'QUIZ_RETRY',
+          pathwayId: quiz.pathwaySlug,
+          contentId: quiz.slug,
+          payload: {
+            score_percent: Math.round((submitted.score.correct / submitted.score.total) * 100),
+          },
+        });
+      }
     } catch {
       setError(true);
     } finally {
@@ -118,6 +153,10 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
     try {
       const { attempt: done } = await completeChallengeAttempt(attempt.id);
       setAttempt(done);
+      await emitLearningEvent({
+        eventType: 'CHALLENGE_COMPLETED',
+        contentId: challenge?.slug,
+      });
     } catch {
       setError(true);
     } finally {
@@ -125,7 +164,7 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
     }
   }
 
-  if (signedIn === null) {
+  if (signedIn === null || hasLesson === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
   }
 
@@ -154,6 +193,17 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
   const backHref = challenge.pathwayId
     ? `/${locale}/pathways/${challenge.pathwayId}`
     : `/${locale}/challenges`;
+
+  if (hasLesson) {
+    return (
+      <div className="stack">
+        <Link className="back-link" href={backHref}>
+          ← {challenge.pathwayId ? dictionary['nav.pathways'] : dictionary['nav.challenges']}
+        </Link>
+        <LessonPlayer locale={locale} dictionary={dictionary} challengeId={challengeId} />
+      </div>
+    );
+  }
 
   return (
     <div className="stack">
@@ -206,7 +256,7 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
                       name={`${challenge.id}-${item.id}`}
                       value={option.id}
                       checked={answers[item.id] === option.id}
-                      disabled={Boolean(result) || attempt?.status === 'completed'}
+                      disabled={attempt?.status === 'completed' || Boolean(result?.passed)}
                       onChange={() => setAnswers((prev) => ({ ...prev, [item.id]: option.id }))}
                     />
                     <span>{option.label}</span>
@@ -215,14 +265,14 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
               </fieldset>
             ))}
 
-            {!result && attempt?.status === 'in_progress' ? (
+            {attempt?.status === 'in_progress' && !result?.passed ? (
               <button
                 type="button"
                 className="btn btn-accent"
                 disabled={busy || quiz.quiz.some((item) => !answers[item.id])}
                 onClick={() => void onSubmit()}
               >
-                {dictionary['challenges.submitQuiz']}
+                {result ? 'Try again' : dictionary['challenges.submitQuiz']}
               </button>
             ) : null}
 
@@ -236,10 +286,16 @@ export function ChallengePlayPanel({ locale, dictionary, challengeId }: Props) {
                     {item.isCorrect ? '✓' : '✗'} {item.teachBack}
                   </p>
                 ))}
-                <p className="muted">{dictionary['challenges.completed']}</p>
-                <Link className="btn btn-secondary" href={`/${locale}/tutor`}>
-                  {dictionary['nav.tutor']}
-                </Link>
+                {result.passed ? (
+                  <>
+                    <p className="muted">{dictionary['challenges.completed']}</p>
+                    <Link className="btn btn-secondary" href={`/${locale}/tutor`}>
+                      {dictionary['nav.tutor']}
+                    </Link>
+                  </>
+                ) : (
+                  <p className="muted">Not quite — change an answer and try again.</p>
+                )}
               </div>
             ) : null}
           </div>

@@ -9,7 +9,33 @@ export const challengeKindSchema = z.enum([
   'reflection',
   'field_task',
   'mini_project',
+  'lesson',
 ]);
+
+/** Ordered multi-modal lesson steps (Phase A player). */
+export const lessonStepKindSchema = z.enum([
+  'slide',
+  'video',
+  'practice',
+  'quiz',
+  'reflection',
+  'field',
+]);
+
+export const lessonStepSchema = z.object({
+  id: z.string().regex(/^[a-z0-9_-]+$/),
+  kind: lessonStepKindSchema,
+  title: z.string().trim().min(1).max(200),
+  /** Markdown body for slide / reflection / field / practice intro. */
+  bodyMarkdown: z.string().trim().max(8000).optional(),
+  /** Public URL or path for video steps. */
+  mediaUrl: z.string().trim().max(2000).optional(),
+  /** Approximate media length for progress UI. */
+  mediaDurationSeconds: z.number().int().positive().max(3600).optional(),
+  /** Quiz item ids from challenge.quiz for quiz/practice steps. */
+  quizItemIds: z.array(z.string().regex(/^[a-z0-9_-]+$/)).max(12).optional(),
+  conceptId: z.string().regex(/^[a-z0-9_-]+$/).optional(),
+});
 
 export const quizOptionSchema = z.object({
   id: z.string().regex(/^[a-z0-9_-]+$/),
@@ -63,6 +89,10 @@ export const contentChallengeSchema = z.object({
   /** Learner-facing body. Markdown allowed inside the string. */
   briefMarkdown: z.string().trim().min(1).max(8000),
   quiz: z.array(quizItemSchema).max(12).optional(),
+  /** When present, learner UI uses the step player instead of brief-only quiz. */
+  steps: z.array(lessonStepSchema).min(1).max(24).optional(),
+  /** Koode coins awarded once on successCriteria evidence (idempotent key per challenge). */
+  coinReward: z.number().int().min(0).max(500).optional(),
   reflectionPrompt: z.string().trim().max(2000).optional(),
   fieldPrompt: z.string().trim().max(2000).optional(),
   projectPrompt: z.string().trim().max(2000).optional(),
@@ -89,6 +119,8 @@ export const contentCatalogSchema = z.object({
 });
 
 export type PaceBand = z.infer<typeof paceBandSchema>;
+export type LessonStep = z.infer<typeof lessonStepSchema>;
+export type LessonStepKind = z.infer<typeof lessonStepKindSchema>;
 export type ContentChallenge = z.infer<typeof contentChallengeSchema>;
 export type ContentPathway = z.infer<typeof contentPathwaySchema>;
 export type ContentCatalog = z.infer<typeof contentCatalogSchema>;

@@ -19,5 +19,10 @@ export function testConfig(databaseUrl: string): ApiConfig {
     rateLimitTutorWindowMs: 60_000,
     bootstrapSecret: 'test-bootstrap-secret-16+',
     tutorTurnRetentionDays: 365,
+    autoHelpEnabled: true,
+    autoHelpFailStreak: 2,
+    autoHelpIdleMs: 15_000,
+    rateLimitEventsMax: 1000,
+    rateLimitEventsWindowMs: 60_000,
   };
 }
