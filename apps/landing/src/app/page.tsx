@@ -19,10 +19,11 @@ export default function LandingPage() {
         <div className="hero-main">
           <div>
             <p className="brand-hero">Koode</p>
-            <h1 className="headline">Learn coding like a game. Teach it like a class.</h1>
+            <h1 className="headline">Learn your way. Grow with Koode.</h1>
             <p className="support">
-              Pathways, challenges, and a friendly tutor — built for classrooms and curious
-              learners.
+              Personal intelligence for human growth — pathways, challenges, projects, and a gentle
+              tutor that helps you think, make, and choose for yourself. Coding is one path; curiosity
+              is the point.
             </p>
             <div className="ctas" id="paths">
               <a className="btn btn-primary" href={`${appOrigin}/en/sign-in`}>
@@ -44,22 +45,22 @@ export default function LandingPage() {
                 <div className="node done">
                   <div className="dot" />
                   <div>
-                    <strong>Loops</strong>
-                    <span>Challenge cleared</span>
+                    <strong>Discover</strong>
+                    <span>Interest unlocked</span>
                   </div>
                 </div>
                 <div className="node active">
                   <div className="dot" />
                   <div>
-                    <strong>Make a game</strong>
+                    <strong>Build & explain</strong>
                     <span>Your turn</span>
                   </div>
                 </div>
                 <div className="node">
                   <div className="dot" />
                   <div>
-                    <strong>Share project</strong>
-                    <span>Up next</span>
+                    <strong>Reflect</strong>
+                    <span>Grow next</span>
                   </div>
                 </div>
               </div>
@@ -73,19 +74,26 @@ export default function LandingPage() {
 
       <section className="section" id="how">
         <h2>Three ways in</h2>
-        <p>Same product energy as Code.org classrooms + Duolingo momentum — pick your door.</p>
+        <p>
+          Classroom energy + learning momentum — for independent thinkers, not just homework
+          helpers.
+        </p>
         <div className="paths">
           <article className="path-card">
             <div className="badge teacher">Teachers</div>
             <h3>Run a section</h3>
             <p>
-              Create a class, share a code, watch learning-support signals — not vanity dashboards.
+              Create a class, share a code, watch learning-support signals — evidence of growth, not
+              vanity dashboards.
             </p>
           </article>
           <article className="path-card">
             <div className="badge">Learners</div>
             <h3>Chase a pathway</h3>
-            <p>Start a pathway, knock out challenges, keep a streak going with a gentle tutor.</p>
+            <p>
+              Discover interests, take on challenges, build projects you understand, and keep a streak
+              with a tutor that scaffolds — it doesn’t steal the thinking.
+            </p>
           </article>
           <article className="path-card">
             <div className="badge join">Classmates</div>

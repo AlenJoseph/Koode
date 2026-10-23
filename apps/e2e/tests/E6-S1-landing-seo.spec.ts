@@ -8,14 +8,15 @@ test.describe('E6-S1 SEO landing', () => {
   test('happy: indexable title, h1, meta, and three CTAs', async ({ page }) => {
     await page.goto('/');
 
-    await expect(page).toHaveTitle(/Koode/i);
-    await expect(page.locator('h1')).toContainText(/Learn coding like a game/i);
+    await expect(page).toHaveTitle(/Personal intelligence for human growth/i);
+    await expect(page.locator('h1')).toContainText(/Learn your way\. Grow with Koode/i);
+    await expect(page.getByText(/curiosity is the point/i)).toBeVisible();
 
     const description = page.locator('meta[name="description"]');
-    await expect(description).toHaveAttribute('content', /Pathways, challenges/i);
+    await expect(description).toHaveAttribute('content', /human growth|curiosity/i);
 
     const ogTitle = page.locator('meta[property="og:title"]');
-    await expect(ogTitle).toHaveAttribute('content', /Koode/i);
+    await expect(ogTitle).toHaveAttribute('content', /human growth/i);
 
     await expect(page.getByRole('link', { name: 'I’m a teacher' })).toBeVisible();
     await expect(page.getByRole('link', { name: 'I’m learning alone' })).toBeVisible();

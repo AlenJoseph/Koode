@@ -19,9 +19,11 @@ pnpm db:migrate
 pnpm build
 pnpm test
 pnpm dev            # web :3000 + api :3001
+pnpm --filter @koode/landing dev   # marketing landing :3002
+pnpm --filter @koode/docs dev      # docs site :3003
 ```
 
-Open http://localhost:3000/en or http://localhost:3000/ml, then **Sign in** with a magic link (dev mode prints the link on the page).
+Open http://localhost:3000/en or http://localhost:3000/ml, then **Sign in** with a magic link (dev mode prints the link on the page). Marketing landing: http://localhost:3002. Docs: http://localhost:3003.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md), [docs/architecture.md](docs/architecture.md), and [docs/testing.md](docs/testing.md).
 
