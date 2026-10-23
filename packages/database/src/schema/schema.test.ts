@@ -4,6 +4,7 @@ import {
   consentRecords,
   learnerProfiles,
   magicLinkTokens,
+  pathwayEnrollments,
   pathways,
   sectionStudents,
   sections,
@@ -26,6 +27,7 @@ describe('database schema', () => {
     expect(sectionStudents).toBeDefined();
     expect(pathways).toBeDefined();
     expect(challenges).toBeDefined();
+    expect(pathwayEnrollments).toBeDefined();
   });
 });
 

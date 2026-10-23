@@ -2,6 +2,7 @@
   "app.name": "Koode",
   "app.tagline": "Learn your way. Grow with Koode.",
   "nav.home": "Home",
+  "nav.pathways": "Pathways",
   "nav.challenges": "Challenges",
   "nav.progress": "Progress",
   "nav.tutor": "Tutor",
@@ -65,6 +66,13 @@
 
 
   "home.signedOutHint": "Learners sign up with email. Teachers sign in. Class students join with a code.",
+  "pathways.title": "Learning pathways",
+  "pathways.hint": "Start a published pathway to track your progress.",
+  "pathways.start": "Start pathway",
+  "pathways.enrolled": "Started",
+  "pathways.empty": "No published pathways yet.",
+  "pathways.needSignIn": "Sign in to browse and start pathways.",
+  "pathways.error": "Could not start that pathway. Try again.",
 
   "tutor.title": "Guided tutor",
   "tutor.topicLabel": "Topic",

@@ -10,10 +10,12 @@ import { AuthError, createAuthService, type AuthService } from './auth/service.j
 import { createClassroomService, type ClassroomService } from './classroom/service.js';
 import type { ApiConfig } from './config.js';
 import { createMemoryRateLimiter, type MemoryRateLimiter } from './lib/rate-limit.js';
+import { createLearnerPathwayService } from './learning/pathways-learner.js';
 import { registerAdminRoutes } from './routes/admin.js';
 import { registerAuthRoutes } from './routes/auth.js';
 import { registerClassroomRoutes } from './routes/classroom.js';
 import { registerHealthRoutes } from './routes/health.js';
+import { registerLearningRoutes } from './routes/learning.js';
 import { registerTutorRoutes } from './routes/tutor.js';
 import { createTutorService, type TutorService } from './tutor/service.js';
 
@@ -116,6 +118,11 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   await registerHealthRoutes(app, gateway);
   await registerAuthRoutes(app, { config: deps.config, auth, magicLinkLimiter });
   await registerAdminRoutes(app, { config: deps.config, auth, database });
+  await registerLearningRoutes(app, {
+    config: deps.config,
+    auth,
+    learnerPathways: createLearnerPathwayService(database),
+  });
   await registerClassroomRoutes(app, {
     config: deps.config,
     auth,

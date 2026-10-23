@@ -6,6 +6,7 @@ export const messageKeys = [
   'app.name',
   'app.tagline',
   'nav.home',
+  'nav.pathways',
   'nav.challenges',
   'nav.progress',
   'nav.tutor',
@@ -67,6 +68,13 @@ export const messageKeys = [
   'admin.challengeError',
   'home.welcome',
   'home.signedOutHint',
+  'pathways.title',
+  'pathways.hint',
+  'pathways.start',
+  'pathways.enrolled',
+  'pathways.empty',
+  'pathways.needSignIn',
+  'pathways.error',
 
 
 

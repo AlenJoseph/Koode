@@ -159,6 +159,35 @@ export async function archiveAdminChallenge(
   });
 }
 
+export type LearnerPathway = {
+  id: string;
+  title: string;
+  summary: string;
+  locale: string;
+  status: string;
+};
+
+export type PathwayEnrollment = {
+  id: string;
+  pathwayId: string;
+  status: string;
+  startedAt: string;
+};
+
+export async function listLearnerPathways(): Promise<{ pathways: LearnerPathway[] }> {
+  return apiFetch('/pathways');
+}
+
+export async function listMyPathwayEnrollments(): Promise<{ enrollments: PathwayEnrollment[] }> {
+  return apiFetch('/pathways/enrollments');
+}
+
+export async function enrollInPathway(
+  pathwayId: string,
+): Promise<{ enrollment: PathwayEnrollment }> {
+  return apiFetch(`/pathways/${pathwayId}/enroll`, { method: 'POST' });
+}
+
 /** null = signed out; 'forbidden' = signed in but not admin. */
 export async function fetchAdminMe(): Promise<
   { user: SessionUser } | null | 'forbidden'
