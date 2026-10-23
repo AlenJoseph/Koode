@@ -4,6 +4,7 @@ import {
   type TutorTurnResponse,
 } from '@koode/contracts';
 import { tutorTurns, type Database } from '@koode/database';
+import { desc, eq } from 'drizzle-orm';
 import { hashToken } from '../crypto.js';
 
 export type TutorTurnMeta = {
@@ -32,9 +33,33 @@ export function createTutorService(database: Database, runtime: TutorRuntime) {
         uncertaintyNote: turn.uncertaintyNote,
         adapterId: meta.adapterId,
         requestId: meta.requestId,
+        pathwayId: request.pathwayId ?? null,
+        challengeId: request.challengeId ?? null,
       });
 
       return turn;
+    },
+
+    /** Own turns only — never expose another user's tutor chat (incl. to teachers). */
+    async listForUser(userId: string) {
+      const rows = await db
+        .select({
+          id: tutorTurns.id,
+          topic: tutorTurns.topic,
+          phase: tutorTurns.phase,
+          reply: tutorTurns.reply,
+          pathwayId: tutorTurns.pathwayId,
+          challengeId: tutorTurns.challengeId,
+          createdAt: tutorTurns.createdAt,
+        })
+        .from(tutorTurns)
+        .where(eq(tutorTurns.userId, userId))
+        .orderBy(desc(tutorTurns.createdAt))
+        .limit(50);
+      return rows.map((row) => ({
+        ...row,
+        createdAt: row.createdAt.toISOString(),
+      }));
     },
   };
 }

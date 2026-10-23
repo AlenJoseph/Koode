@@ -17,6 +17,20 @@ export async function registerTutorRoutes(
 ): Promise<void> {
   const { config, auth, tutorService, adapterId, tutorLimiter } = deps;
 
+  app.get('/tutor/turns', async (request, reply) => {
+    const sessionToken = readSessionToken(request, config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const turns = await tutorService.listForUser(user.id);
+    return { turns };
+  });
+
   app.post('/tutor/turn', async (request, reply) => {
     const sessionToken = readSessionToken(request, config);
     if (!sessionToken) {

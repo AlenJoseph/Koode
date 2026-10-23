@@ -12,6 +12,8 @@ export const tutorTurnRequestSchema = z.object({
   topic: z.string().trim().min(1).max(200),
   learnerMessage: z.string().trim().min(1).max(4000),
   phase: tutorPhaseSchema.default('explain'),
+  pathwayId: z.string().uuid().nullable().optional(),
+  challengeId: z.string().uuid().nullable().optional(),
 });
 
 export const tutorTurnResponseSchema = z.object({

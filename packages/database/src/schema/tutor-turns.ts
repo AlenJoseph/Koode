@@ -1,4 +1,6 @@
 import { pgTable, text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { challenges } from './challenges.js';
+import { pathways } from './pathways.js';
 import { users } from './users.js';
 
 /**
@@ -20,5 +22,8 @@ export const tutorTurns = pgTable('tutor_turns', {
   uncertaintyNote: text('uncertainty_note'),
   adapterId: text('adapter_id').notNull(),
   requestId: text('request_id'),
+  pathwayId: uuid('pathway_id').references(() => pathways.id, { onDelete: 'set null' }),
+  challengeId: uuid('challenge_id').references(() => challenges.id, { onDelete: 'set null' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
+
