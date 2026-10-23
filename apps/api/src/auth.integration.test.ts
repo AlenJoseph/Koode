@@ -1,7 +1,6 @@
 import { createDatabase } from '@koode/database';
 import { afterAll, describe, expect, it } from 'vitest';
 import { buildApp } from './app.js';
-import { createMemoryRateLimiter } from './lib/rate-limit.js';
 import { testConfig } from './test-config.js';
 
 const databaseUrl = process.env.DATABASE_URL;
@@ -123,11 +122,13 @@ describe.runIf(Boolean(databaseUrl))('auth integration', () => {
   });
 
   it('rate limits magic-link requests', async () => {
-    const limiter = createMemoryRateLimiter({ windowMs: 60_000, max: 2 });
     const app = await buildApp({
-      config,
+      config: {
+        ...config,
+        rateLimitMagicLinkMax: 2,
+        rateLimitMagicLinkWindowMs: 60_000,
+      },
       database,
-      magicLinkLimiter: limiter,
       disableLogger: true,
     });
 

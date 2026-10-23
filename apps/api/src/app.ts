@@ -1,5 +1,6 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import rateLimit from '@fastify/rate-limit';
 import { TutorRuntimeError, createTutorRuntime, type TutorRuntime } from '@koode/agent-runtime';
 import { createGatewayFromEnv, type AiGateway } from '@koode/ai-gateway';
 import { createDatabase, type Database } from '@koode/database';
@@ -30,9 +31,7 @@ export type AppDeps = {
   gateway?: AiGateway;
   tutor?: TutorRuntime;
   tutorService?: TutorService;
-  magicLinkLimiter?: MemoryRateLimiter;
   tutorLimiter?: MemoryRateLimiter;
-  studentSignInLimiter?: MemoryRateLimiter;
   disableLogger?: boolean;
 };
 
@@ -43,23 +42,11 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const gateway = deps.gateway ?? createGatewayFromEnv();
   const tutorRuntime = deps.tutor ?? createTutorRuntime(gateway);
   const tutorService = deps.tutorService ?? createTutorService(database, tutorRuntime);
-  const magicLinkLimiter =
-    deps.magicLinkLimiter ??
-    createMemoryRateLimiter({
-      windowMs: deps.config.rateLimitMagicLinkWindowMs,
-      max: deps.config.rateLimitMagicLinkMax,
-    });
   const tutorLimiter =
     deps.tutorLimiter ??
     createMemoryRateLimiter({
       windowMs: deps.config.rateLimitTutorWindowMs,
       max: deps.config.rateLimitTutorMax,
-    });
-  const studentSignInLimiter =
-    deps.studentSignInLimiter ??
-    createMemoryRateLimiter({
-      windowMs: deps.config.rateLimitMagicLinkWindowMs,
-      max: deps.config.rateLimitMagicLinkMax,
     });
 
   const app = Fastify({
@@ -98,6 +85,16 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   });
   await app.register(cookie);
+  await app.register(rateLimit, {
+    global: false,
+    max: deps.config.rateLimitMagicLinkMax,
+    timeWindow: deps.config.rateLimitMagicLinkWindowMs,
+    errorResponseBuilder: (_request, context) => ({
+      statusCode: 429,
+      error: 'rate_limited',
+      retryAfterSec: Math.ceil(context.ttl / 1000),
+    }),
+  });
 
   app.addHook('onRequest', async (request, reply) => {
     reply.header('x-request-id', request.id);
@@ -113,12 +110,34 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (error instanceof TutorRuntimeError) {
       return reply.status(error.statusCode).send({ error: error.message });
     }
+    const statusCode =
+      typeof error === 'object' &&
+      error !== null &&
+      'statusCode' in error &&
+      typeof (error as { statusCode?: unknown }).statusCode === 'number'
+        ? (error as { statusCode: number }).statusCode
+        : undefined;
+    if (statusCode === 429) {
+      const payload =
+        typeof error === 'object' &&
+        error !== null &&
+        'error' in error &&
+        typeof (error as { error?: unknown }).error === 'string'
+          ? {
+              error: (error as { error: string }).error,
+              ...('retryAfterSec' in error
+                ? { retryAfterSec: (error as { retryAfterSec?: number }).retryAfterSec }
+                : {}),
+            }
+          : { error: 'rate_limited' };
+      return reply.status(429).send(payload);
+    }
     request.log.error({ err: error }, 'unhandled error');
     return reply.status(500).send({ error: 'internal_error' });
   });
 
   await registerHealthRoutes(app, gateway);
-  await registerAuthRoutes(app, { config: deps.config, auth, magicLinkLimiter });
+  await registerAuthRoutes(app, { config: deps.config, auth });
   await registerAdminRoutes(app, { config: deps.config, auth, database });
   await registerLearningRoutes(app, {
     config: deps.config,
@@ -131,7 +150,6 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     config: deps.config,
     auth,
     classroom,
-    studentSignInLimiter,
   });
   await registerTutorRoutes(app, {
     config: deps.config,

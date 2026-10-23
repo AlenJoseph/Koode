@@ -3,7 +3,7 @@ import type { AuthService } from '../auth/service.js';
 import type { ClassroomService } from '../classroom/service.js';
 import type { ApiConfig } from '../config.js';
 import { clearSessionCookie, readSessionToken, setSessionCookie } from '../lib/cookies.js';
-import type { MemoryRateLimiter } from '../lib/rate-limit.js';
+import { authRateLimitConfig } from '../lib/route-rate-limit.js';
 
 export async function registerClassroomRoutes(
   app: FastifyInstance,
@@ -11,10 +11,10 @@ export async function registerClassroomRoutes(
     config: ApiConfig;
     auth: AuthService;
     classroom: ClassroomService;
-    studentSignInLimiter: MemoryRateLimiter;
   },
 ): Promise<void> {
-  const { config, auth, classroom, studentSignInLimiter } = deps;
+  const { config, auth, classroom } = deps;
+  const rateLimit = authRateLimitConfig(config);
 
   async function currentUser(request: FastifyRequest) {
     const sessionToken = readSessionToken(request, config);
@@ -198,25 +198,13 @@ export async function registerClassroomRoutes(
     },
   );
 
-  app.get('/classroom/join/:code', async (request, reply) => {
-    const limit = studentSignInLimiter.check(`join-lookup:${request.ip}`);
-    if (!limit.ok) {
-      reply.header('retry-after', String(limit.retryAfterSec));
-      return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
-    }
-
+  app.get('/classroom/join/:code', { config: rateLimit }, async (request) => {
     const { code } = request.params as { code: string };
     const section = await classroom.lookupSectionByCode({ code });
     return { section };
   });
 
-  app.post('/classroom/student/sign-in', async (request, reply) => {
-    const limit = studentSignInLimiter.check(`student-signin:${request.ip}`);
-    if (!limit.ok) {
-      reply.header('retry-after', String(limit.retryAfterSec));
-      return reply.status(429).send({ error: 'rate_limited', retryAfterSec: limit.retryAfterSec });
-    }
-
+  app.post('/classroom/student/sign-in', { config: rateLimit }, async (request, reply) => {
     const authenticated = await classroom.authenticateStudent(request.body);
 
     const session = await auth.createSessionForUser(authenticated.userId);
