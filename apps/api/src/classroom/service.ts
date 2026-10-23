@@ -148,6 +148,36 @@ export function createClassroomService(database: Database) {
       };
     },
 
+    /** Regenerate secret words; new words returned once, old hash invalidated. */
+    async resetStudentSecretWords(teacherId: string, sectionId: string, membershipId: string) {
+      await this.getSectionForTeacher(teacherId, sectionId);
+      const membership = await db.query.sectionStudents.findFirst({
+        where: and(
+          eq(sectionStudents.id, membershipId),
+          eq(sectionStudents.sectionId, sectionId),
+        ),
+      });
+      if (!membership) {
+        throw new AuthError('Student not found in section', 404);
+      }
+      let secretWords = generateSecretWords();
+      let secretWordsHash = hashToken(normalizeSecretWords(secretWords));
+      for (let attempt = 0; attempt < 8 && secretWordsHash === membership.secretWordsHash; attempt += 1) {
+        secretWords = generateSecretWords();
+        secretWordsHash = hashToken(normalizeSecretWords(secretWords));
+      }
+      await db
+        .update(sectionStudents)
+        .set({ secretWordsHash })
+        .where(eq(sectionStudents.id, membershipId));
+      return {
+        id: membership.id,
+        userId: membership.userId,
+        displayName: membership.displayName,
+        secretWords,
+      };
+    },
+
     /** Drop section membership only — the user account remains. */
     async removeStudent(teacherId: string, sectionId: string, membershipId: string) {
       await this.getSectionForTeacher(teacherId, sectionId);

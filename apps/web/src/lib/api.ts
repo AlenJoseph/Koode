@@ -346,6 +346,15 @@ export async function removeStudent(sectionId: string, membershipId: string): Pr
   });
 }
 
+export async function resetStudentSecret(
+  sectionId: string,
+  membershipId: string,
+): Promise<{ student: { id: string; userId: string; displayName: string; secretWords: string } }> {
+  return apiFetch(`/classroom/sections/${sectionId}/students/${membershipId}/reset-secret`, {
+    method: 'POST',
+  });
+}
+
 export async function lookupSection(code: string): Promise<{
   section: { code: string; name: string; students: Array<{ displayName: string }> };
 }> {

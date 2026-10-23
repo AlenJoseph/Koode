@@ -115,6 +115,7 @@
   "classroom.codeLabel": "Section code",
   "classroom.addStudent": "Add student",
   "classroom.removeStudent": "Remove",
+  "classroom.resetSecret": "Reset secret words",
   "classroom.studentName": "Student display name",
   "classroom.secretWords": "Secret words (save for login card)",
   "classroom.roster": "Roster",

@@ -10,6 +10,7 @@ import {
   listRoster,
   listSections,
   removeStudent,
+  resetStudentSecret,
   type ClassroomSection,
 } from '@/lib/api';
 
@@ -91,6 +92,17 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
     }
   }
 
+  async function onResetSecret(membershipId: string) {
+    if (!activeId) return;
+    setError(false);
+    try {
+      const { student } = await resetStudentSecret(activeId, membershipId);
+      setLastSecretWords(student.secretWords);
+    } catch {
+      setError(true);
+    }
+  }
+
   if (isTeacher === null) {
     return <p className="muted">{dictionary['health.ok']}…</p>;
   }
@@ -148,6 +160,13 @@ export function ClassroomPanel({ locale, dictionary }: Props) {
             {roster.map((row) => (
               <li key={row.id} className="nav">
                 <span>{row.displayName}</span>
+                <button
+                  type="button"
+                  className="secondary"
+                  onClick={() => void onResetSecret(row.id)}
+                >
+                  {dictionary['classroom.resetSecret']}
+                </button>
                 <button
                   type="button"
                   className="secondary"
