@@ -1,4 +1,4 @@
-import type { SessionUser } from '@koode/contracts';
+import type { SessionUser, TutorTurnRequest, TutorTurnResponse } from '@koode/contracts';
 
 const apiBase = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
@@ -53,4 +53,13 @@ export async function fetchMe(): Promise<{ user: SessionUser } | null> {
 
 export async function logout(): Promise<void> {
   await apiFetch('/auth/logout', { method: 'POST' });
+}
+
+export async function runTutorTurn(
+  input: TutorTurnRequest,
+): Promise<{ ok: true; adapter: string; turn: TutorTurnResponse }> {
+  return apiFetch('/tutor/turn', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }

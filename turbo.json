@@ -24,7 +24,11 @@
         "COOKIE_SECURE",
         "APP_ORIGIN",
         "API_ORIGIN",
-        "NODE_ENV"
+        "NODE_ENV",
+        "AI_PROVIDER",
+        "AI_BASE_URL",
+        "AI_MODEL",
+        "AI_API_KEY"
       ]
     }
   }

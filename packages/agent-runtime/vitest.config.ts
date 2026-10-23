@@ -4,6 +4,5 @@ export default defineConfig({
   test: {
     name: 'agent-runtime',
     include: ['src/**/*.test.ts'],
-    passWithNoTests: true,
   },
 });

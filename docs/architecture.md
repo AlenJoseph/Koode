@@ -10,8 +10,8 @@ Status: early implementation. Product principles and the full agent blueprint li
 | `apps/api` | Fastify API: health, magic-link auth, session cookies |
 | `packages/contracts` | Shared Zod types, auth schemas, and i18n contracts |
 | `packages/database` | Drizzle schema + migrations (users, profiles, consent, sessions) |
-| `packages/ai-gateway` | Provider-neutral model gateway (stub) |
-| `packages/agent-runtime` | Bounded tutor workflows (stub) |
+| `packages/ai-gateway` | Model-agnostic gateway (`ModelAdapter`) + stub / OpenAI-compatible adapters |
+| `packages/agent-runtime` | Bounded tutor workflow with Zod-validated turns |
 | `prompts/` | Versioned prompt templates |
 | `evaluations/` | Multilingual and safety evaluation assets |
 
@@ -19,8 +19,16 @@ Status: early implementation. Product principles and the full agent blueprint li
 
 Supported locales: `en`, `ml`. Canonical keys are owned by `@koode/contracts`. Catalogs are owned by `@koode/web`.
 
+## Model-agnostic AI
+
+Application code depends on `ModelAdapter` / `AiGateway` only. Swap providers with env:
+
+- `AI_PROVIDER=stub` (default, tests and offline)
+- `AI_PROVIDER=openai-compatible` + `AI_BASE_URL` + `AI_MODEL` (+ optional `AI_API_KEY`)
+
 ## Boundaries
 
-- PostgreSQL is the future source of truth for private learner records.
+- PostgreSQL is the source of truth for private learner records.
 - Agents must not bypass application authorization.
+- Tutor outputs are schema-validated before they reach the client.
 - Observability must not become a raw conversation archive.

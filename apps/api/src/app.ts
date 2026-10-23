@@ -1,5 +1,7 @@
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
+import { TutorRuntimeError, createTutorRuntime, type TutorRuntime } from '@koode/agent-runtime';
+import { createGatewayFromEnv, type AiGateway } from '@koode/ai-gateway';
 import { createDatabase, type Database } from '@koode/database';
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
 import { ZodError } from 'zod';
@@ -12,6 +14,8 @@ export type AppDeps = {
   config: ApiConfig;
   database?: Database;
   auth?: AuthService;
+  gateway?: AiGateway;
+  tutor?: TutorRuntime;
 };
 
 declare module 'fastify' {
@@ -56,6 +60,8 @@ function clearSessionCookie(reply: FastifyReply, config: ApiConfig): void {
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const database = deps.database ?? createDatabase(deps.config.databaseUrl);
   const auth = deps.auth ?? createAuthService(database, deps.config);
+  const gateway = deps.gateway ?? createGatewayFromEnv();
+  const tutor = deps.tutor ?? createTutorRuntime(gateway);
   const app = Fastify({ logger: false });
 
   await app.register(cors, {
@@ -71,11 +77,17 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     if (error instanceof AuthError) {
       return reply.status(error.statusCode).send({ error: error.message });
     }
+    if (error instanceof TutorRuntimeError) {
+      return reply.status(error.statusCode).send({ error: error.message });
+    }
     app.log.error(error);
     return reply.status(500).send({ error: 'internal_error' });
   });
 
-  app.get('/health', async () => getHealth());
+  app.get('/health', async () => ({
+    ...getHealth(),
+    aiAdapter: gateway.adapterId,
+  }));
 
   app.post('/auth/magic-link/request', async (request) => {
     return auth.requestMagicLink(request.body);
@@ -107,6 +119,26 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     }
     clearSessionCookie(reply, deps.config);
     return { ok: true };
+  });
+
+  app.post('/tutor/turn', async (request, reply) => {
+    const sessionToken = readSessionToken(request, deps.config);
+    if (!sessionToken) {
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+    const user = await auth.getUserForSessionToken(sessionToken);
+    if (!user) {
+      clearSessionCookie(reply, deps.config);
+      return reply.status(401).send({ error: 'Unauthorized' });
+    }
+
+    const turn = await tutor.runTurn(request.body);
+    return {
+      ok: true,
+      adapter: tutor.gatewayId,
+      userId: user.id,
+      turn,
+    };
   });
 
   app.addHook('onClose', async () => {

@@ -44,6 +44,12 @@ importers:
       '@fastify/cors':
         specifier: ^11.1.0
         version: 11.3.1
+      '@koode/agent-runtime':
+        specifier: workspace:*
+        version: link:../../packages/agent-runtime
+      '@koode/ai-gateway':
+        specifier: workspace:*
+        version: link:../../packages/ai-gateway
       '@koode/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts
@@ -106,6 +112,9 @@ importers:
       '@koode/contracts':
         specifier: workspace:*
         version: link:../contracts
+      zod:
+        specifier: ^4.1.12
+        version: 4.6.7
     devDependencies:
       typescript:
         specifier: ^5.9.3
@@ -119,6 +128,9 @@ importers:
       '@koode/contracts':
         specifier: workspace:*
         version: link:../contracts
+      zod:
+        specifier: ^4.1.12
+        version: 4.6.7
     devDependencies:
       typescript:
         specifier: ^5.9.3

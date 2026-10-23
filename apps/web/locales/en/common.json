@@ -4,6 +4,7 @@
   "nav.home": "Home",
   "nav.challenges": "Challenges",
   "nav.progress": "Progress",
+  "nav.tutor": "Tutor",
   "nav.signIn": "Sign in",
   "nav.signOut": "Sign out",
   "locale.switch": "Language",
@@ -19,5 +20,12 @@
   "auth.verifyFailed": "That sign-in link is invalid or expired.",
   "auth.signedInAs": "Signed in as",
   "home.welcome": "Welcome back. Your learning progress will live here.",
-  "home.signedOutHint": "Sign in to save progress across sessions."
+  "home.signedOutHint": "Sign in to save progress across sessions.",
+  "tutor.title": "Guided tutor",
+  "tutor.topicLabel": "Topic",
+  "tutor.messageLabel": "Your message",
+  "tutor.send": "Ask Koode",
+  "tutor.needSignIn": "Sign in to use the tutor.",
+  "tutor.error": "The tutor could not answer. Try again.",
+  "tutor.guidingQuestion": "Guiding question"
 }

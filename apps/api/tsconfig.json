@@ -9,6 +9,8 @@
   "exclude": ["src/**/*.test.ts"],
   "references": [
     { "path": "../../packages/contracts" },
-    { "path": "../../packages/database" }
+    { "path": "../../packages/database" },
+    { "path": "../../packages/ai-gateway" },
+    { "path": "../../packages/agent-runtime" }
   ]
 }

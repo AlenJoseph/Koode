@@ -4,6 +4,5 @@ export default defineConfig({
   test: {
     name: 'ai-gateway',
     include: ['src/**/*.test.ts'],
-    passWithNoTests: true,
   },
 });

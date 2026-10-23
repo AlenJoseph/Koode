@@ -8,6 +8,7 @@ export const messageKeys = [
   'nav.home',
   'nav.challenges',
   'nav.progress',
+  'nav.tutor',
   'nav.signIn',
   'nav.signOut',
   'locale.switch',
@@ -24,6 +25,13 @@ export const messageKeys = [
   'auth.signedInAs',
   'home.welcome',
   'home.signedOutHint',
+  'tutor.title',
+  'tutor.topicLabel',
+  'tutor.messageLabel',
+  'tutor.send',
+  'tutor.needSignIn',
+  'tutor.error',
+  'tutor.guidingQuestion',
 ] as const;
 
 export type MessageKey = (typeof messageKeys)[number];

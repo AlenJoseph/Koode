@@ -1,4 +1,6 @@
-/**
- * Bounded tutor workflows and tool policies — weeks 5–6.
- */
-export const agentRuntimePackageName = '@koode/agent-runtime' as const;
+export {
+  createTutorRuntime,
+  TutorRuntimeError,
+  type TutorRuntime,
+} from './tutor.js';
+export { buildTutorSystemPrompt, buildTutorUserPrompt } from './prompts.js';

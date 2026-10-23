@@ -4,6 +4,7 @@
   "nav.home": "ഹോം",
   "nav.challenges": "ചലഞ്ചുകൾ",
   "nav.progress": "പുരോഗതി",
+  "nav.tutor": "ട്യൂട്ടർ",
   "nav.signIn": "സൈൻ ഇൻ",
   "nav.signOut": "സൈൻ ഔട്ട്",
   "locale.switch": "ഭാഷ",
@@ -19,5 +20,12 @@
   "auth.verifyFailed": "ആ സൈൻ ഇൻ ലിങ്ക് അസാധുവാണ് അല്ലെങ്കിൽ കാലഹരണപ്പെട്ടു.",
   "auth.signedInAs": "സൈൻ ഇൻ ചെയ്തിരിക്കുന്നത്",
   "home.welcome": "സ്വാഗതം. നിങ്ങളുടെ പഠന പുരോഗതി ഇവിടെ ഉണ്ടാകും.",
-  "home.signedOutHint": "സെഷനുകൾക്കിടയിൽ പുരോഗതി സൂക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക."
+  "home.signedOutHint": "സെഷനുകൾക്കിടയിൽ പുരോഗതി സൂക്ഷിക്കാൻ സൈൻ ഇൻ ചെയ്യുക.",
+  "tutor.title": "ഗൈഡഡ് ട്യൂട്ടർ",
+  "tutor.topicLabel": "വിഷയം",
+  "tutor.messageLabel": "നിങ്ങളുടെ സന്ദേശം",
+  "tutor.send": "കൂടെയോട് ചോദിക്കുക",
+  "tutor.needSignIn": "ട്യൂട്ടർ ഉപയോഗിക്കാൻ സൈൻ ഇൻ ചെയ്യുക.",
+  "tutor.error": "ട്യൂട്ടർക്ക് മറുപടി നൽകാനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
+  "tutor.guidingQuestion": "ഗൈഡിങ് ചോദ്യം"
 }

@@ -14,11 +14,12 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings=0",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
     "@koode/ai-gateway": "workspace:*",
-    "@koode/contracts": "workspace:*"
+    "@koode/contracts": "workspace:*",
+    "zod": "^4.1.12"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
